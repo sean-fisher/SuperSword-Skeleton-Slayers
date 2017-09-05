@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<scene FileName="battleMessages">
+  <Wait AttackID="0" Description="">
+    <line>
+      <Name></Name>
+      <Message>%n chose to wait for a turn.</Message>
+    </line>
+  </Wait>
+</scene>

@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 0c3244527b2c27b428c805a16f194d42
+timeCreated: 1502939215
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 500
+  forceTextureCase: -1
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Final Fantasy 3/6 Font
+  fontNames:
+  - Final Fantasy 3/6 Font
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 3
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
