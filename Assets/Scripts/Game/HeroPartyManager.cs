@@ -57,6 +57,7 @@ public class HeroPartyManager : PartyManager {
             }
             newHero.gameObject.transform.parent = actPartyObj.transform;
             Debug.Log("Added Hero: " + newHero.name);
+            newHero.transform.position = Vector3.zero;
         } else
         {
             Debug.Log("Active Party Full");

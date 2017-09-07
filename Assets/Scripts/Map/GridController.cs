@@ -10,6 +10,7 @@ public class GridController : MonoBehaviour {
     // Leader is 0, then 1, 2, etc. 
     // Used for making the party follow the leader.
     public int placeInParty;
+    SpriteRenderer sr;
 
     /** ANIMATION STATES:
      * 0: idle
@@ -31,6 +32,7 @@ public class GridController : MonoBehaviour {
             GameManager.gm.leader = this;
             TextBoxManager.player = this;
         }
+        sr = GetComponent<SpriteRenderer>();
 	}
 	
 	// Update is called once per frame
@@ -177,6 +179,8 @@ public class GridController : MonoBehaviour {
             canMove = true;
             CheckTile(transform.position);
         }
+        
+       // sr.sortingOrder = -(int)transform.position.y;
     }
 
     static Vector2 ClampToPixel(Vector2 unclamped)
