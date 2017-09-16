@@ -261,7 +261,7 @@ public class BattleMenu : Menu {
 
                 listSelectWindow.gameObject.SetActive(true);
                 currRects = listTexts;
-                isScrollable = true;
+                //isScrollable = true;
                 visibleSize = 9;
                 rows = 3;
                 cols = 3;
@@ -306,7 +306,7 @@ public class BattleMenu : Menu {
     bool waitFrame = false;
 
     // The list of spells should be able to be scrolled through even if the spell hasn't been learned yet
-    List<Attack> emptyAttackList = new List<Attack>(new Attack[18]);
+    List<Attack> emptyAttackList = new List<Attack>(new Attack[9]);
     BaseCharacter currCharacter;
 
     int heroEnemyCursor = 0;

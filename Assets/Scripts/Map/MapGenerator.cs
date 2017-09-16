@@ -680,16 +680,7 @@ public class MapGenerator : MonoBehaviour {
             }
             yield return null;
         }
-        
     }
-	
-	// Update is called once per frame
-	void Update () {
-		if (Input.GetKeyDown(KeyCode.G))
-        {
-            GenerateMap(128, 100, 5, 2.2f);
-        }
-	}
 }
 
 // This struct is currently not used, but may be used later to prevent continents from overlapping.

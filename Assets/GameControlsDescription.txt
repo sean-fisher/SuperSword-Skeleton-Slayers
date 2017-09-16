@@ -1,0 +1,15 @@
+If you're confused about the controls, here you go:
+Arrow keys: Move, navigate through menus
+D: Confirm
+S: Back
+
+Unfinished:
+Enter: Open menu
+W: TBD
+A: TBD
+
+The reason WASD are used as buttons is to mimic a standard D-pad, four-button layout. D corresponds to a SNES controller's A button, S corresponds to B, etc.
+
+Debug:
+O: Start random battle ([O]pen battle window)
+Numpad 1, 2: add additional Knight to party. As more hero classes are created, each numpad key will correspond to a different class.

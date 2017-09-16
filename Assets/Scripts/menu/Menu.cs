@@ -109,7 +109,7 @@ public abstract class Menu : MonoBehaviour {
             }
             else
             {
-                listTexts[i].GetComponent<Text>().text = tempSpellnames[i + firstVisibleIndex];
+                listTexts[i].GetComponent<Text>().text = "";// tempSpellnames[i + firstVisibleIndex];
             
             }
         }

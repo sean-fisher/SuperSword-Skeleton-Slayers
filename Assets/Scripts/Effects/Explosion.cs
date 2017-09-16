@@ -42,7 +42,7 @@ public class Explosion : MonoBehaviour {
 
         for (int i = 1; i < 70; i++)
         {
-            float c = (float) 20f / i;
+            float c = (float) 50f / i;
             b1.transform.position += ne * c;
             s1.transform.position += se * c;
             b2.transform.position += sw * c;
