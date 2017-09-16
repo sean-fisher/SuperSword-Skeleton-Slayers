@@ -17,6 +17,8 @@ public class HeroPartyManager : PartyManager {
 
     public CamFollow camFollower;
 
+    public static List<BaseCharacter> activeHeroes;
+
     // Use this for initialization
     void Start () {
 		
@@ -29,13 +31,20 @@ public class HeroPartyManager : PartyManager {
             AddCharacterToParty((GameObject.Instantiate(knightPrefab)).GetComponent<BaseCharacter>());
         } else if (Input.GetKeyDown(KeyCode.Keypad2))
         {
-            AddCharacterToParty(GameObject.Instantiate(magePrefab).GetComponent<BaseCharacter>());
+            AddCharacterToParty(GameObject.Instantiate(knightPrefab).GetComponent<BaseCharacter>());
         }
 	}
 
     public new void KillCharacter(BaseCharacter targetCharacter)
     {
 
+    }
+
+    public void AddKnight(Vector3 knightPosition)
+    {
+        GameObject knightObj = GameObject.Instantiate(knightPrefab);
+        AddCharacterToParty(knightObj.GetComponent<BaseCharacter>());
+        knightObj.transform.position = new Vector2(knightPosition.x * 16, knightPosition.y * -16 + 4);
     }
 
     public void AddCharacterToActive(BaseCharacter newHero)
@@ -47,6 +56,7 @@ public class HeroPartyManager : PartyManager {
 
             if (activePartyMembers.Count == 1)
             {
+                GameManager.gm.leader = newHero.GetComponent<GridController>();
                 leader = newHero;
                 newHero.gameObject.transform.position = Vector2.zero;
                 camFollower.targetToFollow = leader.gameObject.transform;
@@ -56,8 +66,11 @@ public class HeroPartyManager : PartyManager {
                 newHero.GetComponent<GridController>().placeInParty = activePartyMembers.Count - 1;
             }
             newHero.gameObject.transform.parent = actPartyObj.transform;
+
+            newHero.GetComponent<GridController>().debugEnabled = GameManager.gm.debugEnabled;
             Debug.Log("Added Hero: " + newHero.name);
-            newHero.transform.position = Vector3.zero;
+            newHero.transform.position = leader.transform.position;
+            BattleManager.bManager.heroesAlive++;
         } else
         {
             Debug.Log("Active Party Full");

@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
+    public bool debugEnabled = false;
+
     public FadeTransition fadeTransition;
     public FourSideTransition fsTransition;
     public SpiralTransition spiralTransition;
@@ -49,6 +51,9 @@ public class GameManager : MonoBehaviour {
             case (TransitionType.FOURSIDE):
                 st = fsTransition;
                 break;
+            default:
+                Debug.Log("Invalid Scene Name!");
+                break;
         }
 
 
@@ -58,6 +63,7 @@ public class GameManager : MonoBehaviour {
         {
             yield return null;
         }
+        Debug.Log("Scene trans in");
         if (sceneName != null)
         {
             SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
@@ -77,5 +83,7 @@ public class GameManager : MonoBehaviour {
             BattleManager.hpm.activePartyMembers[i].gameObject.GetComponent<GridController>().canMove = true;
         }
         enabled = false;
+
+        Debug.Log("Scene switch successful");
     }
 }

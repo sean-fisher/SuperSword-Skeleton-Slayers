@@ -25,4 +25,16 @@ public class PartyManager : MonoBehaviour {
     {
 
     }
+
+    public bool PartyContainsCharacter(BaseCharacter character)
+    {
+        for (int i = 0; i < activePartyMembers.Count; i++)
+        {
+            if (activePartyMembers[i].characterName == character.characterName)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

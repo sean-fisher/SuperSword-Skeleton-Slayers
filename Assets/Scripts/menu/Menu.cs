@@ -133,19 +133,19 @@ public abstract class Menu : MonoBehaviour {
         if (newIndex - cursorMarker < visibleRectArr.Length && newIndex - cursorMarker > -1)
         {
             optionPosition = visibleRectArr[newIndex - cursorMarker].transform.position;
+            //optionPosition = Camera.main.WorldToScreenPoint(visibleRectArr[newIndex - cursorMarker].transform.position);
         } else
         {
             //Debug.Log(newIndex % visibleSize + " " + visibleRectArr[0].gameObject.name);
 
 
 
-
-            optionPosition =  visibleRectArr[newIndex % visibleSize].transform.position;
+            optionPosition = visibleRectArr[newIndex % visibleSize].transform.position;
+            //optionPosition = Camera.main.WorldToScreenPoint(visibleRectArr[newIndex % visibleSize].transform.position);
         }
         //optionPosition = visibleRectArr[optionIndex].transform.position;
-
-        // There's some inefficiency here in the newIndex % visibleSize; shouldn't be necessary
-        currCursor.transform.position = new Vector2(optionPosition.x - visibleRectArr[0/*newIndex % visibleSize*/].rect.width + 16, optionPosition.y);
+        
+        currCursor.transform.position = new Vector2(optionPosition.x - (float) (Screen.width / 17)/*- visibleRectArr[newIndex - cursorMarker].rect.width*/, optionPosition.y);
 
         tempCursor = newIndex;
         cursorMoved = true;

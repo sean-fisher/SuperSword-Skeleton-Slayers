@@ -90,7 +90,11 @@ public abstract class Attack : MonoBehaviour {
         }
 
         // NO NEED TO EDIT CODE FROM HERE TO END OF METHOD
+        EndTurnCheck(turnList);
+    }
 
+    protected void EndTurnCheck(List<Turn> turnList)
+    {
         // If all of this phase's turns are over, a win/lose double check occurs.
         if (turnList.Count == 0)
         {
@@ -100,17 +104,20 @@ public abstract class Attack : MonoBehaviour {
             }
             else if (BattleManager.hasLost)
             {
-                Debug.Log("Game Over...");
+                //BattleManager.bManager.GameOver();
             }
         }
-        else
+        else if (!BattleManager.hasWon && !BattleManager.hasLost)
         {
             // The phase continues, and another hero or enemy takes his/her turn
             Turn nextTurn = turnList[0];
             turnList.RemoveAt(0);
             BattleManager.bManager.StartInactiveTurn(nextTurn, turnList);
+        } else {
+            //BattleManager.bManager.GameOver();
         }
     }
+
     // END EXAMPLE IMPLEMENTATION
 
     protected BaseCharacter CheckTargetAlive(BaseCharacter attacker, BaseCharacter target)

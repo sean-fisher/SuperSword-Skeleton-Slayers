@@ -527,8 +527,9 @@ public class BattleMenu : Menu {
     {
         List<Turn> turnList = bm.turnList;
 
-        foreach (Turn turn in turnList)
+        for (int i = 0; i < turnList.Count; i++) 
         {
+            Turn turn = turnList[i];
             if (turn.attack is Defend)
             {
                 Debug.Log(turn.attacker + " is defending");

@@ -74,9 +74,7 @@ public class BattleManager : MonoBehaviour {
         {
             // An enemy was defeated!
             epm.activePartyMembers.Remove(targetCharacter);
-            GameObject explosion = GameObject.Instantiate(GameManager.gm.allEffects.smokeExplosion.gameObject);
-            explosion.transform.position = targetCharacter.gameObject.transform.position;
-            Destroy(targetCharacter.gameObject);
+            StartCoroutine(EnemyDeathAnimation(targetCharacter.gameObject));
             enemiesAlive--;
             Debug.Log("Enemy dies: " + targetCharacter.characterName);
 
@@ -85,15 +83,38 @@ public class BattleManager : MonoBehaviour {
         else if (hpm.activePartyMembers.Contains(targetCharacter))
         {
             // A hero was defeated!
-            Debug.Log("Hero dies: " + targetCharacter.characterName);
+            Debug.Log("Hero dies: " + targetCharacter.characterName + " " + heroesAlive);
+            //hpm.activePartyMembers.Remove(targetCharacter);
+            heroesAlive--;
 
             CheckLose();
         }
+    }
 
+    IEnumerator EnemyDeathAnimation(GameObject enemyObj)
+    {
+        GameObject explosion = GameObject.Instantiate(GameManager.gm.allEffects.smokeExplosion.gameObject, enemyObj.gameObject.transform.parent);
+        explosion.transform.position = enemyObj.gameObject.transform.position;
+        //enemyObj.transform.parent = enemyObj.transform.parent.transform.parent;
+        float frameCount = 0;
+        for (float i = 0; i < 1; i += Time.deltaTime)
+        {
+            frameCount += Time.deltaTime;
+            if (frameCount > .2f)
+            {
+                frameCount = 0;
+                enemyObj.GetComponent<Image>().enabled = !enemyObj.GetComponent<Image>().enabled;
+            }
+            yield return null;
+        }
+        Destroy(enemyObj);
     }
 
     public void StartBattle()
     {
+        // Disable player movement
+        //GameManager.gm.leader.DisableMovement();
+
         epm = GameObject.Instantiate(areaEncounters.GetRandomEncounter(GameManager.currAreaName).gameObject)
             .GetComponent<EnemyPartyManager>();
 
@@ -131,7 +152,7 @@ public class BattleManager : MonoBehaviour {
             enemyObj.SetActive(false);
         }
 
-        heroesAlive = epm.activePartyMembers.Count;
+        enemiesAlive = epm.activePartyMembers.Count;
 
         OpenWindow();
     }
@@ -202,24 +223,36 @@ public class BattleManager : MonoBehaviour {
     {
         if (enemiesAlive == 0)
         {
-            Debug.Log("Game Won!");
-            hasWon = true;
-            turnList.Clear();
-
-            Destroy(epm.gameObject);
-
-            messageBoxImg.gameObject.SetActive(true);
-            TextBoxManager.tbm.EnableTextBox(messageBoxImg.transform.GetChild(0).gameObject, "you've Won!");
+            WinBattle();
         }
+    }
+
+    public void WinBattle()
+    {
+        //Debug.Log("Game Won!");
+        hasWon = true;
+        turnList.Clear();
+
+        Destroy(epm.gameObject);
+
+        messageBoxImg.gameObject.SetActive(true);
+        TextBoxManager.tbm.EnableTextBox(messageBoxImg.transform.GetChild(0).gameObject, "You've Won!");
+
     }
 
     void CheckLose()
     {
-        if (heroesAlive == 0)
+        if (heroesAlive <= 0)
         {
-            Debug.Log("Game Lost...");
             hasLost = true;
+            GameOver();
         }
+    }
+
+    public void GameOver()
+    {
+        messageBoxImg.gameObject.SetActive(true);
+        TextBoxManager.tbm.EnableTextBox(messageBoxImg.transform.GetChild(0).gameObject, "Game Over...");
     }
 
 
@@ -236,7 +269,7 @@ public class BattleManager : MonoBehaviour {
 
     IEnumerator ClosingWindow()
     {
-        yield return null;
+        yield return new WaitForSeconds(.8f);
         backgroundWindow.gameObject.SetActive(false);
         enviroImg.gameObject.SetActive(false);
         backgroundWindow.gameObject.SetActive(false);

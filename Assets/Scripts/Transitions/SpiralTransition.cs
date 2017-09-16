@@ -393,11 +393,11 @@ public class SpiralTransition : ScreenTransition
             yield return null;
         }
     }
-}
-public enum Direction
-{
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT
+    enum Direction
+    {
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT
+    }
 }

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class RandomEncounterManager : MonoBehaviour {
 
-    bool encountersEnabled;
-    int stepsSinceBattle = 0;
+    static bool encountersEnabled;
+    static int encounterStep = 16;
 
     public static RandomEncounterManager rem;
 
@@ -14,6 +14,7 @@ public class RandomEncounterManager : MonoBehaviour {
         if (rem == null)
         {
             rem = this;
+            encounterStep = UnityEngine.Random.Range(8, 24);
         }
 	}
 	
@@ -21,4 +22,31 @@ public class RandomEncounterManager : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    // returns true if a battle started
+    public static bool AdvanceStepCount(char groundType)
+    {
+        switch (groundType)
+        {
+            case ('g'):
+                encounterStep -= 1;
+                break;
+            case ('s'):
+                encounterStep -= 1;
+                break;
+            case ('r'):
+                encounterStep -= 2;
+                break;
+            default:
+                encounterStep--;
+                break;
+        }
+        if (encounterStep < 0)
+        {
+            encounterStep = UnityEngine.Random.Range(8, 24);
+            BattleManager.bManager.StartBattle();
+            return true;
+        }
+        return false;
+    }
 }

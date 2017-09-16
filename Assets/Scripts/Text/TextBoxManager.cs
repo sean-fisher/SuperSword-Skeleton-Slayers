@@ -107,6 +107,13 @@ public class TextBoxManager : MonoBehaviour {
                     {
                         yesNoPicked = true;
                     }
+
+                    // If the battle was just won, enable the player movement and disable the UI
+                    if (BattleManager.hasWon)
+                    {
+                        BattleManager.hasWon = false;
+                        BattleManager.bManager.CheckDisableMenu();
+                    }
                 }
                 else
                 {
@@ -273,7 +280,13 @@ public class TextBoxManager : MonoBehaviour {
 
         if (enableOnDisable)
         {
-            player.EnableMovement();
+            if (player)
+            {
+                player.EnableMovement();
+            } else
+            {
+                // GameOver
+            }
         }
         enabled = false;
     }

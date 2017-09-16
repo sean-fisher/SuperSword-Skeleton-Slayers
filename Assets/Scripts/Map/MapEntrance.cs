@@ -11,6 +11,7 @@ public class MapEntrance : InteractableTile {
 
     public override void ActivateInteraction()
     {
+        Debug.Log("Interact with door");
         GameManager.gm.SwitchScene(transitionType, sceneToLoad);
     }
 

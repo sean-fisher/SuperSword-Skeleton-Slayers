@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class GridController : MonoBehaviour {
 
+    public static bool encountersEnabled = true;
+    public static bool clampToPixel = true;
+    public bool debugEnabled = false;
+
     public LayerMask wall;
     public LayerMask interactableTile;
 
@@ -20,18 +24,27 @@ public class GridController : MonoBehaviour {
      * 4. Walk right
      * */
 
+    public enum MoveDir
+    {
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT
+    }
 
-    public List<Direction> inputList = new List<Direction>();
+    public List<MoveDir> inputList = new List<MoveDir>();
+    Animator anim;
 
     // Each grid space is 16 units wide; 1 unit represents one pixel. This always moves in increments of one pixel so as to reduce blur and increase sharpness.
 
     // Use this for initialization
     void Start () {
-		if (GameManager.gm.leader == null)
+		if (!debugEnabled && GameManager.gm.leader == null)
         {
             GameManager.gm.leader = this;
             TextBoxManager.player = this;
         }
+        anim = GetComponent<Animator>();
         sr = GetComponent<SpriteRenderer>();
 	}
 	
@@ -41,78 +54,121 @@ public class GridController : MonoBehaviour {
         {
             if (Input.GetAxis("Horizontal") < 0)
             {
-                MoveOneSpace(Direction.LEFT);
+                MoveOneSpace(MoveDir.LEFT);
             }
             else if (Input.GetAxis("Horizontal") > 0)
             {
-                MoveOneSpace(Direction.RIGHT);
+                MoveOneSpace(MoveDir.RIGHT);
             }
             else if (Input.GetAxis("Vertical") < 0f)
             {
-                MoveOneSpace(Direction.DOWN);
+                MoveOneSpace(MoveDir.DOWN);
             }
             else if (Input.GetAxis("Vertical") > 0)
             {
-                MoveOneSpace(Direction.UP);
+                MoveOneSpace(MoveDir.UP);
             }
         }
     }
 
     public bool canMove = true;
 
-    void MoveOneSpace(Direction destination, bool canMoveAfter = true)
-    {
-        inputList.Add(destination);
+    public static bool partyCanMove = true;
 
-        if (inputList.Count > placeInParty)
+    void MoveOneSpace(MoveDir destination, bool canMoveAfter = true)
+    {
+        int tempWalkState = 0;
+
+        if (GameManager.gm.leader == this)
         {
-            if (placeInParty == 0)
+
+            Vector3 destinationVector = Vector3.zero;
+            switch (destination)
             {
-                //inputList.RemoveAt(0);
+                case (MoveDir.LEFT):
+                    destinationVector = new Vector3(gameObject.transform.position.x - 16, gameObject.transform.position.y, transform.position.z);
+                    tempWalkState = 3;
+                    break;
+                case (MoveDir.RIGHT):
+                    destinationVector = new Vector3(gameObject.transform.position.x + 16, gameObject.transform.position.y, transform.position.z);
+                    tempWalkState = 4;
+                    break;
+                case (MoveDir.DOWN):
+                    destinationVector = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 16, transform.position.z);
+                    tempWalkState = 2;
+                    break;
+                case (MoveDir.UP):
+                    destinationVector = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 16, transform.position.z);
+                    tempWalkState = 1;
+                    break;
+                default:
+                    break;
+            }
+
+            // Checks if objects are already at the destination and if they can be moved onto
+            Collider2D objectsAtDestination = Physics2D.OverlapCircle(destinationVector, 4, wall);
+            // Prevent party from moving
+            partyCanMove = objectsAtDestination == null;
+
+        }
+
+        if (partyCanMove)
+        {
+            inputList.Add(destination);
+
+            if (inputList.Count > placeInParty)
+            {
+
+                destination = inputList[0];
+                inputList.RemoveAt(0);
+
+                Vector3 destinationVector = Vector3.zero;
+                switch (destination)
+                {
+                    case (MoveDir.LEFT):
+                        destinationVector = new Vector3(gameObject.transform.position.x - 16, gameObject.transform.position.y, transform.position.z);
+                        tempWalkState = 3;
+                        break;
+                    case (MoveDir.RIGHT):
+                        destinationVector = new Vector3(gameObject.transform.position.x + 16, gameObject.transform.position.y, transform.position.z);
+                        tempWalkState = 4;
+                        break;
+                    case (MoveDir.DOWN):
+                        destinationVector = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 16, transform.position.z);
+                        tempWalkState = 2;
+                        break;
+                    case (MoveDir.UP):
+                        destinationVector = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 16, transform.position.z);
+                        tempWalkState = 1;
+                        break;
+                    default:
+                        break;
+                }
+
+                walkState = tempWalkState;
+
+                destinationVector = new Vector3(Mathf.Round(destinationVector.x), Mathf.Round(destinationVector.y), destinationVector.z);
+                canMove = false;
+
+                if (anim)
+                {
+                    anim.SetInteger("WalkState", walkState);
+                }
+
+                StartCoroutine(MovingOneSpace(destinationVector, canMoveAfter));
+
             }
             else
             {
+                StartCoroutine(WaitWhileLeaderMoves());
             }
-            destination = inputList[0];
-            inputList.RemoveAt(0);
-
-            Vector2 destinationVector;
-
-            switch (destination)
-            {
-                case (Direction.LEFT):
-                    destinationVector = new Vector2(gameObject.transform.position.x - 16, gameObject.transform.position.y);
-                    walkState = 3;
-                    break;
-                case (Direction.RIGHT):
-                    destinationVector = new Vector2(gameObject.transform.position.x + 16, gameObject.transform.position.y);
-                    walkState = 4;
-                    break;
-                case (Direction.DOWN):
-                    destinationVector = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 16);
-                    walkState = 2;
-                    break;
-                default:
-                    destinationVector = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y + 16);
-                    walkState = 1;
-                    break;
-            }
-            destinationVector = new Vector2(Mathf.Round(destinationVector.x), Mathf.Round(destinationVector.y));
-            canMove = false;
-            //Debug.Log("Set state to " + walkState);
-            GetComponent<Animator>().SetInteger("WalkState", walkState);
-            StartCoroutine(MovingOneSpace(destinationVector, canMoveAfter));
-
-        } else
-        {
-            StartCoroutine(WaitWhileLeaderMoves());
         }
-
     }
+
+    //void CheckMap
 
     public int speed = 50;
 
-    Vector2 tempPosition;
 
     IEnumerator WaitWhileLeaderMoves()
     {
@@ -126,35 +182,36 @@ public class GridController : MonoBehaviour {
 
     int walkState;
 
-    IEnumerator MovingOneSpace(Vector2 tryDestination, bool canMoveAfter = true)
+    IEnumerator MovingOneSpace(Vector3 tryDestination, bool canMoveAfter = true)
     {
+        //Physics2D.OverlapSphere(tryDestination, 5f);
 
-        // Checks if objects are already at the destination and if they can be moved onto
-        Collider2D objectsAtDestination = Physics2D.OverlapCircle(tryDestination, 4, wall);//Physics2D.OverlapSphere(tryDestination, 5f);
-                
-        if (objectsAtDestination)
+        Vector3 tempPosition = transform.position;
+        bool battleActivated = false;
+
+        if (false)
         {
         } else
         {
             int distanceX = Mathf.Abs((int)(tryDestination.x - gameObject.transform.position.x));
             int distanceY = Mathf.Abs((int)(tryDestination.y - gameObject.transform.position.y));
 
-            int directionX = 1;
+            int MoveDirX = 1;
             if (tryDestination.x < gameObject.transform.position.x)
             {
-                directionX = -1;
+                MoveDirX = -1;
             }
-            int directionY = 1;
+            int MoveDirY = 1;
             if (tryDestination.y < gameObject.transform.position.y)
             {
-                directionY = -1;
+                MoveDirY = -1;
             }
 
             float progress = 0;
             while (progress < distanceX)
             {
                 progress += Time.deltaTime * speed;
-                tempPosition = new Vector2(tempPosition.x + Time.deltaTime * speed * directionX, tempPosition.y);
+                tempPosition = new Vector3(tempPosition.x + Time.deltaTime * speed * MoveDirX, tempPosition.y, tempPosition.z);
                 transform.position = ClampToPixel(tempPosition);
                 yield return null;
             }
@@ -162,19 +219,32 @@ public class GridController : MonoBehaviour {
             while (progress < distanceY)
             {
                 progress += Time.deltaTime * speed;
-                tempPosition = new Vector2(tempPosition.x, tempPosition.y + Time.deltaTime * speed * directionY);
+                tempPosition = new Vector3(tempPosition.x, tempPosition.y + Time.deltaTime * speed * MoveDirY, tempPosition.z);
                 transform.position = ClampToPixel(tempPosition);
                 yield return null;
             }
             tempPosition = tryDestination;
             gameObject.transform.position = tempPosition;
 
-            GetComponent<Animator>().SetInteger("WalkState", 0);
+            Animator anim = GetComponent<Animator>();
+            if (anim)
+            {
+                anim.SetInteger("WalkState", 0);
+            }
+
+            if (GameManager.gm.leader == this && !debugEnabled)
+            {
+                char currGround = MapGenerator.mg.GetTile(transform.position, true);
+                if (encountersEnabled)
+                {
+                    battleActivated = RandomEncounterManager.AdvanceStepCount(currGround);
+                }
+            }
         }
 
         //gameObject.transform.position = new Vector3((int)transform.position.x, (int)transform.position.y, (int)transform.position.z);
 
-        if (canMoveAfter)
+        if (canMoveAfter && !battleActivated)
         {
             canMove = true;
             CheckTile(transform.position);
@@ -183,12 +253,18 @@ public class GridController : MonoBehaviour {
        // sr.sortingOrder = -(int)transform.position.y;
     }
 
-    static Vector2 ClampToPixel(Vector2 unclamped)
+    static Vector3 ClampToPixel(Vector3 unclamped)
     {
-        return new Vector2(Mathf.Round(unclamped.x), Mathf.Round(unclamped.y));
+        if (clampToPixel)
+        {
+            return new Vector3(Mathf.Round(unclamped.x), Mathf.Round(unclamped.y), unclamped.z);
+        } else
+        {
+            return unclamped;
+        }
     }
 
-    void CheckTile(Vector2 positionToCheck)
+    void CheckTile(Vector3 positionToCheck)
     {
         Collider2D checkedTileCol = Physics2D.OverlapCircle(positionToCheck, 4, interactableTile);
 

@@ -23,10 +23,10 @@ public class StandardAttack : Attack {
         if (attacker)
         {
             bool targetIsHero = false;
-            if (BattleManager.hpm.activePartyMembers.Contains(attacker))
+            if (BattleManager.hpm.PartyContainsCharacter(attacker))//.activePartyMembers.Contains(attacker))
             {
                 // A hero is attacking
-                if (!BattleManager.epm.activePartyMembers.Contains(target))
+                if (!BattleManager.epm.PartyContainsCharacter(target))//.activePartyMembers.Contains(target))
                 {
                     // The enemy target is dead, find a new target
                     target = BattleManager.epm.activePartyMembers[0];
@@ -57,11 +57,11 @@ public class StandardAttack : Attack {
                     {
                         BattleManager.bManager.battleMenu.UpdatePanel(target);
                     }
-                    Debug.Log(attacker.characterName + " deals " + damageDealt + " damage to " + target.characterName);
+                    //Debug.Log(attacker.characterName + " deals " + damageDealt + " damage to " + target.characterName);
 
                 } else
                 {
-                    Debug.Log("Checkwin");
+                    //Debug.Log("Checkwin");
                 }
             } else if (BattleManager.epm.activePartyMembers.Contains(attacker))
             {
@@ -118,33 +118,21 @@ public class StandardAttack : Attack {
             }
             else
             {
-                Debug.Log("Error!!!");
+                // This is encountered when an enemy attacks after another enemy has died. 
+                // It shouldn't happen, but I haven't found any issues with it.
             }
 
-
-
-            if (turnList.Count == 0)
-            {
-                if (!BattleManager.hasLost && !BattleManager.hasWon)
-                {
-                    ReturnToMenu();
-                } else if (BattleManager.hasLost)
-                {
-                    Debug.Log("Game Over...");
-                }
-            } else
-            {
-                Turn nextTurn = turnList[0];
-                turnList.RemoveAt(0);
-                BattleManager.bManager.StartInactiveTurn(nextTurn, turnList);
-                //StartCoroutine(attack.UseAttack(nextTurn.attacker, nextTurn.target, turnList));
-            }
-        } else
+            
+            EndTurnCheck(turnList);
+        } else if (!BattleManager.hasLost && !BattleManager.hasWon)
         {
             Turn nextTurn = turnList[0];
             turnList.RemoveAt(0);
             BattleManager.bManager.StartInactiveTurn(nextTurn, turnList);
             //StartCoroutine(nextTurn.attack.UseAttack(nextTurn.target, nextTurn.attacker, turnList));
+        } else
+        {
+            BattleManager.bManager.GameOver();
         }
     }
 }
