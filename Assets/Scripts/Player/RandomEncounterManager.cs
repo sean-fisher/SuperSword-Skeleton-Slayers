@@ -26,6 +26,7 @@ public class RandomEncounterManager : MonoBehaviour {
     // returns true if a battle started
     public static bool AdvanceStepCount(char groundType)
     {
+        AreaNames currArea = AreaNames.GRASSLAND;
         switch (groundType)
         {
             case ('g'):
@@ -33,14 +34,21 @@ public class RandomEncounterManager : MonoBehaviour {
                 break;
             case ('s'):
                 encounterStep -= 1;
+                currArea = AreaNames.DESERT;
                 break;
             case ('r'):
                 encounterStep -= 2;
+                currArea = AreaNames.GRASSLAND;
+                break;
+            case ('\0'):
+                encounterStep -= 1;
+                currArea = AreaNames.OCEAN;
                 break;
             default:
                 encounterStep--;
                 break;
         }
+        GameManager.currAreaName = currArea;
         if (encounterStep < 0)
         {
             encounterStep = UnityEngine.Random.Range(8, 24);

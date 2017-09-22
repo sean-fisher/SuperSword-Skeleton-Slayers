@@ -21,14 +21,15 @@ public class AreaEncounters : MonoBehaviour {
 
     public EnemyPartyManager GetRandomEncounter(AreaNames currArea)
     {
+        Debug.Log(currArea);
         List<EnemyPartyManager> currAreaList = null;
         switch (currArea)
         {
-            case (AreaNames.GRASSLAND):
-                currAreaList = grasslandParties;
-                break;
             case (AreaNames.MOUNTAIN):
                 currAreaList = mountainParties;
+                break;
+            default:
+                currAreaList = grasslandParties;
                 break;
         }
 
@@ -54,5 +55,7 @@ public class AreaEncounters : MonoBehaviour {
 public enum AreaNames
 {
     GRASSLAND,
-    MOUNTAIN
+    MOUNTAIN,
+    DESERT,
+    OCEAN
 }

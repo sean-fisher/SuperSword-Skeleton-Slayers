@@ -7,6 +7,9 @@ public class SetSortLayerByY : MonoBehaviour {
 
     public bool updateEveryFrame;
 
+    public int spriteOffsetX = 0;
+    public int spriteOffsetY = 0;
+
     SpriteRenderer sr;
 
 	// Use this for initialization
