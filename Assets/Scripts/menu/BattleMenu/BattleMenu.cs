@@ -52,6 +52,7 @@ public class BattleMenu : Menu {
         {
             cursor3 = GameObject.Instantiate(cursor, cursor.transform.parent);
         }
+        currCursor = cursor;
 
         defaultActionMenu.SetActive(true);
 
@@ -104,7 +105,6 @@ public class BattleMenu : Menu {
         heroRects = heroRectsList.ToArray();
 
         selectingHeroIndex = -1;
-        tempSelectHeroIndex = -1;
         NextHeroSelectsAttack(false);
     }
 
@@ -143,7 +143,6 @@ public class BattleMenu : Menu {
                                     // Player chooses to defend
 
                                     bm.AddDefendTurn(GetAttacker());
-                                    tempSelectHeroIndex = selectingHeroIndex;
                                     NextHeroSelectsAttack(true);
                                     aPressed = false;
                                     break;
@@ -158,7 +157,6 @@ public class BattleMenu : Menu {
                         else if (bPressed)
                         {
                             waitFrame = false;
-                            tempSelectHeroIndex = selectingHeroIndex;
                             PreviousHeroSelectsAttack(true);
                         }
                     }
@@ -168,7 +166,6 @@ public class BattleMenu : Menu {
                     if (aPressed)
                     {
                         BattleManager.bManager.AddStandardAttackTurn(GetAttacker(), GetTarget());
-                        tempSelectHeroIndex = selectingHeroIndex;
                         NextHeroSelectsAttack(true);
                         aPressed = false;
 
@@ -188,7 +185,7 @@ public class BattleMenu : Menu {
                     // Selecting an item
                     break;
                 case (3):
-                    CheckInput<Attack>(currRects, 3, 3, emptyAttackList, false);
+                    CheckInput<Attack>(currRects, 3, 3, emptyAttackList, false, 0, false, -Screen.width / 40);
                     if (!waitFrame)
                     {
                         waitFrame = true;
@@ -270,7 +267,7 @@ public class BattleMenu : Menu {
                 currCharacter = GetAttacker();
 
                 cursor2.SetActive(true);
-                UpdateCursor(currRects, 0, 2);
+                UpdateCursor(currRects, 0, 2, -Screen.width / 40);
                 break;
             case (4):
                 break;
@@ -310,7 +307,6 @@ public class BattleMenu : Menu {
     BaseCharacter currCharacter;
 
     int heroEnemyCursor = 0;
-    int tempSelectHeroIndex = 0;
     bool heroCursorMoved = false;
 
     public void NextHeroSelectsAttack(bool calledFromPrevHero)
@@ -472,7 +468,6 @@ public class BattleMenu : Menu {
     void PickEnemyAttacks()
     {
         selectingHeroIndex = -1;
-        tempSelectHeroIndex = -1;
 
         for (int i = 0; i < BattleManager.epm.activePartyMembers.Count; i++)
         {

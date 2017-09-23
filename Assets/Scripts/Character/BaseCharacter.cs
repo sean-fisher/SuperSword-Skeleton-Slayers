@@ -7,7 +7,7 @@ public class BaseCharacter : MonoBehaviour {
 
     public string characterName;
 
-    public HeroJob job;
+    public HeroClasses heroClass;
 
     public AttackType strength;
     public AttackType weakness;

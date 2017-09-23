@@ -34,16 +34,6 @@ public abstract class Menu : MonoBehaviour {
 
     List<object> scrollableListO = new List<object>(18); 
 
-    // Use this for initialization
-    void Start ()
-    {
-    }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
     public void SwitchTo(Menu otherMenu, bool closeCurrentMenu = false)
     {
         if (closeCurrentMenu)
@@ -116,7 +106,7 @@ public abstract class Menu : MonoBehaviour {
     }
 
     // Move the cursor to a RectTransform (i.e. an enemy's image)
-    protected void UpdateCursor(RectTransform[] visibleRectArr, int newIndex, int cursorNum = 0)
+    protected void UpdateCursor(RectTransform[] visibleRectArr, int newIndex, int cursorNum = 0, float offsetNum = 0)
     {
         if (cursorNum == 2)
         {
@@ -127,25 +117,18 @@ public abstract class Menu : MonoBehaviour {
         {
             currCursor = cursor3;
         }
-        Vector2 optionPosition = Vector2.zero;
+        Vector3 optionPosition = Vector3.zero;
         
         // Places the cursor at the position of the chosen option, but offset to the left
         if (newIndex - cursorMarker < visibleRectArr.Length && newIndex - cursorMarker > -1)
         {
             optionPosition = visibleRectArr[newIndex - cursorMarker].transform.position;
-            //optionPosition = Camera.main.WorldToScreenPoint(visibleRectArr[newIndex - cursorMarker].transform.position);
         } else
         {
-            //Debug.Log(newIndex % visibleSize + " " + visibleRectArr[0].gameObject.name);
-
-
-
             optionPosition = visibleRectArr[newIndex % visibleSize].transform.position;
-            //optionPosition = Camera.main.WorldToScreenPoint(visibleRectArr[newIndex % visibleSize].transform.position);
         }
-        //optionPosition = visibleRectArr[optionIndex].transform.position;
         
-        currCursor.transform.position = new Vector2(optionPosition.x - (float) (Screen.width / 17)/*- visibleRectArr[newIndex - cursorMarker].rect.width*/, optionPosition.y);
+        currCursor.transform.position = new Vector3(optionPosition.x - (float) (Screen.width / 17) + offsetNum, optionPosition.y + 4);
 
         tempCursor = newIndex;
         cursorMoved = true;
@@ -154,6 +137,7 @@ public abstract class Menu : MonoBehaviour {
         {
             enableScrollingDown = true;
         }
+        currCursor.SetActive(true);
         //Debug.Log(tempCursor);
         //cursorMarker = tempCursor % visibleSize - 1;
     }
@@ -231,7 +215,8 @@ public abstract class Menu : MonoBehaviour {
 
     // The <T> is only necessary when a scrollableList is passed. Otherwise, substitute T with an arbitrary class.
 
-    protected void CheckInput<T>(RectTransform[] visibleTextArr, int width, int height = 0, List<T> scrollableList = null, bool listMustBeFilled = true, int cursorInt = 0, bool cantScrollHoriz = false)
+    protected void CheckInput<T>(RectTransform[] visibleTextArr, int width, int height = 0, 
+        List<T> scrollableList = null, bool listMustBeFilled = true, int cursorInt = 0, bool cantScrollHoriz = false, float offsetVal = 0)
     {
         if (!cursorMoved)
         {
@@ -260,13 +245,13 @@ public abstract class Menu : MonoBehaviour {
                         {
                             cursorMarker += cols;
                             ScrollTo(scrollableList, cursorMarker, listMustBeFilled); // Scroll down 1
-                            UpdateCursor(visibleTextArr, tempCursor);
+                            UpdateCursor(visibleTextArr, tempCursor, 0, offsetVal);
                         }
                         else
                         {
                             // scroll to beginning
                             ScrollTo(scrollableList, 0, listMustBeFilled);
-                                UpdateCursor(visibleTextArr, 0, cursorInt);
+                                UpdateCursor(visibleTextArr, 0, cursorInt, offsetVal);
                             if (scrollableList.Count > visibleSize)
                             {
                                 enableScrollingDown = true;
@@ -277,14 +262,14 @@ public abstract class Menu : MonoBehaviour {
                     }
                     else
                     {
-                        UpdateCursor(visibleTextArr, tempCursor % width, cursorInt);
+                        UpdateCursor(visibleTextArr, tempCursor % width, cursorInt, offsetVal);
                     }
 
 
                 }
                 else
                 {
-                    UpdateCursor(visibleTextArr, tempCursor, cursorInt);
+                    UpdateCursor(visibleTextArr, tempCursor, cursorInt, offsetVal);
                 }
             }
             else
@@ -312,11 +297,11 @@ public abstract class Menu : MonoBehaviour {
                                 ScrollTo(scrollableList, scrollVal, listMustBeFilled);
                                 tempCursor += cols;
                                 Debug.Log(scrollableList.Count - (cols - (tempCursor)));
-                                UpdateCursor(visibleTextArr, scrollableList.Count - (cols -(tempCursor)));
+                                UpdateCursor(visibleTextArr, scrollableList.Count - (cols -(tempCursor)), 0, offsetVal);
                             }
                             else
                             {
-                                UpdateCursor(visibleTextArr, visibleSize - 1);
+                                UpdateCursor(visibleTextArr, visibleSize - 1, 0, offsetVal);
                             }
                             enableScrollingDown = false;
 
@@ -325,14 +310,14 @@ public abstract class Menu : MonoBehaviour {
                     }
                     else
                     {
-                        UpdateCursor(visibleTextArr, length - 1);
+                        UpdateCursor(visibleTextArr, length - 1, 0, offsetVal);
                     }
                     // TODO: Scroll items
                 }
                 else
                 {
                     // Moce cursor up one row
-                    UpdateCursor(visibleTextArr, tempCursor);
+                    UpdateCursor(visibleTextArr, tempCursor, 0, offsetVal);
                 }
             }
             else
@@ -354,7 +339,7 @@ public abstract class Menu : MonoBehaviour {
                             cursorMarker += cols;
                             
                             ScrollTo(scrollableList, cursorMarker, listMustBeFilled); // Scroll down 1
-                            UpdateCursor(visibleTextArr, tempCursor);
+                            UpdateCursor(visibleTextArr, tempCursor, 0, offsetVal);
                             //tempCursor -= cols - 1;
                         }
                         else if (!enableScrollingDown)
@@ -368,23 +353,23 @@ public abstract class Menu : MonoBehaviour {
                             }
                             cursorMarker = 0;
                             tempCursor = 0;
-                            UpdateCursor(visibleTextArr, 0);
+                            UpdateCursor(visibleTextArr, 0, 0, offsetVal);
                         } else
                         {
                             //Debug.Log("Move right one");
                             // EnsableScrollingDown
-                            UpdateCursor(visibleTextArr, tempCursor);
+                            UpdateCursor(visibleTextArr, tempCursor, 0, offsetVal);
                         }
                     }
                     else
                     {
                         //Debug.Log("Move to 0");
-                        UpdateCursor(visibleTextArr, 0);
+                        UpdateCursor(visibleTextArr, 0, 0, offsetVal);
                     }
                 }
                 else
                 {
-                    UpdateCursor(visibleTextArr, tempCursor);
+                    UpdateCursor(visibleTextArr, tempCursor, 0, offsetVal);
                 }
             }
             else
@@ -410,11 +395,11 @@ public abstract class Menu : MonoBehaviour {
                             if (scrollVal > 0)
                             {
                                 ScrollTo(scrollableList, scrollVal, listMustBeFilled);
-                                UpdateCursor(visibleTextArr, 3);
+                                UpdateCursor(visibleTextArr, 3, 0, offsetVal);
                             }
                             else
                             {
-                                UpdateCursor(visibleTextArr, visibleSize - 1);
+                                UpdateCursor(visibleTextArr, visibleSize - 1, 0, offsetVal);
                             }
                             enableScrollingDown = false;
 
@@ -423,12 +408,12 @@ public abstract class Menu : MonoBehaviour {
                     }
                     else
                     {
-                        UpdateCursor(visibleTextArr, length - 1);
+                        UpdateCursor(visibleTextArr, length - 1, 0, offsetVal);
                     }
                 }
                 else
                 {
-                    UpdateCursor(visibleTextArr, tempCursor);
+                    UpdateCursor(visibleTextArr, tempCursor, 0, offsetVal);
                 }
             }
 

@@ -32,7 +32,7 @@ public abstract class EquipData : ItemData
 
     public EquipType equipType;
 
-    public List<HeroJob> equippableBy;
+    public List<HeroClasses> equippableBy;
 
     // Decreases Damage done by these
     public List<AttackType> strongAgainst;

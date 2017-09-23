@@ -19,7 +19,7 @@ public static class HeroNames
     public const string hero4Name = "Michelangelo";
     public const string hero5Name = "Kermit the Fron";
 }
-public enum HeroJob
+public enum HeroClasses
 {
     KNIGHT,
     MAGE,

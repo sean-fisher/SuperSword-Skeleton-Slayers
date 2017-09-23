@@ -80,23 +80,23 @@ public class Inventory : MonoBehaviour {
                 if (((EquipData)newItem).equippableBy.Count > 0)
                 {
                     // If equippableBy is greater than 0, the equip will only be added to the correct characters
-                    foreach (HeroJob job in ((EquipData)newItem).equippableBy)
+                    foreach (HeroClasses job in ((EquipData)newItem).equippableBy)
                     {
                         switch (job)
                         {
-                            case (HeroJob.KNIGHT):
+                            case (HeroClasses.KNIGHT):
                                 knightEquips.Add((EquipData)newItem);
                                 break;
-                            case (HeroJob.MAGE):
+                            case (HeroClasses.MAGE):
                                 mageEquips.Add((EquipData)newItem);
                                 break;
-                            case (HeroJob.MONK):
+                            case (HeroClasses.MONK):
                                 monkEquips.Add((EquipData)newItem);
                                 break;
-                            case (HeroJob.NINJA):
+                            case (HeroClasses.NINJA):
                                 ninjaEquips.Add((EquipData)newItem);
                                 break;
-                            case (HeroJob.CHEF):
+                            case (HeroClasses.CHEF):
                                 chefEquips.Add((EquipData)newItem);
                                 break;
                         }

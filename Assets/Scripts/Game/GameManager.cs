@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour {
 
     public bool debugEnabled = false;
 
+    public PauseMenu pauseMenu;
+
     public FadeTransition fadeTransition;
     public FourSideTransition fsTransition;
     public SpiralTransition spiralTransition;
@@ -28,6 +30,8 @@ public class GameManager : MonoBehaviour {
         currAreaName = AreaNames.GRASSLAND;
 
         allEffects = GetComponent<AllEffects>();
+
+        //pauseMenu.InitMenu();
     }
 
     public void SwitchScene(TransitionType transitionType, string sceneName)

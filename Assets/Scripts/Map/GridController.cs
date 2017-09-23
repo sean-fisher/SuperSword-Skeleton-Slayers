@@ -50,10 +50,12 @@ public class GridController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
+        //if (Input.GetKeyDown(KeyCode.Return))
         if (canMove)
         {
             if (Input.GetAxis("Horizontal") < 0)
             {
+                Debug.Log("Move");
                 MoveOneSpace(MoveDir.LEFT);
             }
             else if (Input.GetAxis("Horizontal") > 0)
@@ -67,6 +69,9 @@ public class GridController : MonoBehaviour {
             else if (Input.GetAxis("Vertical") > 0)
             {
                 MoveOneSpace(MoveDir.UP);
+            } else if (Input.GetButtonDown("StartButton")) {
+                GameManager.gm.pauseMenu.OpenMenu();
+                canMove = false;
             }
         }
     }

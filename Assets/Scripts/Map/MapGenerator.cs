@@ -107,7 +107,6 @@ public class MapGenerator : MonoBehaviour {
 
         // Make sure the continents are varied; 
         // if there is already a mountain, for example, a different type will be picked unless all types have been picked
-        bool isMountain = false;
         /*
         for (int i = 1; i < numContinents; i++)
         {
@@ -129,10 +128,8 @@ public class MapGenerator : MonoBehaviour {
         }
         */
         MapCoor mapCenter = new MapCoor(mapWidth / 2, mapHeight / 2);
-        float fromMapCenterRadius = mapWidth / 3;
-        float defaultRadius = fromMapCenterRadius;
-        float theta = 0;
-        float ratio = (float)mapWidth / mapHeight;
+
+        
 
         CreateMapFeature(FeatureTypes.FOREST_CIRCLE, new MapCoor(mapWidth / 2, mapHeight / 2));
         /*
@@ -392,7 +389,10 @@ public class MapGenerator : MonoBehaviour {
                             case ('r'):
                                 coastType = 'd';
                                 walkLevelGrid[x - 1, y] = 'm';
+                                //SetTile(0, new MapCoor(x - 1, y), 'm');
                                 dontCheckGrid[x - 1, y] = 'd';
+                                //SetTile(2, new MapCoor(x - 1, y), 'd');
+                                //SetTile(2, new MapCoor(x-2, y), 'd');
                                 dontCheckGrid[x - 2, y] = 'd';
                                 break;
                             default:
@@ -400,7 +400,6 @@ public class MapGenerator : MonoBehaviour {
                                 break;
                         }
                         lastWasWater = false;
-                        char leftTile = GetTile(new MapCoor(x - 1, y), true);
                          groundGrid[x, y] = coastType;
 
                     }
@@ -472,7 +471,6 @@ public class MapGenerator : MonoBehaviour {
                                 break;
                         }
                         lastWasWater = false;
-                        char leftTile = GetTile(new MapCoor(x, y - 1), true);
                         groundGrid[x, y] = coastType;
 
                     }
@@ -550,9 +548,6 @@ public class MapGenerator : MonoBehaviour {
     // The greater patchy is, the more empty spots the circle will have.
     void CreateCircle(MapCoor center, int radius, char groundType, bool hasCoast = true, int patchy = 0)
     {
-
-        //groundGrid[(int)center.x, (int)center.y] = groundType;
-        float area = 3.14f * radius * radius;
         float theta = 0;
 
         float deltaTheta = 3.14f / (radius * 5);
@@ -579,9 +574,7 @@ public class MapGenerator : MonoBehaviour {
                 {
                     y = y - mapHeight;
                 }
-
-                // Set the ground tile
-                char currTile = GetGroundTileAtCoor(new MapCoor(x, y));
+                
 
                 bool isSparse = 0 != UnityEngine.Random.Range(0, patchy + 1);
 
@@ -733,7 +726,6 @@ public class MapGenerator : MonoBehaviour {
         {
             for (int y = 0; y < mapHeight; y++)
             {
-                char groundTile = groundGrid[x, y];
                 GameObject tile = null;
 
                     tile = GameObject.Instantiate(GetTileObj(groundGrid[x, y]));
