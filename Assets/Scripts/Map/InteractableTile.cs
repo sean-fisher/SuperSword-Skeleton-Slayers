@@ -4,5 +4,7 @@ using UnityEngine;
 
 public abstract class InteractableTile : MonoBehaviour {
 
+    public static bool currentlyStandingOnInteractableTile = false;
+
     public abstract void ActivateInteraction();
 }

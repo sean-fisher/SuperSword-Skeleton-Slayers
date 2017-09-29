@@ -55,7 +55,6 @@ public class GridController : MonoBehaviour {
         {
             if (Input.GetAxis("Horizontal") < 0)
             {
-                Debug.Log("Move");
                 MoveOneSpace(MoveDir.LEFT);
             }
             else if (Input.GetAxis("Horizontal") > 0)
@@ -72,13 +71,53 @@ public class GridController : MonoBehaviour {
             } else if (Input.GetButtonDown("StartButton")) {
                 GameManager.gm.pauseMenu.OpenMenu();
                 canMove = false;
+            } else if (Input.GetButtonDown("AButton"))
+            {
+                InspectTile();
             }
         }
     }
 
     public bool canMove = true;
+    MoveDir lastMove = MoveDir.DOWN;
 
     public static bool partyCanMove = true;
+
+    // Checks the tile in front of the hero and interacts with it if something is found there.
+    // If nothing is in front, it checks the current tile.
+    void InspectTile()
+    {
+        Vector3 tileToInspect = Vector3.zero;
+        switch (lastMove)
+        {
+            case (MoveDir.LEFT):
+                tileToInspect = new Vector3(gameObject.transform.position.x - 16, gameObject.transform.position.y, transform.position.z);
+                break;
+            case (MoveDir.RIGHT):
+                tileToInspect = new Vector3(gameObject.transform.position.x + 16, gameObject.transform.position.y, transform.position.z);
+                break;
+            case (MoveDir.DOWN):
+                tileToInspect = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 16, transform.position.z);
+                break;
+            case (MoveDir.UP):
+                tileToInspect = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 16, transform.position.z);
+                break;
+            default:
+                break;
+        }
+        bool adjacentTileFound = CheckTile(tileToInspect);
+
+        if (!adjacentTileFound)
+        {
+            if (CheckTile(gameObject.transform.position)) {
+
+                InteractableTile.currentlyStandingOnInteractableTile = true;
+            }
+        } else
+        {
+            InteractableTile.currentlyStandingOnInteractableTile = true;
+        }
+    }
 
     void MoveOneSpace(MoveDir destination, bool canMoveAfter = true)
     {
@@ -125,6 +164,7 @@ public class GridController : MonoBehaviour {
             {
 
                 destination = inputList[0];
+                lastMove = destination;
                 inputList.RemoveAt(0);
 
                 Vector3 destinationVector = Vector3.zero;
@@ -190,6 +230,7 @@ public class GridController : MonoBehaviour {
     IEnumerator MovingOneSpace(Vector3 tryDestination, bool canMoveAfter = true)
     {
         //Physics2D.OverlapSphere(tryDestination, 5f);
+        InteractableTile.currentlyStandingOnInteractableTile = false;
 
         Vector3 tempPosition = transform.position;
         bool battleActivated = false;
@@ -269,7 +310,7 @@ public class GridController : MonoBehaviour {
         }
     }
 
-    void CheckTile(Vector3 positionToCheck)
+    bool CheckTile(Vector3 positionToCheck)
     {
         Collider2D checkedTileCol = Physics2D.OverlapCircle(positionToCheck, 4, interactableTile);
 
@@ -277,7 +318,9 @@ public class GridController : MonoBehaviour {
         {
             InteractableTile it = checkedTileCol.gameObject.GetComponent<InteractableTile>();
             it.ActivateInteraction();
+            return true;
         }
+        return false;
     }
 
     public void DisableMovement()

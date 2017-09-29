@@ -279,6 +279,8 @@ public class MapGenerator : MonoBehaviour {
                     GameManager.gm.GetComponent<HeroPartyManager>().AddKnight(center);
 
                     walkLevelGrid[(int) center.x + 5, (int) center.y] = 'a';
+                    walkLevelGrid[(int)center.x - 5, (int)center.y] = 'c';
+                    walkLevelGrid[(int)center.x - 6, (int)center.y] = 'c';
                 }
                 break;
             case (ContinentType.MOUNTAINOUS):
@@ -388,12 +390,12 @@ public class MapGenerator : MonoBehaviour {
                         {
                             case ('r'):
                                 coastType = 'd';
-                                walkLevelGrid[x - 1, y] = 'm';
+                                walkLevelGrid[Mathf.Abs((x - 1) % mapWidth), y] = 'm';
                                 //SetTile(0, new MapCoor(x - 1, y), 'm');
-                                dontCheckGrid[x - 1, y] = 'd';
+                                dontCheckGrid[Mathf.Abs((x - 1) % mapWidth), y] = 'd';
                                 //SetTile(2, new MapCoor(x - 1, y), 'd');
                                 //SetTile(2, new MapCoor(x-2, y), 'd');
-                                dontCheckGrid[x - 2, y] = 'd';
+                                dontCheckGrid[Mathf.Abs((x - 2) % mapWidth), y] = 'd';
                                 break;
                             default:
                                 coastType = 's';
@@ -452,7 +454,7 @@ public class MapGenerator : MonoBehaviour {
                                 {
                                     walkLevelGrid[x, y] = 'm';
                                     dontCheckGrid[x, y] = 'd';
-                                    dontCheckGrid[x - 1, y] = 'd';
+                                    dontCheckGrid[Mathf.Abs((x - 1) % mapWidth), y] = 'd';
                                 }
                                 //groundGrid[x, y + 1] = 'r';
                                 break;
@@ -462,7 +464,7 @@ public class MapGenerator : MonoBehaviour {
                                 {
                                     walkLevelGrid[x, y] = 'm';
                                     dontCheckGrid[x, y] = 'd';
-                                    dontCheckGrid[x - 1, y] = 'd';
+                                    dontCheckGrid[Mathf.Abs((x - 1) % mapWidth), y] = 'd';
                                 }
                                 //groundGrid[x, y + 1] = 'r';
                                 break;

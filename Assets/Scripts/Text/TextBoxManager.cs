@@ -42,6 +42,8 @@ public class TextBoxManager : MonoBehaviour {
 
     public bool canAdvance = true;
 
+    public static GameObject defaultMessageWindow;
+
     // Use this for initialization
     void Start()
     {
@@ -163,8 +165,13 @@ public class TextBoxManager : MonoBehaviour {
         {
             this.textBox = textBox;
             this.activeText = textBox.GetComponentInChildren<Text>();
+        } else
+        {
+            this.textBox = defaultMessageWindow;
+            textBox = defaultMessageWindow;
+            this.activeText = textBox.GetComponentInChildren<Text>();
         }
-        textBox.SetActive(true);
+        this.textBox.SetActive(true);
         isActive = true;
         if (stopPlayerMovement)
         {

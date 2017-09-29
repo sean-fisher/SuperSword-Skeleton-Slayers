@@ -53,6 +53,7 @@ public class BattleManager : MonoBehaviour {
         if (Attack.battleMessageWindow == null)
         {
             Attack.battleMessageWindow = messageBoxImg.gameObject;
+            TextBoxManager.defaultMessageWindow = messageBoxImg.gameObject;
         }
     }
 

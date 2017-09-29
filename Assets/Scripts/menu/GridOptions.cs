@@ -3,80 +3,64 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public abstract class Menu : MonoBehaviour {
+public abstract class GridOptions : MonoBehaviour {
 
-    public bool menuActive = false;
+    public int rows;
+    public int cols;
+    public bool isScrollable;
 
-    // TempCursor is the position of the cursor in the whole list, greater than or equal to the visibleSize
-    protected int tempCursor = 0;
-    protected bool cursorMoved = false;
-     
-    protected bool enableScrollingUp = false; // This is set to true if the start point is greater than 0
-    protected bool enableScrollingDown = true; // Set to true if the start point is greater than 0
-    protected bool isScrollable = false;
-     
+    public bool canControl = true;
+
+    public string emptyText = "";
+
+    public GameObject cursor;
+
+    protected int visibleSize = 0;
+
     protected int cursorMarker = 0;
-     
+    protected int tempCursor = 0;
+
+    protected bool cursorMoved = false;
+
+    protected bool enableScrollingDown = false;
+    protected bool enableScrollingUp = false;
+
     protected RectTransform[] listTexts;
-     
-    protected int visibleSize = 1;
 
-    protected int rows;
-    protected int cols;
-
-    protected static GameObject cursor;
     protected static GameObject cursor2;
     protected static GameObject cursor3;
 
     protected GameObject currCursor;
 
-    GameObject attackHolderObj;
+    public List<GridOptions> menuOptions;
 
-    public void SwitchTo(Menu otherMenu, bool closeCurrentMenu = false)
+    // Open a submenu
+    protected virtual void MakeMenuSelection(int menuIndex)
     {
-        if (closeCurrentMenu)
-        {
-            CloseMenu();
-        }
-        else
-        {
-            menuActive = false;
-        }
-
-        otherMenu.OpenMenu();
+        menuOptions[menuIndex].OpenMenu();
+        DisableMenuControl();
     }
 
-    public virtual void OpenMenu()
-    {
-        gameObject.SetActive(true);
-        menuActive = true;
-        currCursor = cursor;
-    }
+    // What is called to open and set up this menu.
+    public abstract void OpenMenu();
 
-    public virtual void CloseMenu()
+    // Disables control of the current menu; used when a sub-menu is opened
+    public virtual void DisableMenuControl()
     {
-        gameObject.SetActive(false);
-        menuActive = false;
+        canControl = false;
     }
 
     public void InitializeListText<T>(int firstVisibleIndex, List<T> scrollableList)
     {
-        //Debug.Log("Initialize at " + firstVisibleIndex);
-        if (scrollableList != null)
-        {
-            //scrollableListO = scrollableList as List<object>;
-        }
         int i = 0;
 
         for (; i < visibleSize; i++)
         {
-            listTexts[i].GetComponent<Text>().text = tempSpellnames[i + firstVisibleIndex];
-
-            
-			object currElement = null;
-			if (scrollableList != null && firstVisibleIndex + i < scrollableList.Count) {
-				currElement = scrollableList[firstVisibleIndex + i];
-			}
+            object currElement = null;
+            if (scrollableList != null && firstVisibleIndex + i < scrollableList.Count)
+            {
+                currElement = scrollableList[firstVisibleIndex + i];
+            }
             if (currElement != null)
             {
                 if (currElement is ItemData)
@@ -97,78 +81,36 @@ public abstract class Menu : MonoBehaviour {
             }
             else
             {
-                listTexts[i].GetComponent<Text>().text = "";// tempSpellnames[i + firstVisibleIndex];
-            
+                listTexts[i].GetComponent<Text>().text = "";
+
             }
         }
     }
 
-    // Move the cursor to a RectTransform (i.e. an enemy's image)
-    protected void UpdateCursor(RectTransform[] visibleRectArr, int newIndex, int cursorNum = 0, float offsetNum = 0)
+
+    public void InitializeListText<T>(int firstVisibleIndex, T[] scrollableList)
     {
-        if (cursorNum == 2)
-        {
-            currCursor = cursor2;
-        }
-        else
-        if (cursorNum == 3)
-        {
-            currCursor = cursor3;
-        }
-        Vector3 optionPosition = Vector3.zero;
-        
-        // Places the cursor at the position of the chosen option, but offset to the left
-        if (newIndex - cursorMarker < visibleRectArr.Length && newIndex - cursorMarker > -1)
-        {
-            optionPosition = visibleRectArr[newIndex - cursorMarker].transform.position;
-        } else
-        {
-            optionPosition = visibleRectArr[newIndex % visibleSize].transform.position;
-        }
-        
-        currCursor.transform.position = new Vector3(optionPosition.x - (float) (Screen.width / 17) + offsetNum, optionPosition.y + 4);
+        int i = 0;
 
-        tempCursor = newIndex;
-        cursorMoved = true;
-
-        if (isScrollable && tempCursor == visibleSize - 1)
+        for (; i < visibleSize; i++)
         {
-            enableScrollingDown = true;
-        }
-        currCursor.SetActive(true);
-        //Debug.Log(tempCursor);
-        //cursorMarker = tempCursor % visibleSize - 1;
-    }
-
-    List<string> tempSpellnames = new List<string> { "0", "1", "2",
-                                                     "3", "4", "5",
-                                                     "6", "7", "8",
-                                                     "9", "10", "11",
-                                                     "12", "13", "14",
-                                                     "15", "16", "17",};
-
-    void ScrollTo<T>(List<T> scrollableList, int firstVisibleIndex, bool listMustBeFilled = true)
-    {
-        Debug.Log("Scroll To " + firstVisibleIndex + " " + scrollableList);
-        int j = 0;
-
-        /*
-        for (; j < visibleSize && j + firstVisibleIndex < scrollableList.Count; j++)
-        {
-            T currElement = scrollableList[firstVisibleIndex + j];
+            object currElement = null;
+            if (scrollableList != null && firstVisibleIndex + i < scrollableList.Length)
+            {
+                currElement = scrollableList[firstVisibleIndex + i];
+            }
             if (currElement != null)
             {
-                Debug.Log("Has name");
                 if (currElement is ItemData)
                 {
                     // Displays the item name in the list
-                    listTexts[j].GetComponent<Text>().text = ((ItemData)(object)currElement).itemName;
+                    listTexts[i].GetComponent<InventoryEntry>().itemName.text = ((ItemData)currElement).itemName;
                 }
                 else if (currElement is Attack)
                 {
                     // TODO: Maybe change Attack class name to spell??
                     // Displays the spell name in the list
-                    listTexts[j].GetComponent<Text>().text = ((Attack)(object)currElement).attackName;
+                    listTexts[i].GetComponent<Text>().text = ((Attack)currElement).attackName;
                 }
                 else
                 {
@@ -177,16 +119,52 @@ public abstract class Menu : MonoBehaviour {
             }
             else
             {
-                listTexts[j].GetComponent<Text>().text = tempSpellnames[j];
-                
-                //listTexts[j].GetComponent<Text>().text = "--------";
-                if (!listMustBeFilled)
-                {
-                    enableScrollingDown = true;
-                }
-            }
+                listTexts[i].GetComponentInChildren<Text>(true).text = "";
 
-        }*/
+            }
+        }
+    }
+
+    // Use this for initialization
+    void Start () {
+        visibleSize = rows * cols;
+	}
+
+    public abstract void CloseMenu();
+
+    // Move the cursor to a RectTransform (i.e. an enemy's image)
+    protected void UpdateCursor(RectTransform[] visibleRectArr, int newIndex, int cursorNum = 0, float offsetNum = 0)
+    {
+        Vector3 optionPosition = Vector3.zero;
+
+        // Places the cursor at the position of the chosen option, but offset to the left
+        if (newIndex - cursorMarker < visibleRectArr.Length && newIndex - cursorMarker > -1)
+        {
+            optionPosition = visibleRectArr[newIndex - cursorMarker].transform.position;
+        }
+        else
+        {
+            optionPosition = visibleRectArr[newIndex % visibleSize].transform.position;
+        }
+
+        cursor.transform.position = new Vector3(optionPosition.x - (float)(Screen.width / 17) + offsetNum, optionPosition.y + 4);
+
+        tempCursor = newIndex;
+        cursorMoved = true;
+
+        if (isScrollable && tempCursor == visibleSize - 1)
+        {
+            enableScrollingDown = true;
+        }
+        cursor.SetActive(true);
+    }
+
+
+    void ScrollTo<T>(List<T> scrollableList, int firstVisibleIndex, bool listMustBeFilled = true)
+    {
+        Debug.Log("Scroll To " + firstVisibleIndex + " " + scrollableList);
+        int j = 0;
+        
 
         //tempCursor = firstVisibleIndex + cursorMarker;
         if (firstVisibleIndex + visibleSize >= scrollableList.Count)
@@ -196,7 +174,6 @@ public abstract class Menu : MonoBehaviour {
         for (; j < 4; j++)
         {
             listTexts[j].GetComponent<Text>().text = "";
-            //visibleSize--;
         }
         if (firstVisibleIndex > 0)
         {
@@ -207,13 +184,94 @@ public abstract class Menu : MonoBehaviour {
             enableScrollingUp = false;
         }
         cursorMoved = true;
-        InitializeListText<Attack>(firstVisibleIndex, null);
+        //InitializeListText<Attack>(firstVisibleIndex, null); // this line was problematic, fix when scrolling is necessary
         //cursorMarker = firstVisibleIndex;
     }
 
-    // The <T> is only necessary when a scrollableList is passed. Otherwise, substitute T with an arbitrary class.
 
-    protected void CheckInput<T>(RectTransform[] visibleTextArr, int width, int height = 0, 
+    // Update is called once per frame
+    void Update () {
+		if (canControl)
+        {
+            CheckInput<RectTransform>(listTexts, cols, rows);
+        }
+	}
+
+    private void UpdateCursor(Text[] array, int current, int newIndex)
+    {
+        array[current].transform.GetChild(0).gameObject.SetActive(false);
+        array[newIndex].transform.GetChild(0).gameObject.SetActive(true);
+        tempCursor = newIndex;
+    }
+
+    void CheckInput(Text[] array, int width, int height = 0)
+    {
+        // If only part of the array should be able to be scrolled through, pass a height smaller than the array's length
+        int length; // length is the number of slots to scroll through
+        if (height > 0)
+        {
+            length = width * height;
+        }
+        else
+        {
+            length = array.Length;
+        }
+
+        if (Input.GetAxis("Vertical") < -.5f)
+        {
+            tempCursor += width;
+            if (tempCursor > length - 1)
+            {
+                UpdateCursor(array, tempCursor - width, tempCursor % width);
+            }
+            else
+            {
+                UpdateCursor(array, tempCursor - width, tempCursor);
+            }
+        }
+        else if (Input.GetAxis("Vertical") > .5f)
+        {
+            tempCursor -= width;
+            if (tempCursor < 0)
+            {
+                UpdateCursor(array, width + tempCursor, length - 1);
+
+                // TODO: Scroll items
+            }
+            else
+            {
+                UpdateCursor(array, tempCursor + width, tempCursor);
+            }
+        }
+        else if (Input.GetAxis("Horizontal") > .5f)
+        {
+            tempCursor++;
+            if (tempCursor > length - 1)
+            {
+                UpdateCursor(array, --tempCursor, 0);
+
+            }
+            else
+            {
+                UpdateCursor(array, tempCursor - 1, tempCursor);
+            }
+        }
+        else if (Input.GetAxis("Horizontal") < -.5f)
+        {
+            if (--tempCursor < 0)
+            {
+                UpdateCursor(array, ++tempCursor, length - 1);
+
+            }
+            else
+            {
+                UpdateCursor(array, tempCursor + 1, tempCursor);
+            }
+        }
+    }
+
+
+    protected void CheckInput<T>(RectTransform[] visibleTextArr, int width, int height = 0,
         List<T> scrollableList = null, bool listMustBeFilled = true, int cursorInt = 0, bool cantScrollHoriz = false, float offsetVal = 0)
     {
         if (!cursorMoved)
@@ -231,7 +289,7 @@ public abstract class Menu : MonoBehaviour {
                 length = visibleTextArr.Length;
             }
 
-            
+
             if (Input.GetAxis("Vertical") < 0)
             {
                 tempCursor += width;
@@ -249,7 +307,7 @@ public abstract class Menu : MonoBehaviour {
                         {
                             // scroll to beginning
                             ScrollTo(scrollableList, 0, listMustBeFilled);
-                                UpdateCursor(visibleTextArr, 0, cursorInt, offsetVal);
+                            UpdateCursor(visibleTextArr, 0, cursorInt, offsetVal);
                             if (scrollableList.Count > visibleSize)
                             {
                                 enableScrollingDown = true;
@@ -295,7 +353,7 @@ public abstract class Menu : MonoBehaviour {
                                 ScrollTo(scrollableList, scrollVal, listMustBeFilled);
                                 tempCursor += cols;
                                 Debug.Log(scrollableList.Count - (cols - (tempCursor)));
-                                UpdateCursor(visibleTextArr, scrollableList.Count - (cols -(tempCursor)), 0, offsetVal);
+                                UpdateCursor(visibleTextArr, scrollableList.Count - (cols - (tempCursor)), 0, offsetVal);
                             }
                             else
                             {
@@ -321,6 +379,7 @@ public abstract class Menu : MonoBehaviour {
             else
             if (Input.GetAxis("Horizontal") > 0)
             {
+
                 tempCursor++;
                 //Debug.Log("TempCursor is " + tempCursor);
                 /*if (tempCursor % visibleSize == 0)*/
@@ -330,19 +389,16 @@ public abstract class Menu : MonoBehaviour {
                     {
                         //Debug.Log(string.Format("fvi = {0},  tempCursor = {1}", cursorMarker, tempCursor));
 
-                        if (enableScrollingDown && tempCursor % (visibleSize -cursorMarker) == 0)
+                        if (enableScrollingDown && tempCursor % (visibleSize - cursorMarker) == 0)
                         {
-                            //Debug.Log("Scroll to next row");
                             // Scroll down one row
                             cursorMarker += cols;
-                            
+
                             ScrollTo(scrollableList, cursorMarker, listMustBeFilled); // Scroll down 1
                             UpdateCursor(visibleTextArr, tempCursor, 0, offsetVal);
-                            //tempCursor -= cols - 1;
                         }
                         else if (!enableScrollingDown)
                         {
-                            //Debug.Log("Scroll to beginning");
                             // scroll to beginning
                             ScrollTo(scrollableList, 0);
                             if (scrollableList.Count > 4)
@@ -352,9 +408,9 @@ public abstract class Menu : MonoBehaviour {
                             cursorMarker = 0;
                             tempCursor = 0;
                             UpdateCursor(visibleTextArr, 0, 0, offsetVal);
-                        } else
+                        }
+                        else
                         {
-                            //Debug.Log("Move right one");
                             // EnsableScrollingDown
                             UpdateCursor(visibleTextArr, tempCursor, 0, offsetVal);
                         }
@@ -389,7 +445,7 @@ public abstract class Menu : MonoBehaviour {
                             {
                                 scrollVal = scrollableList.Count - visibleSize;
                             }
-                            
+
                             if (scrollVal > 0)
                             {
                                 ScrollTo(scrollableList, scrollVal, listMustBeFilled);
@@ -423,13 +479,18 @@ public abstract class Menu : MonoBehaviour {
                 if (Input.GetButtonDown("AButton"))
                 {
                     aPressed = true;
-                } else
+                    MakeMenuSelection(tempCursor);
+                }
+                else
                 if (Input.GetButtonDown("BButton"))
                 {
                     bPressed = true;
                 }
+            } else
+            {
             }
-        } else
+        }
+        else
         {
             aPressed = false;
             bPressed = false;
@@ -439,4 +500,5 @@ public abstract class Menu : MonoBehaviour {
 
     protected bool aPressed = false;
     protected bool bPressed = false;
+
 }

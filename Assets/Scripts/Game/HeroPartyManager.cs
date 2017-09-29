@@ -17,8 +17,6 @@ public class HeroPartyManager : PartyManager {
 
     public CamFollow camFollower;
 
-    public static List<BaseCharacter> activeHeroes;
-
     // Use this for initialization
     void Start () {
 		

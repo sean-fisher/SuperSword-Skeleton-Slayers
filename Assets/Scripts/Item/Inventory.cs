@@ -7,11 +7,11 @@ public class Inventory : MonoBehaviour {
     // The key is the ItemID, the second is the number of that item.
     public static Dictionary<int, int> allItems = new Dictionary<int, int>(); // Every item ID in the inventory along with the number of said item
     public static Dictionary<int, int> equipment = new Dictionary<int, int>();
-    public static ItemData[] unsortedList = new ItemData[100]; // Items the player has, in the order they appear in the item window
+    public static ItemData[] unsortedList = new ItemData[16]; // Items the player has, in the order they appear in the item window
     int emptySpot = 0;
 
     // Used for retrieving an item prefab based on its ID
-    public BaseItem[] allItemsInGame = new BaseItem[150];
+    //public BaseItem[] allItemsInGame = new BaseItem[150];
 
     // Equippables for each character stored here for equip menu access. 
     // The number represents a particular hero ID, not his party position
@@ -121,32 +121,6 @@ public class Inventory : MonoBehaviour {
     {
         ItemData decrementItem = unsortedList[unsortedIndex];
 
-        if (decrementItem is EquipData)
-        {
-            EquipData eq = (EquipData)decrementItem;
-
-            if (knightEquips.Contains((EquipData) decrementItem))
-            {
-                knightEquips.Remove((EquipData)decrementItem);
-            }
-            if (mageEquips.Contains(eq))
-            {
-                mageEquips.Remove(eq);
-            }
-            if (monkEquips.Contains(eq))
-            {
-                monkEquips.Remove(eq);
-            }
-            if (ninjaEquips.Contains(eq))
-            {
-                ninjaEquips.Remove(eq);
-            }
-            if (chefEquips.Contains(eq))
-            {
-                chefEquips.Remove(eq);
-            }
-        }
-        
 
         if (--allItems[decrementItem.itemID] < 1)
         {
@@ -156,6 +130,33 @@ public class Inventory : MonoBehaviour {
             {
                 emptySpot = unsortedIndex;
             }
+
+            if (decrementItem is EquipData)
+            {
+                EquipData eq = (EquipData)decrementItem;
+
+                if (knightEquips.Contains((EquipData)decrementItem))
+                {
+                    knightEquips.Remove((EquipData)decrementItem);
+                }
+                if (mageEquips.Contains(eq))
+                {
+                    mageEquips.Remove(eq);
+                }
+                if (monkEquips.Contains(eq))
+                {
+                    monkEquips.Remove(eq);
+                }
+                if (ninjaEquips.Contains(eq))
+                {
+                    ninjaEquips.Remove(eq);
+                }
+                if (chefEquips.Contains(eq))
+                {
+                    chefEquips.Remove(eq);
+                }
+            }
+
             return false;
         }
         else return true;

@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour {
 
     public static GameManager gm;
     public static AreaNames currAreaName;
+    public Inventory inventory;
 
     public GameObject cursor;
 
@@ -30,8 +31,7 @@ public class GameManager : MonoBehaviour {
         currAreaName = AreaNames.GRASSLAND;
 
         allEffects = GetComponent<AllEffects>();
-
-        //pauseMenu.InitMenu();
+        inventory = GetComponent<Inventory>();
     }
 
     public void SwitchScene(TransitionType transitionType, string sceneName)
