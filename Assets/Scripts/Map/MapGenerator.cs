@@ -39,7 +39,7 @@ public class MapGenerator : MonoBehaviour {
     static bool mapGenerated = false;
 
     // Used to make sure continents don't overlap
-    List<CenterRadiusPair> continents = new List<CenterRadiusPair>();
+    //List<CenterRadiusPair> continents = new List<CenterRadiusPair>();
 
     int mapWidth = 0;
     int mapHeight = 0;
@@ -487,7 +487,8 @@ public class MapGenerator : MonoBehaviour {
                             {
                                 walkLevelGrid[x, y] = 'm';
                                 dontCheckGrid[x, y] = 'd';
-                                dontCheckGrid[x - 1, y] = 'd';
+                                //dontCheckGrid[x - 1, y] = 'd';
+                                SetTile(2, new MapCoor(x - 1, y), 'd');
                             }
                             //groundGrid[x, y - 1] = 'r';
                             break;
@@ -497,7 +498,8 @@ public class MapGenerator : MonoBehaviour {
                             {
                                 walkLevelGrid[x, y] = 'm';
                                 dontCheckGrid[x, y] = 'd';
-                                dontCheckGrid[x - 1, y] = 'd';
+                                SetTile(2, new MapCoor(x - 1, y), 'd');
+                                //dontCheckGrid[x - 1, y] = 'd';
                             }
                             //groundGrid[x, y - 1] = 'r';
                             break;
@@ -602,8 +604,6 @@ public class MapGenerator : MonoBehaviour {
 
     }
 
-    int errors = 0;
-
     enum Direction
     {
         RIGHT,
@@ -611,8 +611,6 @@ public class MapGenerator : MonoBehaviour {
         LEFT,
         DOWN
     }
-
-    int numTrees = 0;
 
     bool CharIsGround(char checkGround)
     {

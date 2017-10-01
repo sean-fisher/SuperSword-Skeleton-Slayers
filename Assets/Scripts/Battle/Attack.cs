@@ -28,12 +28,7 @@ public abstract class Attack : MonoBehaviour {
 
     public GameObject attackAnimation;
     
-
-    public Attack()
-    {
-
-    }
-
+    
     // What an attack does after the player has selected all his/her characters' moves and the move is used.
     // If turnList is empty, all turns are over and the player gets to select moves again (assuming the player is alive)
     public virtual IEnumerator UseAttack(BaseCharacter attacker, BaseCharacter target, List<Turn> turnList)
@@ -165,7 +160,7 @@ public abstract class Attack : MonoBehaviour {
             //public abstract void UseDualTech(CharacterStateMachine target, BattleStateMachine BSM);
 
 
-    public int DealDamage(Attack attack, BaseCharacter attacker, BaseCharacter targetCharacter, bool canCrit = false, int damageDealt = 0)
+    public int DealDamage(Attack attack, BaseCharacter attacker, BaseCharacter targetCharacter, bool canCrit = false, int damageDealt = 0, bool checkWinLose = true)
     {
         //If the target was dead but was resurrected, it is set to alive
         bool targetIsDead = targetCharacter.currentHP < 1;
@@ -185,7 +180,7 @@ public abstract class Attack : MonoBehaviour {
         //if the target's health drops below zero, set to dead. If target is healed and HP is greater than max, currentHP is set to max.
         if (targetCharacter.currentHP <= 0)
         {
-            BattleManager.bManager.KillCharacter(targetCharacter);
+            BattleManager.bManager.KillCharacter(targetCharacter, checkWinLose);
             //targetCharacter.SetCurrentState(CharacterStateMachine.TurnState.DEAD);
             //targetCharacter.GetBaseCharacter().currentHP = 0;
 

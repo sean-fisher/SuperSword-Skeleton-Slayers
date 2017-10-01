@@ -130,6 +130,7 @@ public class BattleMenu : Menu {
                             {
                                 case (0):
                                     // Attack selected; now target enemy
+                                    attackIndex = 0;
                                     OpenMenu(1, 0);
                                     break;
                                 case (1):
@@ -165,7 +166,13 @@ public class BattleMenu : Menu {
                     CheckHeroesAndEnemies();
                     if (aPressed)
                     {
-                        BattleManager.bManager.AddStandardAttackTurn(GetAttacker(), GetTarget());
+                        if (attackIndex == 0)
+                        {
+                            BattleManager.bManager.AddStandardAttackTurn(GetAttacker(), GetTarget());
+                        } else
+                        {
+                            BattleManager.bManager.AddAttackTurn(GetAttacker(), GetTarget(), attackIndex - 1);
+                        }
                         NextHeroSelectsAttack(true);
                         aPressed = false;
 
@@ -206,6 +213,7 @@ public class BattleMenu : Menu {
                             if (chosenSpell)
                             {
                                 menuLayer = 1;
+                                attackIndex = tempCursor + 1;
                                 OpenMenu(1, 3);
                             }
                             else
@@ -225,6 +233,8 @@ public class BattleMenu : Menu {
             }
         }
     }
+
+    int attackIndex = 0;
 
     void OpenMenu(int newMenuLayer, int lastMenuLayer = 0)
     {
@@ -264,8 +274,6 @@ public class BattleMenu : Menu {
                 cols = 3;
                 InitializeListText(0,  GetAttacker().usableAttacks);
 
-                currCharacter = GetAttacker();
-
                 cursor2.SetActive(true);
                 UpdateCursor(currRects, 0, 2, -Screen.width / 40);
                 break;
@@ -304,20 +312,20 @@ public class BattleMenu : Menu {
 
     // The list of spells should be able to be scrolled through even if the spell hasn't been learned yet
     List<Attack> emptyAttackList = new List<Attack>(new Attack[9]);
-    BaseCharacter currCharacter;
 
     int heroEnemyCursor = 0;
     bool heroCursorMoved = false;
 
     public void NextHeroSelectsAttack(bool calledFromPrevHero)
     {
+        attackIndex = 0;
         listSelectWindow.gameObject.SetActive(false);
         cursor2.SetActive(false);
         if (calledFromPrevHero)
         {
             MovePanelVert(selectingHeroIndex, 1);
         }
-        //Debug.Log(string.Format("hero {0} selects attack", selectingHeroIndex + 1));
+
         if (++selectingHeroIndex < hpm.activePartyMembers.Count && selectingHeroIndex > -1 && hpm.activePartyMembers[selectingHeroIndex])
         {
             // More heroes must input their moves
@@ -378,7 +386,7 @@ public class BattleMenu : Menu {
         } else
         {
             selectingHeroIndex++;
-            NextHeroSelectsAttack(false);
+            //NextHeroSelectsAttack(false);
             // Play "You can't do that" noise
         }
     }
@@ -479,7 +487,7 @@ public class BattleMenu : Menu {
             while (enemyAttack == null && --tries > 0)
             {
                 int randMoveIndex = UnityEngine.Random.Range(0, enemy.usableAttacks.Count);
-                //Debug.Log(randMoveIndex + " " + enemy.usableAttacks.Count + " " + occurrenceVal);
+
                 if (occurrenceVal <= enemy.usableAttacks[randMoveIndex].occurrenceChance)
                 {
                     enemyAttack = enemy.usableAttacks[randMoveIndex];
