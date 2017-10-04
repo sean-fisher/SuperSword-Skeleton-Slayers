@@ -114,34 +114,6 @@ public class SpiralTransition : ScreenTransition
             // West
             GUI.DrawTexture(new Rect(x, y, 
                             (float)eigth * (left - 1) * ratio, spiralHeight), blackTexture);
-            
-            float x2 = 0;
-            float y2 = 0;
-            
-            switch (currDir)
-            {
-                case (Direction.RIGHT):
-                    x2 = ratio * eigth * (left);
-                    y2 = spiralHeight - eigth * (right + 1);
-                    break;
-                case (Direction.DOWN):
-                    x2 = eigth * (left) * ratio;
-                    y2 = eigth * down;
-                    break;
-                case (Direction.LEFT):
-                    x2 = eigth * (left - 1) * ratio;
-                    y2 = eigth * (up - 1);
-                    break;
-                case (Direction.UP):
-                    x2 = spiralWidth - eigth * right * ratio;
-                    y2 = eigth * (left - 1);
-                    break;
-                default:
-                    break;
-            }
-            //Debug.Log(String.Format("x: {0} y: {1} width: {2} height: {3}", x, y, width, height));
-            //GUI.DrawTexture(new Rect(x, y, width, height), whiteTexture);
-
         }
         else if (waitOnBlack)
         {

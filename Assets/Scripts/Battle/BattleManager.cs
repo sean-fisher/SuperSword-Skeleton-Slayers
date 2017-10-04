@@ -66,7 +66,7 @@ public class BattleManager : MonoBehaviour {
         }
     }
 
-    public virtual void KillCharacter(BaseCharacter targetCharacter)
+    public virtual void KillCharacter(BaseCharacter targetCharacter, bool checkWinLose = true)
     {
         targetCharacter.currentHP = 0;
         targetCharacter.isDead = true;
@@ -79,7 +79,10 @@ public class BattleManager : MonoBehaviour {
             enemiesAlive--;
             Debug.Log("Enemy dies: " + targetCharacter.characterName);
 
-            CheckWin();
+            if (checkWinLose)
+            {
+                CheckWin();
+            }
         }
         else if (hpm.activePartyMembers.Contains(targetCharacter))
         {
@@ -88,7 +91,10 @@ public class BattleManager : MonoBehaviour {
             //hpm.activePartyMembers.Remove(targetCharacter);
             heroesAlive--;
 
-            CheckLose();
+            if (checkWinLose)
+            {
+                CheckLose();
+            }
         }
     }
 
@@ -202,8 +208,12 @@ public class BattleManager : MonoBehaviour {
         messageBoxImg.gameObject.SetActive(false);
         battleMenu.InitMenu();
     }
-    
 
+
+    public void AddAttackTurn(BaseCharacter attacker, BaseCharacter target, int attackIndex)
+    {
+        turnList.Add(new Turn(attacker, target, attacker.usableAttacks[attackIndex]));
+    }
 
     public void AddStandardAttackTurn(BaseCharacter attacker, BaseCharacter target)
     {
@@ -220,7 +230,7 @@ public class BattleManager : MonoBehaviour {
         turnList.Add(new Turn(defender, null, defaultDefendPrefab));
     }
 
-    void CheckWin()
+    public void CheckWin()
     {
         if (enemiesAlive == 0)
         {
@@ -237,11 +247,16 @@ public class BattleManager : MonoBehaviour {
         Destroy(epm.gameObject);
 
         messageBoxImg.gameObject.SetActive(true);
-        TextBoxManager.tbm.EnableTextBox(messageBoxImg.transform.GetChild(0).gameObject, "You've Won!");
+        TextBoxManager.tbm.EnableTextBox(messageBoxImg.transform.GetChild(0).gameObject, "You've Won!", true);
 
     }
 
-    void CheckLose()
+    IEnumerator WaitForExplode()
+    {
+        yield return new WaitForSeconds(.7f);
+    }
+
+    public void CheckLose()
     {
         if (heroesAlive <= 0)
         {

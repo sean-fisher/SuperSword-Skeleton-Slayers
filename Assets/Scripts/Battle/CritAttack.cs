@@ -4,17 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CritAttack : Attack {
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
+    
     public CritAttack() { }
 
 
@@ -45,8 +35,13 @@ public class CritAttack : Attack {
                 {
                     battleMessage = String.Format("{0}'s critical blow scores {2} points of damage to {1}!", attacker.characterName, target.characterName, damageDealt);
                     TextBoxManager.tbm.EnableTextBox(battleMessageWindow, battleMessage, false);
-                    DealDamage(this, attacker, target, false, damageDealt);
+                    DealDamage(this, attacker, target, false, damageDealt, false);
                 }
+                while (TextBoxManager.tbm.isTyping)
+                {
+                    yield return null;
+                }
+                yield return new WaitForSeconds(.3f);
 
                 // update health display if hero
                 yield return null;
@@ -55,6 +50,9 @@ public class CritAttack : Attack {
                 {
                     BattleManager.bManager.battleMenu.UpdatePanel(target);
                 }
+
+                BattleManager.bManager.CheckLose();
+                BattleManager.bManager.CheckWin();
 
             }
             else
