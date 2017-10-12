@@ -27,6 +27,11 @@ public class Inventory : MonoBehaviour {
     // this keeps track of where the item should be added to unsortedList.
     // @return true if the inventory already had this item or was null, false if new item
 
+    public bool containsItem(ItemData item)
+    {
+        return allItems.ContainsKey(item.itemID);
+    }
+
     public bool AddToInventory(ItemData newItem)
     {
         if (newItem == null)
