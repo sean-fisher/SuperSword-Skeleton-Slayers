@@ -22,6 +22,7 @@ public class MapGenerator : MonoBehaviour {
     public GameObject doorTile;             // d
     public GameObject forestTile;           // f
     public GameObject treasureChest;        // c
+    public GameObject lockedChest;          // l
 
                                             // EACH TILE TYPE MUST HAVE:
                                             //  Appropriate GameObject GetTileObj(...) code
@@ -280,7 +281,7 @@ public class MapGenerator : MonoBehaviour {
 
                     walkLevelGrid[(int) center.x + 5, (int) center.y] = 'a';
                     walkLevelGrid[(int)center.x - 5, (int)center.y] = 'c';
-                    walkLevelGrid[(int)center.x - 6, (int)center.y] = 'c';
+                    walkLevelGrid[(int)center.x, (int)center.y + 5] = 'l';
                 }
                 break;
             case (ContinentType.MOUNTAINOUS):
@@ -632,6 +633,8 @@ public class MapGenerator : MonoBehaviour {
                 return grassTile;
             case ('f'):
                 return forestTile;
+            case ('l'):
+                return lockedChest;
             case ('m'):
                 return mountainTile;
             case ('r'):
