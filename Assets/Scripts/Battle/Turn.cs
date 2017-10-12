@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Turn {
+public class Turn : IComparer<Turn> {
 
     public BaseCharacter attacker;
     public BaseCharacter target;
@@ -25,5 +25,10 @@ public class Turn {
         this.attacker = attacker;
         this.target = target;
         this.attack = attack;
+    }
+
+    public int Compare(Turn turnOne, Turn turnTwo)
+    {
+        return turnOne.attacker.currentEVA - turnTwo.attacker.currentEVA;
     }
 }

@@ -18,19 +18,19 @@ public class TreasureChest : InteractableTile
             {
                 if (!hasBeenOpened)
                 {
+                    GameManager.gm.leader.DisableMovement();
                     TextBoxManager textManager = TextBoxManager.tbm;
                     textManager.currentLine = 0;
                     textManager.endLine = 0; // Controls how many windows
 
                     string boxMessage = "Inside the chest, you found a " + treasure.GetItemData().itemName + ".";
-                    TextBoxManager.tbm.EnableTextBox(null, boxMessage, true);
+                    TextBoxManager.tbm.EnableTextBox(null, boxMessage, true, false, true);
                     // TODO: Open box animation
                     GameManager.gm.gameObject.GetComponent<Inventory>().AddToInventory(treasure.GetItemData());
 
 
                     hasBeenOpened = true;
                     heroStandingOnThisTile = false;
-                    Debug.Log("Open Chest");
                 }
                 else
                 {
