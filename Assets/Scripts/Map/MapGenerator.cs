@@ -27,7 +27,8 @@ public class MapGenerator : MonoBehaviour {
     public GameObject mountainTile;         // m
     public GameObject forestTile;           // f
     public GameObject treasureChest;        // c
-    public GameObject lockedTreasureChest;        // l
+    public GameObject lockedTreasureChest;  // l
+    public GameObject castle;               // .
 
     [Header("Entrances")]
     public GameObject darkForestEntrance;   // !
@@ -207,6 +208,7 @@ public class MapGenerator : MonoBehaviour {
                     dontCheckGrid[(int)center.x, (int)center.y + 2] = '!';
                     walkLevelGrid[(int)center.x - 5, (int)center.y] = 'c';
                     walkLevelGrid[(int)center.x - 6, (int)center.y] = 'l';
+                    walkLevelGrid[(int)center.x, (int)center.y - 8] = '.';
                 } else
                 {
                 }
@@ -722,6 +724,8 @@ public class MapGenerator : MonoBehaviour {
                 return icebergTile;
             case ('l'):
                 return lockedTreasureChest;
+            case ('.'):
+                return castle;
             case ('!'):
                 return darkForestEntrance;
             case ('0'):
