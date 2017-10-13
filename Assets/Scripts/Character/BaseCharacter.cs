@@ -30,7 +30,7 @@ public class BaseCharacter : MonoBehaviour {
     public int baseSKL;
     public int currentSKL;
 
-    public int meleeDist;
+    public int goldDrop = 0;
 
     public bool isDead = false;
 

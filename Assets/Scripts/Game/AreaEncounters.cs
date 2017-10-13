@@ -21,7 +21,7 @@ public class AreaEncounters : MonoBehaviour {
 
     public EnemyPartyManager GetRandomEncounter(AreaNames currArea)
     {
-        Debug.Log(currArea);
+        //Debug.Log(currArea);
         List<EnemyPartyManager> currAreaList = null;
         switch (currArea)
         {
@@ -34,8 +34,7 @@ public class AreaEncounters : MonoBehaviour {
         }
 
         int randPartyIndex = UnityEngine.Random.Range(0, currAreaList.Count);
-        int occurrenceChance = UnityEngine.Random.Range(1, 5);
-
+        int occurrenceChance = UnityEngine.Random.Range(1, 6);
 
         if (occurrenceChance <= currAreaList[randPartyIndex].occurrenceRate)
         {

@@ -19,13 +19,15 @@ public class LockedChest : InteractableTile
             {
                 if (!opened)
                 {
-                    if (GameManager.gm.gameObject.GetComponent<Inventory>().containsItem(key.GetItemData())){
+                    if (GameManager.gm.gameObject.GetComponent<Inventory>().ContainsItem(key.GetItemData())){
                         TextBoxManager textManager = TextBoxManager.tbm;
                         textManager.currentLine = 0;
                         textManager.endLine = 0; // Controls how many windows
 
+                        GameManager.gm.leader.DisableMovement();
+
                         string boxMessage = "You unlock the chest and find a " + treasure.GetItemData().itemName + ".";
-                        TextBoxManager.tbm.EnableTextBox(null, boxMessage, true);
+                        TextBoxManager.tbm.EnableTextBox(null, boxMessage, true, false, true);
                         // TODO: Open box animation
                         GameManager.gm.gameObject.GetComponent<Inventory>().AddToInventory(treasure.GetItemData());
 
@@ -34,15 +36,19 @@ public class LockedChest : InteractableTile
                         heroOnTile = false;
                         Debug.Log("Open Locked Chest");
                     }
-                    else if (!GameManager.gm.gameObject.GetComponent<Inventory>().containsItem(key.GetItemData()))
+                    else if (!GameManager.gm.gameObject.GetComponent<Inventory>().ContainsItem(key.GetItemData()))
                     {
                         TextBoxManager textManager = TextBoxManager.tbm;
                         textManager.currentLine = 0;
                         textManager.endLine = 0;
 
-                        string lockedMessage = "The chest is locked. You need a " + key.GetItemData().itemName + ".";
-                        TextBoxManager.tbm.EnableTextBox(null, lockedMessage, true);
+                        GameManager.gm.leader.DisableMovement();
 
+                        string lockedMessage = "The chest is locked. You need a " + key.GetItemData().itemName + ".";
+                        TextBoxManager.tbm.EnableTextBox(null, lockedMessage, true, false, true);
+
+
+                        heroOnTile = false;
                         Debug.Log("Attempted opening");
                     }
                     else {

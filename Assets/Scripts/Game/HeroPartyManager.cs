@@ -8,6 +8,7 @@ public class HeroPartyManager : PartyManager {
 
     public GameObject knightPrefab;
     public GameObject magePrefab;
+    public GameObject archerPrefab;
     public GameObject monkPrefab;
     public GameObject ninjaPrefab;
     public GameObject chefPrefab;
@@ -26,28 +27,59 @@ public class HeroPartyManager : PartyManager {
 	void Update () {
 		if (Input.GetKeyDown(KeyCode.Keypad1))
         {
-            AddCharacterToParty((GameObject.Instantiate(knightPrefab)).GetComponent<BaseCharacter>());
+            AddCharacterToParty((GameObject.Instantiate
+                (knightPrefab)).GetComponent<BaseCharacter>());
         } else if (Input.GetKeyDown(KeyCode.Keypad2))
         {
-            AddCharacterToParty(GameObject.Instantiate(knightPrefab).GetComponent<BaseCharacter>());
+            AddCharacterToParty(GameObject.Instantiate
+                (magePrefab).GetComponent<BaseCharacter>());
         }
-	}
-
-    public new void KillCharacter(BaseCharacter targetCharacter)
-    {
-
+        else if (Input.GetKeyDown(KeyCode.Keypad3))
+        {
+            AddCharacterToParty(GameObject.Instantiate
+                (archerPrefab).GetComponent<BaseCharacter>());
+        }
     }
 
-    public void AddKnight(Vector3 knightPosition)
+    public void MovePartyTo(Vector2 destination)
+    {
+        for (int i = 0; i < activePartyMembers.Count; i++)
+        {
+            activePartyMembers[i].transform.position = new Vector2(
+                destination.x, destination.y + 4);
+        }
+    }
+
+    public void DisablePartyMovement()
+    {
+        for (int i = 0; i < activePartyMembers.Count; i++) {
+            activePartyMembers[i].GetComponent<GridController>().DisableMovement();
+        }
+    }
+
+    public void EnablePartyMovement()
+    {
+        for (int i = 0; i < activePartyMembers.Count; i++)
+        {
+            activePartyMembers[i].GetComponent<GridController>().EnableMovement();
+        }
+    }
+
+    public void AddKnight(Vector2 knightCoor)
     {
         GameObject knightObj = GameObject.Instantiate(knightPrefab);
         AddCharacterToParty(knightObj.GetComponent<BaseCharacter>());
-        knightObj.transform.position = new Vector2(knightPosition.x * 16, knightPosition.y * -16 + 4);
+        knightObj.GetComponent<GridController>().isLeader = true;
+        knightObj.transform.position = new Vector2(
+            knightCoor.x * 16, knightCoor.y * -16 + 4);
+        knightObj.GetComponent<GridController>().SetCoor(new MapCoor(
+            (int)knightCoor.x, (int)knightCoor.y));
     }
 
     public void AddCharacterToActive(BaseCharacter newHero)
     {
-        // This check is redundant if adding from AddCharacterToParty(BaseCharacter newhero)
+        // This check is redundant if adding from 
+        // AddCharacterToParty(BaseCharacter newhero)
         if (activePartyMembers.Count < 4 && !activePartyMembers.Contains(newHero))
         {
             activePartyMembers.Add(newHero);
@@ -61,13 +93,20 @@ public class HeroPartyManager : PartyManager {
             } else
             {
                 newHero.gameObject.transform.position = leader.transform.position;
-                newHero.GetComponent<GridController>().placeInParty = activePartyMembers.Count - 1;
+                newHero.GetComponent<GridController>().placeInParty = 
+                    activePartyMembers.Count - 1;
             }
             newHero.gameObject.transform.parent = actPartyObj.transform;
 
-            newHero.GetComponent<GridController>().debugEnabled = GameManager.gm.debugEnabled;
+            newHero.GetComponent<GridController>().debugEnabled = 
+                GameManager.gm.debugEnabled;
             Debug.Log("Added Hero: " + newHero.name);
             newHero.transform.position = leader.transform.position;
+            newHero.GetComponent<GridController>().SetCoor(
+                leader.GetComponent<GridController>().GetCoor());
+                /*new MapCoor(
+                (int)newHero.transform.position.x / 16, 
+                (int)newHero.transform.position.y / 16));*/
             BattleManager.bManager.heroesAlive++;
         } else
         {
@@ -75,9 +114,18 @@ public class HeroPartyManager : PartyManager {
         }
     }
 
+    public void ClearMoveQueues()
+    {
+        for (int i = 0; i < activePartyMembers.Count; i++)
+        {
+            activePartyMembers[i].GetComponent<GridController>().inputList.Clear();
+        }
+    }
+
     public void AddCharacterToParty(BaseCharacter newHero)
     {
-        if (!inactivePartyMembers.Contains(newHero) && !activePartyMembers.Contains(newHero))
+        if (!inactivePartyMembers.Contains(newHero) && 
+            !activePartyMembers.Contains(newHero))
         {
             if (activePartyMembers.Count < 4)
             {

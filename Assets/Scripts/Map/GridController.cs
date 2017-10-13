@@ -8,8 +8,12 @@ public class GridController : MonoBehaviour {
     public static bool clampToPixel = true;
     public bool debugEnabled = false;
 
+    public bool isLeader = false;
+
     public LayerMask wall;
     public LayerMask interactableTile;
+
+    MapCoor currCoor = new MapCoor();
 
     // Leader is 0, then 1, 2, etc. 
     // Used for making the party follow the leader.
@@ -35,7 +39,9 @@ public class GridController : MonoBehaviour {
     public List<MoveDir> inputList = new List<MoveDir>();
     Animator anim;
 
-    // Each grid space is 16 units wide; 1 unit represents one pixel. This always moves in increments of one pixel so as to reduce blur and increase sharpness.
+    // Each grid space is 16 units wide; 1 unit represents one pixel. 
+    // This always moves in increments of one pixel so as to 
+    // reduce blur and increase sharpness.
 
     // Use this for initialization
     void Start () {
@@ -78,12 +84,40 @@ public class GridController : MonoBehaviour {
         }
     }
 
+    public MapCoor GetCoor()
+    {
+        return currCoor;
+    }
+
+    public void SetCoor(MapCoor curr)
+    {
+        Debug.Log(currCoor);
+        if (curr.x < 0)
+        {
+            curr.x += MapGenerator.mapWidth;
+        } else
+        {
+            curr.x = curr.x % MapGenerator.mapWidth;
+        }
+
+        if (curr.y < 0)
+        {
+            curr.y += MapGenerator.mapWidth;
+        }
+        else
+        {
+            curr.y = curr.y % MapGenerator.mapWidth;
+        }
+        currCoor = curr;
+    }
+
     public bool canMove = true;
     MoveDir lastMove = MoveDir.DOWN;
 
     public static bool partyCanMove = true;
 
-    // Checks the tile in front of the hero and interacts with it if something is found there.
+    // Checks the tile in front of the hero and interacts with it 
+    // if something is found there.
     // If nothing is in front, it checks the current tile.
     void InspectTile()
     {
@@ -149,10 +183,22 @@ public class GridController : MonoBehaviour {
                     break;
             }
 
-            // Checks if objects are already at the destination and if they can be moved onto
-            Collider2D objectsAtDestination = Physics2D.OverlapCircle(destinationVector, 4, wall);
-            // Prevent party from moving
-            partyCanMove = objectsAtDestination == null;
+            // Checks if objects are already at the destination and 
+            // if they can be moved onto
+            Collider2D objectsAtDestination = Physics2D.OverlapCircle
+                (destinationVector, 4, wall);
+            if (objectsAtDestination == null)
+            {
+                objectsAtDestination = Physics2D.OverlapCircle(
+                    destinationVector, 4, interactableTile);
+
+                // Prevent party from moving
+                partyCanMove = objectsAtDestination == null 
+                    || objectsAtDestination.isTrigger;
+            } else
+            {
+                partyCanMove = false;
+            }
 
         }
 
@@ -173,18 +219,26 @@ public class GridController : MonoBehaviour {
                     case (MoveDir.LEFT):
                         destinationVector = new Vector3(gameObject.transform.position.x - 16, gameObject.transform.position.y, transform.position.z);
                         tempWalkState = 3;
+
+                        currCoor.x--;
                         break;
                     case (MoveDir.RIGHT):
                         destinationVector = new Vector3(gameObject.transform.position.x + 16, gameObject.transform.position.y, transform.position.z);
                         tempWalkState = 4;
+                        
+                        currCoor.x++;
                         break;
                     case (MoveDir.DOWN):
                         destinationVector = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 16, transform.position.z);
                         tempWalkState = 2;
+
+                        currCoor.y++;
                         break;
                     case (MoveDir.UP):
                         destinationVector = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 16, transform.position.z);
                         tempWalkState = 1;
+
+                        currCoor.y--;
                         break;
                     default:
                         break;
@@ -239,8 +293,10 @@ public class GridController : MonoBehaviour {
         {
         } else
         {
-            int distanceX = Mathf.Abs((int)(tryDestination.x - gameObject.transform.position.x));
-            int distanceY = Mathf.Abs((int)(tryDestination.y - gameObject.transform.position.y));
+            int distanceX = Mathf.Abs(
+                (int)(tryDestination.x - gameObject.transform.position.x));
+            int distanceY = Mathf.Abs(
+                (int)(tryDestination.y - gameObject.transform.position.y));
 
             int MoveDirX = 1;
             if (tryDestination.x < gameObject.transform.position.x)
@@ -257,7 +313,8 @@ public class GridController : MonoBehaviour {
             while (progress < distanceX)
             {
                 progress += Time.deltaTime * speed;
-                tempPosition = new Vector3(tempPosition.x + Time.deltaTime * speed * MoveDirX, tempPosition.y, tempPosition.z);
+                tempPosition = new Vector3(tempPosition.x + Time.deltaTime * speed
+                    * MoveDirX, tempPosition.y, tempPosition.z);
                 transform.position = ClampToPixel(tempPosition);
                 yield return null;
             }
@@ -270,7 +327,7 @@ public class GridController : MonoBehaviour {
                 yield return null;
             }
             tempPosition = tryDestination;
-            gameObject.transform.position = tempPosition;
+            gameObject.transform.position = ClampToPixel(tempPosition);
 
             Animator anim = GetComponent<Animator>();
             if (anim)
@@ -278,19 +335,24 @@ public class GridController : MonoBehaviour {
                 anim.SetInteger("WalkState", 0);
             }
 
+           // SetCoor(new MapCoor((int)tryDestination.x, (int)tryDestination.y));
+
             if (GameManager.gm.leader == this && !debugEnabled)
             {
-                char currGround = MapGenerator.mg.GetTile(transform.position, true);
+                //char currGround = MapGenerator.mg.GetTile(transform.position, true);
                 if (encountersEnabled)
                 {
-                    battleActivated = RandomEncounterManager.AdvanceStepCount(currGround);
+                    battleActivated = RandomEncounterManager.AdvanceStepCount('\0');
                 }
             }
+            Vector3 newPos = new Vector3(
+                currCoor.x * 16, currCoor.y * -16 + 4, transform.position.z);
+            //transform.position = newPos;
         }
 
         //gameObject.transform.position = new Vector3((int)transform.position.x, (int)transform.position.y, (int)transform.position.z);
 
-        if (canMoveAfter && !battleActivated)
+        if ( canMoveAfter && !battleActivated)
         {
             canMove = true;
             CheckTile(transform.position);
@@ -299,7 +361,7 @@ public class GridController : MonoBehaviour {
        // sr.sortingOrder = -(int)transform.position.y;
     }
 
-    static Vector3 ClampToPixel(Vector3 unclamped)
+    Vector3 ClampToPixel(Vector3 unclamped)
     {
         if (clampToPixel)
         {
@@ -310,15 +372,32 @@ public class GridController : MonoBehaviour {
         }
     }
 
+    Vector3 ClampToPixel(MapCoor nextCoor)
+    {
+        Vector3 newPos = new Vector3(
+            currCoor.x * 16, currCoor.y * -16 + 4, transform.position.z);
+        if (clampToPixel)
+        {
+            return new Vector3(Mathf.Round(newPos.x), Mathf.Round(newPos.y), newPos.z);
+        }
+        else
+        {
+            return newPos;
+        }
+    }
+
     bool CheckTile(Vector3 positionToCheck)
     {
-        Collider2D checkedTileCol = Physics2D.OverlapCircle(positionToCheck, 4, interactableTile);
-
-        if (checkedTileCol)
+        if (isLeader)
         {
-            InteractableTile it = checkedTileCol.gameObject.GetComponent<InteractableTile>();
-            it.ActivateInteraction();
-            return true;
+            Collider2D checkedTileCol = Physics2D.OverlapCircle(positionToCheck, 4, interactableTile);
+
+            if (checkedTileCol)
+            {
+                InteractableTile it = checkedTileCol.gameObject.GetComponent<InteractableTile>();
+                it.ActivateInteraction();
+                return true;
+            }
         }
         return false;
     }
@@ -333,6 +412,9 @@ public class GridController : MonoBehaviour {
     }
     public void EnableMovement()
     {
-        BattleManager.bManager.CheckDisableMenu();
+        if (!BattleManager.bManager.CheckDisableMenu())
+        {
+            canMove = true;
+        }
     }
 }

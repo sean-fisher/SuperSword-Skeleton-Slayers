@@ -18,20 +18,40 @@ public static class MapFeatures {
     public static string[] forestCircle = new string[]{   
                                                        "   f  f  f   ",
                                                        "f  f     f  f",
-                                                       "f     c     f",
+                                                       "f     i     f",
                                                        "f  f     f  f",
                                                        "   f  f  f   ",
-                                                       };/*{
-                                                       "      f  f  f      ",
-                                                       "   f  f  f  f  f   ",
-                                                       "f  f  f     f  f  f",
-                                                       "f  f     c     f  f",
-                                                       "f  f  f     f  f  f",
-                                                       "   f  f  f  f  f   ",
-                                                       "      f  f  f      ",
-                                                       };*/
+                                                       };
+    public static string[] darkForest = new string[]{
+                                                       "      m     m     ",
+                                                       "m  f  f  f     m  ",
+                                                       "m  f  f  f     m  ",
+                                                       "m  f  f  f     m  ",
+                                                       "   m        m     ",
+                                                       };
+
+    public static string[] airshipSalesman = new string[]{
+                                                        "a  0"
+                                                       };
+
+    public static string[] GetFeature(FeatureTypes featureType)
+    {
+        switch (featureType)
+        {
+            case (FeatureTypes.FOREST_CIRCLE):
+                return MapFeatures.forestCircle;
+            case (FeatureTypes.DARK_FOREST):
+                return MapFeatures.darkForest;
+            case (FeatureTypes.AIRSHIP_SALESMAN):
+                return MapFeatures.airshipSalesman;
+            default:
+                return MapFeatures.forestCircle;
+        }
+    }
 }
 public enum FeatureTypes
 {
-    FOREST_CIRCLE
+    FOREST_CIRCLE,
+    DARK_FOREST,
+    AIRSHIP_SALESMAN
 }

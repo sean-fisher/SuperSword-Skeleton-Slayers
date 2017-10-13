@@ -40,6 +40,8 @@ public class BattleManager : MonoBehaviour {
     public Wait defaultWaitPrefab;
     public Defend defaultDefendPrefab;
 
+    int totalGoldDrop = 0;
+
     void Start()
     {
         if (bManager == null)
@@ -76,13 +78,6 @@ public class BattleManager : MonoBehaviour {
             // An enemy was defeated!
             epm.activePartyMembers.Remove(targetCharacter);
             StartCoroutine(EnemyDeathAnimation(targetCharacter.gameObject));
-            enemiesAlive--;
-            Debug.Log("Enemy dies: " + targetCharacter.characterName);
-
-            if (checkWinLose)
-            {
-                CheckWin();
-            }
         }
         else if (hpm.activePartyMembers.Contains(targetCharacter))
         {
@@ -115,15 +110,27 @@ public class BattleManager : MonoBehaviour {
             yield return null;
         }
         Destroy(enemyObj);
+        enemiesAlive--;
+
+        CheckWin();
+        if (!BattleManager.hasLost && !BattleManager.hasWon)
+        {
+            //yield return new WaitForSeconds(1);
+            battleMenu.ReturnToMenu();
+        }
     }
 
-    public void StartBattle()
+    public void StartBattle(string[] introMessage = null, 
+        EnemyPartyManager enemyEncounter = null)
     {
         // Disable player movement
         //GameManager.gm.leader.DisableMovement();
 
-        epm = GameObject.Instantiate(areaEncounters.GetRandomEncounter(GameManager.currAreaName).gameObject)
-            .GetComponent<EnemyPartyManager>();
+        if (enemyEncounter == null)
+        {
+            epm = GameObject.Instantiate(areaEncounters.GetRandomEncounter(GameManager.currAreaName).gameObject)
+                .GetComponent<EnemyPartyManager>();
+        }
 
         int heroDisplayCount = allHeroStats.transform.childCount;
         for (int k = 0; k < heroDisplayCount; k++)
@@ -144,8 +151,8 @@ public class BattleManager : MonoBehaviour {
         }
 
         heroesAlive = hpm.activePartyMembers.Count;
-        
 
+        totalGoldDrop = 0;
         // Instantiate the Enemy sprites
         for (int j = 0; j < epm.activePartyMembers.Count; j++)
         {
@@ -157,19 +164,21 @@ public class BattleManager : MonoBehaviour {
                 tempScale.y / enviroImg.transform.localScale.y, tempScale.z / enviroImg.transform.localScale.z);
             enemyObj.transform.localScale = tempScale;
             enemyObj.SetActive(false);
+
+            totalGoldDrop += enemyObj.GetComponent<BaseCharacter>().goldDrop;
         }
 
         enemiesAlive = epm.activePartyMembers.Count;
 
-        OpenWindow();
+        OpenWindow(introMessage);
     }
 
-    public void OpenWindow()
+    public void OpenWindow(string[] introMessage = null)
     {
-        StartCoroutine(OpeningWindow());
+        StartCoroutine(OpeningWindow(introMessage));
     }
 
-    IEnumerator OpeningWindow()
+    IEnumerator OpeningWindow(string[] introMessage = null)
     {
         GameManager.gm.leader.DisableMovement();
         float enviroWidth = enviroImg.rectTransform.rect.width;
@@ -179,18 +188,27 @@ public class BattleManager : MonoBehaviour {
         rt.sizeDelta = new Vector2(rt.sizeDelta.x, 24);
         backgroundWindow.gameObject.SetActive(true);
 
-        while (rt.sizeDelta.y < 400)
+        while (rt.sizeDelta.y < 324)
         {
             rt.sizeDelta = new Vector2(rt.sizeDelta.x, rt.sizeDelta.y + (1000 * Time.deltaTime));
             yield return null;
         }
+        rt.sizeDelta = new Vector2(rt.sizeDelta.x, 324);
         yield return new WaitForSeconds(.1f);
         enviroImg.gameObject.SetActive(true);
 
         // A [Enemyname] has appeared! message scrolls
-        TextBoxManager.tbm.EnableTextBox(messageBoxImg.transform.GetChild(0).gameObject, "Battle start", false);
+        if (introMessage == null)
+        {
+            TextBoxManager.tbm.EnableTextBox(messageBoxImg.transform.GetChild(0).gameObject, "Battle start", false);
+        } else
+        {
+            TextBoxManager.tbm.EnableTextBox(messageBoxImg.transform.GetChild(0).gameObject, introMessage, false);
+        }
 
-        GameManager.gm.spiralTransition.SpiralOut((float)((float)Screen.width * .75f), (float)(Screen.height * .75f), (float)((float)Screen.width / 8.1f), (float)(Screen.height / 8.1f));
+        GameManager.gm.spiralTransition.SpiralOut((float)((float)Screen.width * .73f), 
+            (float)(Screen.height * .605f), (float)((float)Screen.width / 7.3f),
+            (float)(Screen.height / 5.05f));
         yield return new WaitForSeconds(.5f);
 
         // Enable the enemy sprites
@@ -247,7 +265,10 @@ public class BattleManager : MonoBehaviour {
         Destroy(epm.gameObject);
 
         messageBoxImg.gameObject.SetActive(true);
-        TextBoxManager.tbm.EnableTextBox(messageBoxImg.transform.GetChild(0).gameObject, "You've Won!", true);
+        List<string> endBattleMessages = new List<string>();
+        endBattleMessages.Add("You've Won!");
+        endBattleMessages.Add("The defeated enemies dropped " + totalGoldDrop + " Gold!");
+        TextBoxManager.tbm.EnableTextBox(messageBoxImg.transform.GetChild(0).gameObject, endBattleMessages.ToArray(), true);
 
     }
 
@@ -274,13 +295,15 @@ public class BattleManager : MonoBehaviour {
 
     // If the battle menu is active, it will be disabled and allow the player to resume movement.
     // Called from GridController's EnableMovement()
-    public void CheckDisableMenu()
+    public bool CheckDisableMenu()
     {
         if (battleMenu.menuActive)
         {
             battleMenu.menuActive = false;
             StartCoroutine(ClosingWindow());
+            return true;
         }
+        return false;
     }
 
     IEnumerator ClosingWindow()
