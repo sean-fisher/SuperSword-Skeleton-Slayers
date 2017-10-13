@@ -6,6 +6,7 @@ public class AreaEncounters : MonoBehaviour {
 
     public List<EnemyPartyManager> grasslandParties;
     public List<EnemyPartyManager> mountainParties;
+    public EnemyPartyManager bossParty;
 
     // Use this for initialization
     void Start () {
@@ -48,6 +49,11 @@ public class AreaEncounters : MonoBehaviour {
             }
             return GetRandomEncounter(currArea);
         }
+    }
+
+    public EnemyPartyManager GetFinalBoss()
+    {
+        return bossParty;
     }
 }
 
