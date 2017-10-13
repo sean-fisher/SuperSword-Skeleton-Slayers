@@ -130,6 +130,9 @@ public class BattleManager : MonoBehaviour {
         {
             epm = GameObject.Instantiate(areaEncounters.GetRandomEncounter(GameManager.currAreaName).gameObject)
                 .GetComponent<EnemyPartyManager>();
+        } else
+        {
+            epm = enemyEncounter;
         }
 
         int heroDisplayCount = allHeroStats.transform.childCount;
