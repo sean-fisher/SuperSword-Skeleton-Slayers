@@ -6,7 +6,17 @@ public class AreaEncounters : MonoBehaviour {
 
     public List<EnemyPartyManager> grasslandParties;
     public List<EnemyPartyManager> mountainParties;
+    public List<EnemyPartyManager> glacierParties;
+    public List<EnemyPartyManager> volcanoParties;
+    public List<EnemyPartyManager> desertParties;
+    public List<EnemyPartyManager> forestParties;
+    public List<EnemyPartyManager> iceCaveParties;
+    public List<EnemyPartyManager> pyramidParties;
+    public List<EnemyPartyManager> mountainCaveParties;
+    public List<EnemyPartyManager> lavaCaveParties;
+
     public EnemyPartyManager bossParty;
+    public EnemyPartyManager glacierEnemyChestEncounter;
 
     // Use this for initialization
     void Start () {
@@ -20,14 +30,41 @@ public class AreaEncounters : MonoBehaviour {
 
     int tries = 100;
 
-    public EnemyPartyManager GetRandomEncounter(AreaNames currArea)
+    public EnemyPartyManager GetRandomEncounter(ContinentType currArea)
     {
-        //Debug.Log(currArea);
+
         List<EnemyPartyManager> currAreaList = null;
         switch (currArea)
         {
-            case (AreaNames.MOUNTAIN):
+            case (ContinentType.GRASSLAND):
+                currAreaList = forestParties;
+                break;
+            case (ContinentType.MOUNTAIN):
                 currAreaList = mountainParties;
+                break;
+            case (ContinentType.GLACIER):
+                currAreaList = glacierParties;
+                break;
+            case (ContinentType.DESERT):
+                currAreaList = desertParties;
+                break;
+            case (ContinentType.VOLCANO):
+                currAreaList = volcanoParties;
+                break;
+            case (ContinentType.FOREST):
+                currAreaList = forestParties;
+                break;
+            case (ContinentType.MOUNTAINCAVE):
+                currAreaList = mountainCaveParties;
+                break;
+            case (ContinentType.LAVACAVE):
+                currAreaList = lavaCaveParties;
+                break;
+            case (ContinentType.PYRAMID):
+                currAreaList = pyramidParties;
+                break;
+            case (ContinentType.ICECAVE):
+                currAreaList = iceCaveParties;
                 break;
             default:
                 currAreaList = grasslandParties;
@@ -39,6 +76,7 @@ public class AreaEncounters : MonoBehaviour {
 
         if (occurrenceChance <= currAreaList[randPartyIndex].occurrenceRate)
         {
+            Debug.Log(currArea);
             return currAreaList[randPartyIndex];
         }
         else
@@ -51,16 +89,19 @@ public class AreaEncounters : MonoBehaviour {
         }
     }
 
+    public EnemyPartyManager GetChestEnemy(ContinentType whatRegion)
+    {
+        switch (whatRegion)
+        {
+            case (ContinentType.GLACIER):
+                return glacierEnemyChestEncounter;
+            default:
+                return null;
+        }
+    }
+
     public EnemyPartyManager GetFinalBoss()
     {
         return bossParty;
     }
-}
-
-public enum AreaNames
-{
-    GRASSLAND,
-    MOUNTAIN,
-    DESERT,
-    OCEAN
 }

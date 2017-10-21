@@ -27,20 +27,30 @@ public class MapGenerator : MonoBehaviour {
     public GameObject mountainTile;         // m
     public GameObject forestTile;           // f
     public GameObject treasureChest;        // c
+    public GameObject igloo;                // e
     public GameObject lockedTreasureChest;  // l
     public GameObject castle;               // .
 
     [Header("Entrances")]
     public GameObject darkForestEntrance;   // !
+    public GameObject iceMazeEntrance;      // @
+    public GameObject pyramidEntrance;      // #
+    public GameObject mountaincaveEntrance; // $
+    public GameObject lavaCaveEntrance;     // %
 
     [Header("NPCs")]
     public GameObject airshipSalesman;      // 0
+    public GameObject penguinSalesman;      // 1
+
 
                                             // EACH TILE TYPE MUST HAVE:
                                             //  Appropriate GameObject GetTileObj(...) code
                                             // CreateContinent(...) and CharIsGround(...) code if it is a ground type
 
-
+        
+    [Header("Which items appear on each continent?")]
+    public List<BaseItem> grasslandItems;
+    public List<BaseItem> glacierItems;
 
     // 2D character array represents the grid of tiles that comprises the world map (Grass, sand, etc.) 
     char[,] groundGrid;
@@ -107,11 +117,13 @@ public class MapGenerator : MonoBehaviour {
     IEnumerator WaitThenGenerate()
     {
         yield return null;
-        GenerateMap(128, 100, 5, 2.3f);
+        GenerateMap(80, 80, 5, 2.5f);
     }
 
     void GenerateMap(int width, int height, int numContinents, float continentSize)
     {
+        //Debug.Log(string.Format("Width {0}, height {1}, numContinents {2}, continentSize {3}", width, height, numContinents, continentSize));
+
         groundGrid = new char[width, height];
         walkLevelGrid = new char[width, height];
         dontCheckGrid = new char[width, height];
@@ -121,14 +133,13 @@ public class MapGenerator : MonoBehaviour {
         // A map must always have a starting zone, but the other continents are mostly random.
         // 
         ContinentType[] cTypes = new ContinentType[numContinents];
-        int rand = UnityEngine.Random.Range(0, numContinents);
-        cTypes[0] = ContinentType.STARTING_AREA;
+        cTypes[0] = ContinentType.GRASSLAND;
 
         // Make sure the continents are varied;
 
         cTypes[1] = ContinentType.DESERT;
         cTypes[2] = ContinentType.GLACIER;
-        cTypes[3] = ContinentType.MOUNTAINOUS;
+        cTypes[3] = ContinentType.MOUNTAIN;
         cTypes[4] = ContinentType.VOLCANO;
 
         MapCoor mapCenter = new MapCoor(mapWidth / 2, mapHeight / 2);
@@ -175,8 +186,6 @@ public class MapGenerator : MonoBehaviour {
         StartCoroutine(InstantiateTiles());
     }
 
-    List<Vector2> continentCenters = new List<Vector2>();
-
     void CreateContinent(Vector2 center, int largestRadius, int complexity, 
         ContinentType continentType, bool hasCoast = true)
     {
@@ -199,7 +208,7 @@ public class MapGenerator : MonoBehaviour {
         char groundType = 'g';
         switch (continentType)
         {
-            case (ContinentType.STARTING_AREA):
+            case (ContinentType.GRASSLAND):
                 if (GameManager.gm.leader == null)
                 {
                     GameManager.gm.GetComponent<HeroPartyManager>()
@@ -208,21 +217,25 @@ public class MapGenerator : MonoBehaviour {
                     dontCheckGrid[(int)center.x, (int)center.y + 2] = '!';
                     walkLevelGrid[(int)center.x - 5, (int)center.y] = 'c';
                     walkLevelGrid[(int)center.x - 6, (int)center.y] = 'l';
-                    walkLevelGrid[(int)center.x, (int)center.y - 8] = '.';
+                    //walkLevelGrid[(int)center.x, (int)center.y - 8] = '.';
                 } else
                 {
                 }
                 break;
-            case (ContinentType.MOUNTAINOUS):
+            case (ContinentType.MOUNTAIN):
+                dontCheckGrid[(int)center.x, (int)center.y + 2] = '$';
                 groundType = 'r'; // TODO
                 break;
             case (ContinentType.DESERT):
+                dontCheckGrid[(int)center.x, (int)center.y + 2] = '#';
                 groundType = 's'; // TODO
                 break;
             case (ContinentType.GLACIER):
+                dontCheckGrid[(int)center.x, (int)center.y + 2] = '@';
                 groundType = 'h'; // TODO
                 break;
             case (ContinentType.VOLCANO):
+                dontCheckGrid[(int)center.x, (int)center.y + 2] = '%';
                 groundType = 'o'; // TODO
                 break;
         }
@@ -236,14 +249,14 @@ public class MapGenerator : MonoBehaviour {
 
             int radius = largestRadius;
 
+            int randGeoFeature = UnityEngine.Random.Range(0, 13);
 
             // Create geographical features particular to the continentType; 
             // this is where the majority of the environmental features 
             // will be implemented
             switch (continentType)
             {
-                case (ContinentType.STARTING_AREA):
-                    int randGeoFeature = UnityEngine.Random.Range(0, 13);
+                case (ContinentType.GRASSLAND):
 
                     if (randGeoFeature < 6)
                     {
@@ -287,7 +300,21 @@ public class MapGenerator : MonoBehaviour {
                         // create nothing
                     }
                     break;
-                case (ContinentType.MOUNTAINOUS):
+                case (ContinentType.GLACIER):
+
+                    if (randGeoFeature < 5)
+                    {
+                        // Place a penguin salesman
+                        walkLevelGrid[((int)tempCenter.x) % mapWidth,
+                            ((int)tempCenter.y) % mapHeight] = '1';
+                    } else if (randGeoFeature < 10)
+                    {
+                        // Place an igloo
+                        walkLevelGrid[((int)tempCenter.x) % mapWidth, 
+                            ((int)tempCenter.y) % mapHeight] = 'e';
+                    }
+                    break;
+                case (ContinentType.MOUNTAIN):
                     // TODO: Make continent surrounded by mountains. This likely can't be done in this switch, 
                     // and will be implemented after the whole continent land mass has been created.
                     break;
@@ -296,7 +323,7 @@ public class MapGenerator : MonoBehaviour {
             if (circleNum  == complexity - 1)
             {
                 switch (continentType) {
-                    case (ContinentType.STARTING_AREA):
+                    case (ContinentType.GRASSLAND):
                         if (numAirshipSalesmenPlaced++ < numAirshipSalesmen)
                         {
                             MapCoor placeToPutAirship = 
@@ -310,6 +337,7 @@ public class MapGenerator : MonoBehaviour {
                             {
                                 placeToPutAirship.x += leftOrRight;
                             }
+                            placeToPutAirship.x -= leftOrRight;
                             if (leftOrRight < 0)
                             {
                                 featuresToPlaceOnMap.Add(new FeatureCenterPair(placeToPutAirship, FeatureTypes.AIRSHIP_SALESMAN));
@@ -703,6 +731,8 @@ public class MapGenerator : MonoBehaviour {
                 return sandTileDark;
             case ('g'):
                 return grassTile;
+            case ('e'):
+                return igloo;
             case ('f'):
                 return forestTile;
             case ('i'):
@@ -728,8 +758,18 @@ public class MapGenerator : MonoBehaviour {
                 return castle;
             case ('!'):
                 return darkForestEntrance;
+            case ('@'):
+                return iceMazeEntrance;
+            case ('#'):
+                return pyramidEntrance;
+            case ('$'):
+                return mountaincaveEntrance;
+            case ('%'):
+                return lavaCaveEntrance;
             case ('0'):
                 return airshipSalesman;
+            case ('1'):
+                return penguinSalesman;
             default:
                 if (tileType != '\0')
                 {
@@ -825,7 +865,6 @@ public class MapGenerator : MonoBehaviour {
 
     IEnumerator InstantiateTiles()
     {
-        Debug.Log(string.Format("R: {0}, D: {1}, O {2}, N: {3}", rCount, dCOunt, oCount, nCOunt));
         for (int x = 0; x < mapWidth; x++)
         {
             for (int y = 0; y < mapHeight; y++)
@@ -840,7 +879,7 @@ public class MapGenerator : MonoBehaviour {
 
 
                 tile = GetTileObj(walkLevelGrid[x, y], 1);
-                if (tile != null)
+                if (tile != null)// && dontCheckGrid[x, y] == '\0')
                 {
                     SetSortLayerByY sslby = tile.GetComponent<SetSortLayerByY>();
                     tile = GameObject.Instantiate(tile, transform);
@@ -859,13 +898,18 @@ public class MapGenerator : MonoBehaviour {
                 tile = GetTileObj(dontCheckGrid[x, y], 2);
                 if (tile != null)
                 {
-                    if (tile.name == waterTile.name)
-                    {
-                        Debug.Log("yes");
-                    }
+                    SetSortLayerByY sslby = tile.GetComponent<SetSortLayerByY>();
                     tile = GameObject.Instantiate(tile, transform);
-
-                    tile.transform.position = new Vector2(16 * x, -16 * y);
+                    if (sslby)
+                    {
+                        tile.transform.position = new Vector2(
+                            16 * x + sslby.spriteOffsetX,
+                            -16 * y + sslby.spriteOffsetY);
+                    }
+                    else
+                    {
+                        tile.transform.position = new Vector2(16 * x, -16 * y);
+                    }
                 }
             }
             yield return null;
@@ -939,9 +983,7 @@ public class MapGenerator : MonoBehaviour {
                 }
             }
         }
-
-        MapCoor featureCenter = new MapCoor(mapFeature[0].Length / 2, mapFeature.Length / 2);
-
+        
         for (int row = 0; row < mapFeature.Length; row++)
         {
             char[] rowOfChars = mapFeature[row].ToCharArray();
@@ -1017,9 +1059,15 @@ public enum ContinentType
     None,
     // Different continent types will have different enemy types, geographical features, art, etc.
 
-    STARTING_AREA,      // Grass, coast, forests, some mountains, airship or tunnel (to be implemented) can be found
-    MOUNTAINOUS,         // Surrounded by mountans, only accessible by air'
+    GRASSLAND,      // Grass, coast, forests, some mountains, airship or tunnel (to be implemented) can be found
+    MOUNTAIN,         // Surrounded by mountans, only accessible by air'
     GLACIER,
     DESERT,
-    VOLCANO
+    VOLCANO,
+    FOREST,
+    MOUNTAINCAVE,
+    ICECAVE,
+    LAVACAVE,
+    PYRAMID,
+    OCEAN
 }

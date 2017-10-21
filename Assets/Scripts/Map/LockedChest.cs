@@ -34,7 +34,6 @@ public class LockedChest : InteractableTile
 
                         opened = true;
                         heroOnTile = false;
-                        Debug.Log("Open Locked Chest");
                     }
                     else if (!GameManager.gm.gameObject.GetComponent<Inventory>().ContainsItem(key.GetItemData()))
                     {
@@ -49,7 +48,6 @@ public class LockedChest : InteractableTile
 
 
                         heroOnTile = false;
-                        Debug.Log("Attempted opening");
                     }
                     else {
                         Debug.Log("Something went wrong opening the lock!");
@@ -72,7 +70,6 @@ public class LockedChest : InteractableTile
         if (!opened)
         {
             heroOnTile = true;
-            Debug.Log("HeroOnTile");
         }
     }
 }

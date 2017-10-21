@@ -5,6 +5,16 @@ using UnityEngine;
 public class MazeGenerator : MonoBehaviour {
 
     public static MazeGenerator mazeGenerator;
+    public static bool inMaze;
+    public static char groundType;
+
+    public GameObject currMazeParent;
+
+    public GameObject forestMazeParent;
+    public GameObject mountainCaveParent;
+    public GameObject iceCaveParent;
+    public GameObject pyramidParent;
+    public GameObject lavaCaveParent;
 
     int mazeSize = 50;
     int mazeWidth = 64;
@@ -14,7 +24,13 @@ public class MazeGenerator : MonoBehaviour {
 
     public GameObject moneyChest;
     public GameObject swordChest;
-    public GameObject wallTile;
+    public GameObject forestWallTile;
+    public GameObject iceWallTile;
+    public GameObject pyramidWallTile;
+    public GameObject mountainWallTile;
+    public GameObject lavaWallTile;
+
+    GameObject wallTile;
 
     public GameObject entrance;
 
@@ -24,9 +40,9 @@ public class MazeGenerator : MonoBehaviour {
 
     Direction startPathDir;
 
-    ContinentType continentType;
-
     List<GameObject> objectsToAdd;
+
+    ContinentType currMaze;
 
 	// Use this for initialization
 	void Start () {
@@ -39,25 +55,112 @@ public class MazeGenerator : MonoBehaviour {
 		
 	}
 
+    public void EnableMazeParent(ContinentType mazeToEnter, bool disableIfFalse)
+    {
+        switch (mazeToEnter)
+        {
+            case (ContinentType.FOREST):
+                currMazeParent = forestMazeParent;
+                forestMazeParent.SetActive(disableIfFalse);
+                break;
+            case (ContinentType.ICECAVE):
+                currMazeParent = iceCaveParent;
+                currMazeParent.SetActive(disableIfFalse);
+                break;
+            case (ContinentType.PYRAMID):
+                currMazeParent = pyramidParent;
+                currMazeParent.SetActive(disableIfFalse);
+                break;
+            case (ContinentType.MOUNTAINCAVE):
+                currMazeParent = mountainCaveParent;
+                currMazeParent.SetActive(disableIfFalse);
+                break;
+            case (ContinentType.LAVACAVE):
+                currMazeParent = lavaCaveParent;
+                currMazeParent.SetActive(disableIfFalse);
+                break;
+        }
+    }
+
+    public static void SetGroundType(ContinentType currArea, bool isExiting)
+    {
+        switch (currArea)
+        {
+            case (ContinentType.MOUNTAINCAVE):
+                groundType = 'r';
+                break;
+            case (ContinentType.FOREST):
+                groundType = 'g';
+                break;
+            case (ContinentType.ICECAVE):
+                groundType = 'h';
+                break;
+            case (ContinentType.LAVACAVE):
+                groundType = 'o';
+                break;
+            case (ContinentType.PYRAMID):
+                groundType = 's';
+                break;
+            default:
+                groundType = 'g';
+                break;
+        }
+        RandomEncounterManager.currArea = currArea;
+        mazeGenerator.currMaze = currArea;
+        mazeGenerator.EnableMazeParent(currArea, !isExiting);
+    }
+
     public void GenerateMaze(ContinentType continentType, Vector2 enteredFrom)
     {
         Debug.Log("Generate Maze");
         objectsToAdd = new List<GameObject>();
-        this.continentType = continentType;
+
         this.enteredFrom = enteredFrom;
 
         switch (continentType)
         {
-            case (ContinentType.STARTING_AREA):
+            case (ContinentType.FOREST):
                 objectsToAdd.Add(moneyChest.gameObject);
                 objectsToAdd.Add(swordChest.gameObject);
+                groundType = 'g';
+                wallTile = forestWallTile;
+                currMazeParent = forestMazeParent;
+                break;
+            case (ContinentType.ICECAVE):
+                objectsToAdd.Add(moneyChest.gameObject);
+                objectsToAdd.Add(swordChest.gameObject);
+                groundType = 'h';
+                wallTile = iceWallTile;
+                currMazeParent = iceCaveParent;
+                break;
+            case (ContinentType.PYRAMID):
+                objectsToAdd.Add(moneyChest.gameObject);
+                objectsToAdd.Add(swordChest.gameObject);
+                groundType = 's';
+                wallTile = mountainWallTile;
+                currMazeParent = pyramidParent;
+                break;
+            case (ContinentType.MOUNTAINCAVE):
+                objectsToAdd.Add(moneyChest.gameObject);
+                objectsToAdd.Add(swordChest.gameObject);
+                groundType = 'd';
+                wallTile = mountainWallTile;
+                currMazeParent = mountainCaveParent;
+                break;
+            case (ContinentType.LAVACAVE):
+                objectsToAdd.Add(moneyChest.gameObject);
+                objectsToAdd.Add(swordChest.gameObject);
+                groundType = 'r';
+                wallTile = lavaWallTile;
+                currMazeParent = lavaCaveParent;
                 break;
             default:
-                Debug.Log("No continent typ provided");
+                Debug.Log("Invalid continent type provided");
                 objectsToAdd.Add(moneyChest.gameObject);
                 objectsToAdd.Add(swordChest.gameObject);
                 break;
         }
+        RandomEncounterManager.currArea = continentType;
 
 
         mazeArray = new char[mazeWidth, mazeHeight];
@@ -66,9 +169,6 @@ public class MazeGenerator : MonoBehaviour {
 
         branchPoints = new List<CoorPathLengthPair>();
 
-        BattleManager.hpm.MovePartyTo(new Vector2(
-            transform.position.x + mazeWidth / 2 * 16, 
-            transform.position.y + mazeWidth / 2 * -16));
         mazeArray[mazeWidth / 2, mazeHeight / 2] = 'p';
         walkLevelArray[mazeWidth / 2, mazeHeight / 2] = 'e';
         GeneratePathFrom(mazeWidth / 2, mazeHeight / 2, mazeSize, 'c');
@@ -80,6 +180,13 @@ public class MazeGenerator : MonoBehaviour {
         }
 
         StartCoroutine(InstantiateTiles());
+    }
+
+    public void PlacePartyAtMazeEntrance(ContinentType typeOfMaze)
+    {
+        BattleManager.hpm.MovePartyTo(new Vector2(
+            transform.position.x + mazeWidth / 2 * 16,
+            transform.position.y + mazeWidth / 2 * -16));
     }
 
     void GeneratePathFrom(int x, int y, int pathLength, char endItem = '\0')
@@ -189,7 +296,7 @@ public class MazeGenerator : MonoBehaviour {
                 GameObject tile = null;
                 
                 tile = GameObject.Instantiate(MapGenerator.mg.GetTileObj(
-                    'g'), transform);
+                    groundType), currMazeParent.transform);
                 tile.transform.position = new Vector2
                     (transform.position.x + 16 * x,
                     transform.position.y + -16 * y);
@@ -202,7 +309,7 @@ public class MazeGenerator : MonoBehaviour {
                         if (objectsToAdd.Count > 0 && objectsToAdd[0] != null)
                         {
                             tile = GameObject.Instantiate(
-                                objectsToAdd[0], transform);
+                                objectsToAdd[0], currMazeParent.transform);
                             objectsToAdd.RemoveAt(0);
                             tile.transform.position = new Vector2
                                 (transform.position.x + 16 * x,
@@ -212,15 +319,17 @@ public class MazeGenerator : MonoBehaviour {
                 if (walkLevelArray[x, y] == 'e')
                 {
                     tile = GameObject.Instantiate(
-                        entrance, transform);
+                        entrance, currMazeParent.transform);
                     tile.GetComponent<MapEntrance>().exitPosition = enteredFrom;
                     tile.transform.position = new Vector2
                         (transform.position.x + 16 * x,
                         transform.position.y + -16 * y);
+                    tile.GetComponent<MapEntrance>().mazeToGenerate 
+                        = GetContinentCorrespondingToMazeType(currMaze); 
                 }
                 else if (mazeArray[x, y] != 'p')
                     {
-                    tile = GameObject.Instantiate(wallTile, transform);
+                    tile = GameObject.Instantiate(wallTile, currMazeParent.transform);
                         tile.transform.position = new Vector2
                             (transform.position.x + 16 * x,
                             transform.position.y + -16 * y);
@@ -231,6 +340,24 @@ public class MazeGenerator : MonoBehaviour {
         }
     }
 
+    ContinentType GetContinentCorrespondingToMazeType(ContinentType mazeType)
+    {
+        switch (mazeType)
+        {
+            case (ContinentType.FOREST):
+                return ContinentType.GRASSLAND;
+            case (ContinentType.ICECAVE):
+                return ContinentType.GLACIER;
+            case (ContinentType.LAVACAVE):
+                return ContinentType.VOLCANO;
+            case (ContinentType.MOUNTAINCAVE):
+                return ContinentType.MOUNTAIN;
+            case (ContinentType.PYRAMID):
+                return ContinentType.DESERT;
+            default:
+                throw new System.Exception("Invalid maze exit type?");
+        }
+    }
 
     struct CoorPathLengthPair
     {

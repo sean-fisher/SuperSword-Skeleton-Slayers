@@ -5,9 +5,7 @@ using System.Reflection;
 
 public class NPCTile : InteractableTile
 {
-    public BaseItem treasure;
-
-    public string dialogueMessage;
+    
 
     public override void ActivateInteraction()
     {
@@ -19,7 +17,7 @@ public class NPCTile : InteractableTile
 
     protected virtual void NPCInteraction()
     {
-        SayLine(dialogueMessage);
+        SayLine("No message provided");
     }
 
     protected void SayLine(string line, bool yesNo = false)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AirshipSalesman : NPCTile {
+
     protected override void NPCInteraction()
     {
         GridController.partyCanMove = false;

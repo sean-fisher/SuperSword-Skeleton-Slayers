@@ -13,12 +13,11 @@ public class GridController : MonoBehaviour {
     public LayerMask wall;
     public LayerMask interactableTile;
 
-    MapCoor currCoor = new MapCoor();
+    protected MapCoor currCoor = new MapCoor();
 
     // Leader is 0, then 1, 2, etc. 
     // Used for making the party follow the leader.
     public int placeInParty;
-    SpriteRenderer sr;
 
     /** ANIMATION STATES:
      * 0: idle
@@ -37,7 +36,7 @@ public class GridController : MonoBehaviour {
     }
 
     public List<MoveDir> inputList = new List<MoveDir>();
-    Animator anim;
+    protected Animator anim;
 
     // Each grid space is 16 units wide; 1 unit represents one pixel. 
     // This always moves in increments of one pixel so as to 
@@ -45,13 +44,12 @@ public class GridController : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-		if (!debugEnabled && GameManager.gm.leader == null)
+		if (!debugEnabled && GameManager.gm && GameManager.gm.leader == null)
         {
             GameManager.gm.leader = this;
             TextBoxManager.player = this;
         }
         anim = GetComponent<Animator>();
-        sr = GetComponent<SpriteRenderer>();
 	}
 	
 	// Update is called once per frame
@@ -91,7 +89,6 @@ public class GridController : MonoBehaviour {
 
     public void SetCoor(MapCoor curr)
     {
-        Debug.Log(currCoor);
         if (curr.x < 0)
         {
             curr.x += MapGenerator.mapWidth;
@@ -334,31 +331,22 @@ public class GridController : MonoBehaviour {
             {
                 anim.SetInteger("WalkState", 0);
             }
-
-           // SetCoor(new MapCoor((int)tryDestination.x, (int)tryDestination.y));
+            
 
             if (GameManager.gm.leader == this && !debugEnabled)
             {
-                //char currGround = MapGenerator.mg.GetTile(transform.position, true);
                 if (encountersEnabled)
                 {
-                    battleActivated = RandomEncounterManager.AdvanceStepCount('\0');
+                    battleActivated = RandomEncounterManager.AdvanceStepCount(transform.position);
                 }
             }
-            Vector3 newPos = new Vector3(
-                currCoor.x * 16, currCoor.y * -16 + 4, transform.position.z);
-            //transform.position = newPos;
         }
-
-        //gameObject.transform.position = new Vector3((int)transform.position.x, (int)transform.position.y, (int)transform.position.z);
 
         if ( canMoveAfter && !battleActivated)
         {
             canMove = true;
             CheckTile(transform.position);
         }
-        
-       // sr.sortingOrder = -(int)transform.position.y;
     }
 
     Vector3 ClampToPixel(Vector3 unclamped)

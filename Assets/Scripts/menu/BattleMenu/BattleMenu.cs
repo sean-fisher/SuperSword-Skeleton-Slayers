@@ -149,9 +149,15 @@ public class BattleMenu : Menu {
                                     break;
                                 case (4):
                                     // Player chooses to wait
+                                    bm.AddWaitTurn(GetAttacker());
+                                    NextHeroSelectsAttack(true);
+                                    aPressed = false;
                                     break;
                                 case (5):
                                     // Player chooses to run
+                                    bm.AddRunTurn(GetAttacker());
+                                    NextHeroSelectsAttack(true);
+                                    aPressed = false;
                                     break;
                             }
                         }

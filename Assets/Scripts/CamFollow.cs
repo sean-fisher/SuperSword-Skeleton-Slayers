@@ -16,40 +16,42 @@ public class CamFollow : MonoBehaviour {
                  far = 1000f,
                  orthographicSize = 100;
     private float aspect;
-    private bool orthoOn = false;
 
     private void Start()
     {
         cam = GetComponent<Camera>();
 
         aspect = (float)Screen.width / (float)Screen.height;
-        ortho = Matrix4x4.Ortho(-orthographicSize * aspect, orthographicSize * aspect, -orthographicSize, orthographicSize, near, far);
+        ortho = Matrix4x4.Ortho(-orthographicSize * aspect, orthographicSize * aspect,
+            -orthographicSize, orthographicSize, near, far);
         perspective = Matrix4x4.Perspective(fov, aspect, near, far);
         cam.projectionMatrix = ortho;
         //blender = (MatrixBlender)GetComponent(typeof(MatrixBlender));
     }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            orthoOn = !orthoOn;
-            AirGroundViewSwitch(orthoOn);
-        }
-    }
-
+    
     private void LateUpdate()
     {
         if (targetToFollow)
         {
-            transform.position = new Vector3(targetToFollow.position.x, targetToFollow.position.y, transform.position.z);
+            if (isFlying)
+            {
+                transform.position = new Vector3(targetToFollow.position.x, targetToFollow.position.y - currDisplacement, transform.position.z);
+            } else
+            {
+                transform.position = new Vector3(targetToFollow.position.x, targetToFollow.position.y - currDisplacement, transform.position.z);
+            }
         }
 
     }
 
-    float zSpeed = 7950;
-    float rotSpeed = 15;
-    float fovSpeed = 135;
+    bool isFlying = false;
+    
+
+    public int displace = 0;
+    float currDisplacement = 0;
+    int displaceDest = 0;
+
+    AirshipTile airship;
 
     // Distance for z: -7950
     // Distance for rot: -15deg
@@ -57,36 +59,26 @@ public class CamFollow : MonoBehaviour {
 
     public void AirGroundViewSwitch(bool groundToAir)
     {
+        if (airship == null)
+        {
+            airship = GameObject.FindObjectOfType<AirshipTile>();
+        }
         if (!groundToAir)
         {
+            displaceDest = 0;
             // Switches perspective to overhead
             Quaternion notAngled = Quaternion.Euler(new Vector3(0, 0, 0));
-            BlendToMatrix(ortho, notAngled, .3f);
+            BlendToMatrix(ortho, notAngled, .5f);
+            isFlying = false;
         }
         else
         {
             // Switches perspective to angled, used for airship)
+            displaceDest = displace;
+            isFlying = true;
             Quaternion angled = Quaternion.Euler(new Vector3(-15, 0, 0));
             BlendToMatrix(perspective, angled, .8f);
         }
-    }
-
-    IEnumerator SwitchToGround()
-    {
-        while (transform.rotation.x < 0 || transform.position.z > -8000)
-        {
-            if (transform.rotation.x < 0)
-            {
-                transform.Rotate(new Vector3(rotSpeed * Time.deltaTime, 0, 0));
-            }
-            if (transform.position.z > -8000)
-            {
-                transform.position -= new Vector3(0, 0, zSpeed * Time.deltaTime);
-            }
-            yield return null;
-        }
-        transform.position = new Vector3(transform.position.x, transform.position.y, -8000);
-        transform.rotation = Quaternion.Euler(new Vector3(0, transform.rotation.y, transform.rotation.z));
     }
 
     static Matrix4x4 MatrixLerp(Matrix4x4 from, Matrix4x4 to, float time)
@@ -102,11 +94,18 @@ public class CamFollow : MonoBehaviour {
         float startTime = Time.time;
         while (Time.time - startTime < duration)
         {
-            cam.projectionMatrix = MatrixLerp(src, dest, (Time.time - startTime) / duration);
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, (Time.time - startTime) / duration);
+            currDisplacement = Mathf.Lerp(currDisplacement, displaceDest, (Time.time - startTime) / duration);
+
+            cam.projectionMatrix = MatrixLerp(src, dest, 
+                (Time.time - startTime) / duration);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 
+                (Time.time - startTime) / duration);
+            airship.transform.rotation = Quaternion.Lerp(transform.rotation, 
+                targetRotation, (Time.time - startTime) / duration);
             yield return 1;
         }
         cam.projectionMatrix = dest;
+        currDisplacement = displace;
     }
 
     Coroutine BlendToMatrix(Matrix4x4 targetMatrix, Quaternion targetRotation, float duration)

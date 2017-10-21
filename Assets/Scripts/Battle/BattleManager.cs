@@ -39,6 +39,7 @@ public class BattleManager : MonoBehaviour {
     public StandardAttack defaultAttackPrefab;
     public Wait defaultWaitPrefab;
     public Defend defaultDefendPrefab;
+    public Run defaultRunPrefab;
 
     int totalGoldDrop = 0;
 
@@ -128,8 +129,10 @@ public class BattleManager : MonoBehaviour {
 
         if (enemyEncounter == null)
         {
-            epm = GameObject.Instantiate(areaEncounters.GetRandomEncounter(GameManager.currAreaName).gameObject)
+            epm = GameObject.Instantiate(areaEncounters
+                .GetRandomEncounter(RandomEncounterManager.currArea).gameObject)
                 .GetComponent<EnemyPartyManager>();
+            Debug.Log("encounter");
         } else
         {
             epm = enemyEncounter;
@@ -214,6 +217,7 @@ public class BattleManager : MonoBehaviour {
             (float)(Screen.height / 5.05f));
         yield return new WaitForSeconds(.5f);
 
+
         // Enable the enemy sprites
         for (int i = 0; i < enviroImg.transform.childCount; i++)
         {
@@ -222,8 +226,12 @@ public class BattleManager : MonoBehaviour {
 
         messageBoxImg.gameObject.SetActive(true);
         allHeroStats.gameObject.SetActive(true);
-        yield return new WaitForSeconds(1);
 
+        while (TextBoxManager.tbm.isTyping)
+        {
+            yield return null;
+        }
+        yield return new WaitForSeconds(1);
         // Player now chooses actions
 
         messageBoxImg.gameObject.SetActive(false);
@@ -249,6 +257,20 @@ public class BattleManager : MonoBehaviour {
     public void AddDefendTurn(BaseCharacter defender)
     {
         turnList.Add(new Turn(defender, null, defaultDefendPrefab));
+    }
+
+    public void AddRunTurn(BaseCharacter runner)
+    {
+        turnList.Add(new Turn(runner, null, defaultRunPrefab));
+    }
+
+    public void RunAway()
+    {
+        turnList.Clear();
+
+        Destroy(epm.gameObject);
+
+        CheckDisableMenu();
     }
 
     public void CheckWin()
@@ -293,6 +315,13 @@ public class BattleManager : MonoBehaviour {
     {
         messageBoxImg.gameObject.SetActive(true);
         TextBoxManager.tbm.EnableTextBox(messageBoxImg.transform.GetChild(0).gameObject, "Game Over...");
+        StartCoroutine(WaitThenReturnToTitle());
+    }
+
+    IEnumerator WaitThenReturnToTitle()
+    {
+        yield return new WaitForSeconds(2);
+        GameObject.FindObjectOfType<SceneSwitcher>().SwitchToOtherScene("Title");
     }
 
 
@@ -311,6 +340,12 @@ public class BattleManager : MonoBehaviour {
 
     IEnumerator ClosingWindow()
     {
+        int enemyCount = enviroImg.transform.childCount;
+        Debug.Log(enemyCount);
+        for (int i = 0; i < enemyCount; i++)
+        {
+            Destroy(enviroImg.transform.GetChild(i).gameObject);
+        }
         yield return new WaitForSeconds(.8f);
         backgroundWindow.gameObject.SetActive(false);
         enviroImg.gameObject.SetActive(false);
@@ -319,11 +354,12 @@ public class BattleManager : MonoBehaviour {
         messageBoxImg.gameObject.SetActive(false);
         allHeroStats.gameObject.SetActive(false);
 
+
         int heroDisplayCount = allHeroStats.transform.childCount;
 
         for (int i = 0; i < heroDisplayCount; i++)
         {
-            Destroy(allHeroStats.transform.GetChild(0).gameObject);
+            Destroy(allHeroStats.transform.GetChild(i).gameObject);
         }
         for (int i = 0; i < hpm.activePartyMembers.Count; i++)
         {
@@ -332,7 +368,7 @@ public class BattleManager : MonoBehaviour {
         int attackCount = transform.childCount;
         for (int i = 0; i < attackCount; i++)
         {
-            Destroy(transform.GetChild(0).gameObject);
+            Destroy(transform.GetChild(i).gameObject);
         }
     }
 

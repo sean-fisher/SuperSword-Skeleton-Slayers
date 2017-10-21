@@ -17,7 +17,8 @@ public class CastleDoor : InteractableTile
                 if (GameManager.gm.gameObject.GetComponent<Inventory>().ContainsItem(key.GetItemData()))
                 {
                     BattleManager.bManager.StartBattle(new string[] { "The skeleton king is currently under maintenance, so have a slime instead" }, GameObject.Instantiate(BattleManager.bManager.areaEncounters.GetFinalBoss().gameObject).GetComponent<EnemyPartyManager>());
-             
+
+                    heroOnTile = false;
                 }
                 else
                 {

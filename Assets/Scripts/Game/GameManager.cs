@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour {
     public GridController leader;
 
     public static GameManager gm;
-    public static AreaNames currAreaName;
+    public static ContinentType currAreaName;
     public Inventory inventory;
 
     public GameObject cursor;
@@ -25,13 +25,15 @@ public class GameManager : MonoBehaviour {
 
     public GameObject circleOfLight;
 
+    public AudioSource musicPlayer;
+
 
     private void Start()
     {
         fadeTransition = GetComponent<FadeTransition>();
         fsTransition = GetComponent<FourSideTransition>();
         gm = this;
-        currAreaName = AreaNames.GRASSLAND;
+        currAreaName = ContinentType.GRASSLAND;
 
         allEffects = GetComponent<AllEffects>();
         inventory = GetComponent<Inventory>();
@@ -53,10 +55,10 @@ public class GameManager : MonoBehaviour {
 
     public void GoThruDoor(MapEntrance mapEntrance, bool createMaze = false)
     {
-        StartCoroutine(GoingThruDoor(mapEntrance, createMaze));
+        StartCoroutine(GoingThruDoor(mapEntrance));
     }
 
-    IEnumerator GoingThruDoor(MapEntrance mapEntrance, bool createMaze = false)
+    IEnumerator GoingThruDoor(MapEntrance mapEntrance)
     {
         BattleManager.hpm.DisablePartyMovement();
         GridController.partyCanMove = false;
@@ -91,20 +93,31 @@ public class GameManager : MonoBehaviour {
         {
             SceneManager.LoadScene(mapEntrance.sceneToLoad, LoadSceneMode.Single);
         }
-        else if (!createMaze)
+        else if (!mapEntrance.generateMap)
         {
-            // Move party to exit, usually on world map
-            BattleManager.hpm.MovePartyTo(new Vector2(mapEntrance.exitPosition.x, mapEntrance.exitPosition.y - 4));
-
-            // Destroy the maze
-            Transform mazeGeneratorTransform;
-            mazeGeneratorTransform = MazeGenerator.mazeGenerator.transform;
-
-            StartCoroutine(DestroyingChildrenOf(mazeGeneratorTransform));
+            if (!mapEntrance.entersIntoMaze)
+            {
+                // Move party to exit, usually on world map
+                BattleManager.hpm.MovePartyTo(new Vector2(mapEntrance.exitPosition.x, mapEntrance.exitPosition.y - 4));
+                MazeGenerator.inMaze = false;
+                MazeGenerator.SetGroundType(mapEntrance.mazeToGenerate, true);
+            } else
+            {
+                // enter maze that has already been generated
+                MazeGenerator.inMaze = true;
+                MazeGenerator.mazeGenerator.PlacePartyAtMazeEntrance
+                    (ContinentType.GRASSLAND);
+                MazeGenerator.SetGroundType(mapEntrance.mazeToGenerate, false);
+            }
         } else
         {
+            // generate new maze and enter it
+            MazeGenerator.inMaze = true;
             MazeGenerator.mazeGenerator.GenerateMaze(mapEntrance.mazeToGenerate,
                 GameManager.gm.leader.gameObject.transform.position);
+            mapEntrance.generateMap = false;
+            MazeGenerator.mazeGenerator.PlacePartyAtMazeEntrance(ContinentType.FOREST);
+            MazeGenerator.SetGroundType(mapEntrance.mazeToGenerate, false);
         }
         for (int i = 1; i < BattleManager.hpm.activePartyMembers.Count; i++)
         {
@@ -118,7 +131,21 @@ public class GameManager : MonoBehaviour {
         {
             circleOfLight.SetActive(false);
         }
+        bool changeSong = false;
+        if (mapEntrance.playOnExit != null && mapEntrance.playOnExit != musicPlayer.clip)
+        {
+            changeSong = true;
+            musicPlayer.Stop();
+        }
+
         yield return new WaitForSeconds(1);
+
+        if (changeSong)
+        {
+            musicPlayer.clip = mapEntrance.playOnExit;
+            musicPlayer.Play();
+        }
+
         while (st.TransitionOut())
         {
             yield return null;
@@ -193,6 +220,7 @@ public class GameManager : MonoBehaviour {
             SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
         } else
         {
+            Debug.Log("this shouldn't be called");
             MazeGenerator.mazeGenerator.GenerateMaze(mazeType, 
                 GameManager.gm.leader.gameObject.transform.position);
         }
