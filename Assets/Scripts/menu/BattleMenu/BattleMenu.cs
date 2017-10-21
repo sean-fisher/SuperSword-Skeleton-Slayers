@@ -149,9 +149,15 @@ public class BattleMenu : Menu {
                                     break;
                                 case (4):
                                     // Player chooses to wait
+                                    bm.AddWaitTurn(GetAttacker());
+                                    NextHeroSelectsAttack(true);
+                                    aPressed = false;
                                     break;
                                 case (5):
                                     // Player chooses to run
+                                    bm.AddRunTurn(GetAttacker());
+                                    NextHeroSelectsAttack(true);
+                                    aPressed = false;
                                     break;
                             }
                         }
@@ -529,6 +535,8 @@ public class BattleMenu : Menu {
     void ExecuteAttacks()
     {
         List<Turn> turnList = bm.turnList;
+        
+        turnList.Sort((t1, t2) => ( t1.attacker.currentEVA - t2.attacker.currentEVA));
 
         for (int i = 0; i < turnList.Count; i++) 
         {
@@ -557,9 +565,8 @@ public class BattleMenu : Menu {
         bm.messageBoxImg.gameObject.SetActive(false);
         menuLayer = 1;
         NextHeroSelectsAttack(false);
-
-        //UpdateCursor()doggy
     }
+    
 
     void UpdatePanel(int heroIndex)
     {

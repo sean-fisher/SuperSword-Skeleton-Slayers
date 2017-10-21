@@ -4,39 +4,93 @@ using UnityEngine;
 
 public class AirshipTile : InteractableTile {
 
-    AirshipController ac;
+    GridController gc;
+    public static bool canBoard = false;
 
-    float raiseSpeed = 32;
+    public bool isFlying = false;
+    public int liftSpeed;
+
+    private void Update()
+    {
+        if (Input.GetButtonDown("AButton") && gc.canMove)
+        {
+            SwitchGroundAir();
+        }
+    }
 
     private void Start()
     {
-        ac = GetComponent<AirshipController>();
+        gc = GetComponent<GridController>();
     }
 
     public override void ActivateInteraction()
     {
-        StartCoroutine(MoveHeroesToShip());
+        if (canBoard)
+        {
+            StartCoroutine(MoveHeroesToShip());
+        }
     }
 
     IEnumerator MoveHeroesToShip()
     {
         for (int i = 0; i < BattleManager.hpm.activePartyMembers.Count; i++)
         {
-            BattleManager.hpm.activePartyMembers[i].GetComponent<SpriteRenderer>().enabled = false;
+            BattleManager.hpm.activePartyMembers[i].GetComponent<SpriteRenderer>
+                ().enabled = false;
+            BattleManager.hpm.activePartyMembers[i].GetComponent<GridController>
+                ().enabled = false;
         }
+        GameManager.gm.leader.enabled = false;
         yield return null;
-        ac.canMove = true;
-        GridController.encountersEnabled = false;
-        GridController.clampToPixel = false;
-        GridController.partyCanMove = false;
-        Camera.main.GetComponent<CamFollow>().AirGroundViewSwitch(true);
-        Camera.main.GetComponent<CamFollow>().targetToFollow = gameObject.transform;
-        ac.speed = 100;
+        gc.canMove = true;
+        Camera.main.GetComponent<CamFollow>().targetToFollow = 
+            gameObject.transform;
+        AirshipController.at = this;
+        //gc.speed = 100;
+    }
 
-        /*while (transform.position.z < 16)
+    public void SwitchGroundAir()
+    {
+        if (isFlying)
         {
-            transform.position += new Vector3(0, 0, raiseSpeed * Time.deltaTime);
-            yield return null;
-        }*/
+            isFlying = false;
+            Debug.Log("Air -> Ground");
+            GridController.encountersEnabled = true;
+            GridController.clampToPixel = true;
+            GridController.partyCanMove = false;
+            Camera.main.GetComponent<CamFollow>().AirGroundViewSwitch(false);
+            StartCoroutine(MoveVert(false));
+        } else
+        {
+            isFlying = true;
+            Debug.Log("Ground -> Air");
+            Camera.main.GetComponent<CamFollow>().AirGroundViewSwitch(true);
+            StartCoroutine(MoveVert(true));
+        }
+    }
+
+    IEnumerator MoveVert(bool moveUp)
+    {
+        if (moveUp)
+        {
+            while (transform.position.z > -16)
+            {
+                transform.position -= new Vector3(0, -Time.deltaTime * liftSpeed * 2, Time.deltaTime * liftSpeed);
+                yield return null;
+            }
+            transform.position = new Vector3(transform.position.x, transform.position.y, -16);
+            GridController.encountersEnabled = false;
+            GridController.clampToPixel = false;
+            GridController.partyCanMove = false;
+
+        } else
+        {
+            while (transform.position.z < 0)
+            {
+                transform.position += new Vector3(0, -Time.deltaTime * liftSpeed * 2, Time.deltaTime * liftSpeed);
+                yield return null;
+            }
+            transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+        }
     }
 }

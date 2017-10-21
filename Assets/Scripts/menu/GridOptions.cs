@@ -34,6 +34,9 @@ public abstract class GridOptions : MonoBehaviour {
 
     public List<GridOptions> menuOptions;
 
+    public int displaceCursorByOneOverThisTimesScreenWidth = 17;
+    public float displaceCursorByOneOverThisTimesScreenWidthY = 0;
+
     // Open a submenu
     protected virtual void MakeMenuSelection(int menuIndex)
     {
@@ -133,21 +136,26 @@ public abstract class GridOptions : MonoBehaviour {
     public abstract void CloseMenu();
 
     // Move the cursor to a RectTransform (i.e. an enemy's image)
-    protected void UpdateCursor(RectTransform[] visibleRectArr, int newIndex, int cursorNum = 0, float offsetNum = 0)
+    protected void UpdateCursor(RectTransform[] visibleRectArr, 
+        int newIndex, int cursorNum = 0, float offsetNum = 0)
     {
         Vector3 optionPosition = Vector3.zero;
 
         // Places the cursor at the position of the chosen option, but offset to the left
-        if (newIndex - cursorMarker < visibleRectArr.Length && newIndex - cursorMarker > -1)
+        if (newIndex - cursorMarker < visibleRectArr.Length 
+            && newIndex - cursorMarker > -1)
         {
-            optionPosition = visibleRectArr[newIndex - cursorMarker].transform.position;
+            optionPosition = visibleRectArr[
+                newIndex - cursorMarker].transform.position;
         }
         else
         {
             optionPosition = visibleRectArr[newIndex % visibleSize].transform.position;
         }
 
-        cursor.transform.position = new Vector3(optionPosition.x - (float)(Screen.width / 17) + offsetNum, optionPosition.y + 4);
+        cursor.transform.position = new Vector3(optionPosition.x - (float)
+            (Screen.width / displaceCursorByOneOverThisTimesScreenWidth) + offsetNum, 
+            optionPosition.y + 4 + (Screen.height * displaceCursorByOneOverThisTimesScreenWidthY / 17));
 
         tempCursor = newIndex;
         cursorMoved = true;

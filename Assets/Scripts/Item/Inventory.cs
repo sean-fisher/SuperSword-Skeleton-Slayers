@@ -5,13 +5,17 @@ using UnityEngine;
 public class Inventory : MonoBehaviour {
 
     // The key is the ItemID, the second is the number of that item.
-    public static Dictionary<int, int> allItems = new Dictionary<int, int>(); // Every item ID in the inventory along with the number of said item
+
+    // Every item ID in the inventory along with the number of said item
+    public static Dictionary<int, int> allItems = new Dictionary<int, int>(); 
     public static Dictionary<int, int> equipment = new Dictionary<int, int>();
-    public static ItemData[] unsortedList = new ItemData[16]; // Items the player has, in the order they appear in the item window
+
+    // Items the player has, in the order they appear in the item window
+    public static ItemData[] unsortedList = new ItemData[16]; 
+
     int emptySpot = 0;
 
-    // Used for retrieving an item prefab based on its ID
-    //public BaseItem[] allItemsInGame = new BaseItem[150];
+    public static int partyGold;
 
     // Equippables for each character stored here for equip menu access. 
     // The number represents a particular hero ID, not his party position
@@ -20,12 +24,16 @@ public class Inventory : MonoBehaviour {
     public List<EquipData> monkEquips = new List<EquipData>();
     public List<EquipData> ninjaEquips = new List<EquipData>();
     public List<EquipData> chefEquips = new List<EquipData>();
-
-    public int partyGold = 0;
+    
 
     // If items are removed from the list such that there is an empty space in unsortedList, 
     // this keeps track of where the item should be added to unsortedList.
     // @return true if the inventory already had this item or was null, false if new item
+
+    public bool ContainsItem(ItemData item)
+    {
+        return allItems.ContainsKey(item.itemID);
+    }
 
     public bool AddToInventory(ItemData newItem)
     {
@@ -243,6 +251,33 @@ public class Inventory : MonoBehaviour {
         {
             this.item = item;
             this.num = num;
+        }
+    }
+
+    public static bool SpendGold(int goldSpent)
+    {
+        partyGold -= goldSpent;
+
+        if (partyGold < 0)
+        {
+            partyGold = 0;
+            return false;
+        }
+        return true;
+    }
+
+
+    public static bool GainGold(int goldSpent)
+    {
+        if (goldSpent < 0)
+        {
+            return false;
+        }
+        else
+        {
+            partyGold += goldSpent;
+
+            return true;
         }
     }
 }

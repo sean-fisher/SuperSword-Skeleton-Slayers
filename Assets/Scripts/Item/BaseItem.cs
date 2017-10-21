@@ -5,30 +5,8 @@ using System.Collections.Generic;
 [System.Serializable]
 public abstract class BaseItem : MonoBehaviour {
     
-
-    /*public string ItemName {
-        get { return itemData.itemName; }
-        set { itemData.itemName = value; }
-    }
-
-    public string ItemDescription {
-        get { return itemData.itemDescription; }
-        set { itemData.itemDescription = value; }
-    }
-
-    public int ItemID {
-        get { return itemData.itemID; }
-        set { itemData.itemID = value; }
-    }
-
-    public ItemTypes ItemType {
-        get { return itemData.itemType; }
-        set { itemData.itemType = value; }
-    }*/
-
     public abstract ItemData GetItemData();
 }
-
 
 [System.Serializable]
 public enum ItemTypes
@@ -44,6 +22,7 @@ public abstract class ItemData
     public string itemName;
     public string itemDescription;
     public int itemID;
+    public int itemCost;
 
     public ItemTypes itemType;
 

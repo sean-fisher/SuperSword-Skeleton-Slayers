@@ -31,7 +31,7 @@ public class ActivateTextAtLine : MonoBehaviour {
             textManager.ReloadScript(this.activeText);
             textManager.currentLine = startLine;
             textManager.endLine = endLine;
-            textManager.EnableTextBox();
+            //textManager.EnableTextBox();
 
             
 
@@ -56,7 +56,7 @@ public class ActivateTextAtLine : MonoBehaviour {
             textManager.ReloadScript(this.activeText);
             textManager.currentLine = startLine;
             textManager.endLine = endLine;
-            textManager.EnableTextBox();
+            //textManager.EnableTextBox();
             
             if (destroyWhenFinished)
             {

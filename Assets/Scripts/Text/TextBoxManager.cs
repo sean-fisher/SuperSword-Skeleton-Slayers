@@ -110,7 +110,8 @@ public class TextBoxManager : MonoBehaviour {
                         yesNoPicked = true;
                     }
 
-                    // If the battle was just won, enable the player movement and disable the UI
+                    // If the battle was just won, 
+                    // enable the player movement and disable the UI
                     if (BattleManager.hasWon)
                     {
                         BattleManager.hasWon = false;
@@ -119,21 +120,45 @@ public class TextBoxManager : MonoBehaviour {
                 }
                 else
                 {
-                    if (currentLine < textLines.Length  -1)
+                    Debug.Log("Advance line " + currentLine + " " + textLines.Length);
+                    if (currentLine < textLines.Length)
                     {
+                        Debug.Log("Advance array");
                         StartCoroutine(TextScroll(textLines[currentLine]));
+                    } else
+                    {
+                        DisableTextBox();
+
+                        alreadyPressed = false;
+                        if (yesNoOptions && yesNoOptions.activeSelf)
+                        {
+                            yesNoPicked = true;
+                        }
+
+                        // If the battle was just won, 
+                        // enable the player movement and disable the UI
+                        if (BattleManager.hasWon)
+                        {
+                            BattleManager.hasWon = false;
+                            BattleManager.bManager.CheckDisableMenu();
+                        }
                     }
                 }
             }
-            else if (isTyping && !cancelTyping)
+            else if (isTyping && !cancelTyping && !typingStartedThisFrame)
             {
                 cancelTyping = true;
             }
         }
         
+        if (yesNoOptions.activeSelf)
+        {
+            CheckInputSimple();
+        }
 	}
-
-    private IEnumerator TextScroll (string lineOfText)
+    bool typingStartedThisFrame = false;
+    
+    private IEnumerator TextScroll (string lineOfText, bool yesNo = false)
     {
         isTyping = true;
         //yield return new WaitForEndOfFrame();
@@ -141,15 +166,25 @@ public class TextBoxManager : MonoBehaviour {
         int letterIndex = 0;
         activeText.text = "";
         cancelTyping = false;
+
         while (isTyping && !cancelTyping && (letterIndex < lineOfText.Length - 1))
         {
             activeText.text += lineOfText[letterIndex];
             letterIndex++;
             yield return new WaitForSeconds(.01f / (typingSpeed + .1f));
+            typingStartedThisFrame = false;
         }
         activeText.text = lineOfText;
+        yield return new WaitForSeconds(.1f);
         isTyping = false;
         cancelTyping = false;
+
+        if (yesNo)
+        {
+            yesNoOptions.SetActive(true);
+            cursor.SetActive(true);
+            UpdateCursor(0);
+        }
     }
 
     public bool GetAlreadyPressed()
@@ -157,9 +192,11 @@ public class TextBoxManager : MonoBehaviour {
         return alreadyPressed;
     }
 
-    public void EnableTextBox(GameObject textBox = null, string text = null, bool canAdvance = true)
+    public void EnableTextBox(GameObject textBox = null, string text = null, bool canAdvance = true, bool yesNo = false, bool enableAfter = false)
     {
         this.canAdvance = canAdvance;
+        enableOnDisable = enableAfter;
+        typingStartedThisFrame = true;
 
         if (textBox)
         {
@@ -179,14 +216,24 @@ public class TextBoxManager : MonoBehaviour {
         }
         if (text == null)
         {
-            StartCoroutine(TextScroll(textLines[currentLine]));
+            StartCoroutine(TextScroll(textLines[currentLine], yesNo));
         } else
         {
-            StartCoroutine(TextScroll(text));
+            StartCoroutine(TextScroll(text, yesNo));
         }
     }
 
-    public void EnableTextBox(string text, bool enableOnDisable = true, bool canAdvance = true)
+    public void EnableTextBox(GameObject textBox = null, string[] texts = null, bool canAdvance = true, bool yesNo = false)
+    {
+        this.canAdvance = canAdvance;
+        textLines = texts;
+        currentLine = 0;
+        endLine = texts.Length;
+        StartCoroutine(TextScroll(textLines[currentLine], yesNo));
+    }
+
+    public void EnableTextBox(string text, bool enableOnDisable = true, 
+        bool canAdvance = true)
     {
         textBox.SetActive(true);
         isActive = true;
@@ -284,9 +331,17 @@ public class TextBoxManager : MonoBehaviour {
         textBox.SetActive(false);
         isActive = false;
         activeText.text = "";
+        if (yesNoOptions.activeSelf)
+        {
+            yesNoOptions.SetActive(false);
+            cursor.SetActive(false);
+
+            yesNoPicked = true;
+        }
 
         if (enableOnDisable)
         {
+            player = GameManager.gm.leader;
             if (player)
             {
                 player.EnableMovement();
@@ -341,5 +396,16 @@ public class TextBoxManager : MonoBehaviour {
         yield return new WaitForSeconds(1);
         convoRunning = false;
         fadeText.enabled = false;
+    }
+
+    public int GetPlayerChoice()
+    {
+        if (!yesNoPicked)
+        {
+            return -1;
+        } else
+        {
+            return ynCursor;
+        }
     }
 }
