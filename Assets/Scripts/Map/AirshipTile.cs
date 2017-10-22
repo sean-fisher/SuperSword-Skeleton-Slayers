@@ -53,7 +53,6 @@ public class AirshipTile : InteractableTile {
     {
         if (isFlying)
         {
-            isFlying = false;
             Debug.Log("Air -> Ground");
             GridController.encountersEnabled = true;
             GridController.clampToPixel = true;
@@ -62,7 +61,6 @@ public class AirshipTile : InteractableTile {
             StartCoroutine(MoveVert(false));
         } else
         {
-            isFlying = true;
             Debug.Log("Ground -> Air");
             Camera.main.GetComponent<CamFollow>().AirGroundViewSwitch(true);
             StartCoroutine(MoveVert(true));
@@ -78,7 +76,9 @@ public class AirshipTile : InteractableTile {
                 transform.position -= new Vector3(0, -Time.deltaTime * liftSpeed * 2, Time.deltaTime * liftSpeed);
                 yield return null;
             }
-            transform.position = new Vector3(transform.position.x, transform.position.y, -16);
+            transform.position = new Vector3(transform.position.x, 
+                transform.position.y, -16);
+            RoundPositionToSixteens();
             GridController.encountersEnabled = false;
             GridController.clampToPixel = false;
             GridController.partyCanMove = false;
@@ -90,7 +90,20 @@ public class AirshipTile : InteractableTile {
                 transform.position += new Vector3(0, -Time.deltaTime * liftSpeed * 2, Time.deltaTime * liftSpeed);
                 yield return null;
             }
-            transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+            transform.position = new Vector3(transform.position.x, (int) transform.position.y, 0);
+            RoundPositionToSixteens();
         }
+        isFlying = moveUp;
+    }
+
+    void RoundPositionToSixteens()
+    {
+        float xCoor = transform.position.x / 16;
+        xCoor = Mathf.Round(xCoor);
+        float yCoor = (transform.position.y) / 16;
+        yCoor = Mathf.Round(yCoor);
+
+        transform.position = new Vector3(xCoor * 16, yCoor * 16, transform.position.z);
+        
     }
 }

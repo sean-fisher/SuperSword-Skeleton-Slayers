@@ -57,6 +57,7 @@ public class MazeGenerator : MonoBehaviour {
 
     public void EnableMazeParent(ContinentType mazeToEnter, bool disableIfFalse)
     {
+        Debug.Log(mazeToEnter + " " + disableIfFalse);
         switch (mazeToEnter)
         {
             case (ContinentType.FOREST):
@@ -76,6 +77,26 @@ public class MazeGenerator : MonoBehaviour {
                 currMazeParent.SetActive(disableIfFalse);
                 break;
             case (ContinentType.LAVACAVE):
+                currMazeParent = lavaCaveParent;
+                currMazeParent.SetActive(disableIfFalse);
+                break;
+            case (ContinentType.GRASSLAND):
+                currMazeParent = forestMazeParent;
+                forestMazeParent.SetActive(disableIfFalse);
+                break;
+            case (ContinentType.DESERT):
+                currMazeParent = iceCaveParent;
+                currMazeParent.SetActive(disableIfFalse);
+                break;
+            case (ContinentType.GLACIER):
+                currMazeParent = pyramidParent;
+                currMazeParent.SetActive(disableIfFalse);
+                break;
+            case (ContinentType.MOUNTAIN):
+                currMazeParent = mountainCaveParent;
+                currMazeParent.SetActive(disableIfFalse);
+                break;
+            case (ContinentType.VOLCANO):
                 currMazeParent = lavaCaveParent;
                 currMazeParent.SetActive(disableIfFalse);
                 break;

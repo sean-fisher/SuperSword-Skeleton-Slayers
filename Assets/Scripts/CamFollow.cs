@@ -48,8 +48,9 @@ public class CamFollow : MonoBehaviour {
     
 
     public int displace = 0;
-    float currDisplacement = 0;
-    int displaceDest = 0;
+    public float currDisplacement = 0;
+    public int displaceDest = 0;
+    
 
     AirshipTile airship;
 
@@ -66,7 +67,7 @@ public class CamFollow : MonoBehaviour {
         if (!groundToAir)
         {
             displaceDest = 0;
-            // Switches perspective to overhead
+            // Switches perspective to ortho overhead
             Quaternion notAngled = Quaternion.Euler(new Vector3(0, 0, 0));
             BlendToMatrix(ortho, notAngled, .5f);
             isFlying = false;
@@ -105,7 +106,7 @@ public class CamFollow : MonoBehaviour {
             yield return 1;
         }
         cam.projectionMatrix = dest;
-        currDisplacement = displace;
+        currDisplacement = displaceDest;
     }
 
     Coroutine BlendToMatrix(Matrix4x4 targetMatrix, Quaternion targetRotation, float duration)

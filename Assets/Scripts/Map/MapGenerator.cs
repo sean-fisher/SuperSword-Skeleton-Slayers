@@ -59,6 +59,8 @@ public class MapGenerator : MonoBehaviour {
     // 2D character array represents the grid of tiles that will not ever be checked in the algo
     char[,] dontCheckGrid;
 
+    List<GameObject>[,] instantiatedTiles; // used for wrapping the map
+
     static bool mapGenerated = false;
 
     // Used to make sure continents don't overlap
@@ -117,7 +119,7 @@ public class MapGenerator : MonoBehaviour {
     IEnumerator WaitThenGenerate()
     {
         yield return null;
-        GenerateMap(80, 80, 5, 2.5f);
+        GenerateMap(96, 96, 5, 2.5f);
     }
 
     void GenerateMap(int width, int height, int numContinents, float continentSize)
@@ -127,6 +129,7 @@ public class MapGenerator : MonoBehaviour {
         groundGrid = new char[width, height];
         walkLevelGrid = new char[width, height];
         dontCheckGrid = new char[width, height];
+        instantiatedTiles = new List<GameObject>[width, height];
         mapHeight = height;
         mapWidth = width;
 
@@ -213,7 +216,9 @@ public class MapGenerator : MonoBehaviour {
                 {
                     GameManager.gm.GetComponent<HeroPartyManager>()
                         .AddKnight(center);
-                    
+                    //leaderCoorX = (int) center.x / 16;
+                    //leaderCoorY = (int)(Mathf.Abs(center.y / 16));
+
                     dontCheckGrid[(int)center.x, (int)center.y + 2] = '!';
                     walkLevelGrid[(int)center.x - 5, (int)center.y] = 'c';
                     walkLevelGrid[(int)center.x - 6, (int)center.y] = 'l';
@@ -875,6 +880,11 @@ public class MapGenerator : MonoBehaviour {
                     tile = GameObject.Instantiate(tile, transform);
 
                     tile.transform.position = new Vector2(16 * x, -16 * y);
+                    if (instantiatedTiles[x,y] == null)
+                    {
+                        instantiatedTiles[x, y] = new List<GameObject>();
+                    }
+                    instantiatedTiles[x, y].Add(tile);
                 }
 
 
@@ -892,6 +902,7 @@ public class MapGenerator : MonoBehaviour {
                     {
                         tile.transform.position = new Vector2(16 * x, -16 * y);
                     }
+                    instantiatedTiles[x, y].Add(tile);
                 }
 
                 tile = null;
@@ -910,6 +921,7 @@ public class MapGenerator : MonoBehaviour {
                     {
                         tile.transform.position = new Vector2(16 * x, -16 * y);
                     }
+                    instantiatedTiles[x, y].Add(tile);
                 }
             }
             yield return null;
@@ -994,9 +1006,111 @@ public class MapGenerator : MonoBehaviour {
                     SetTile(1, new MapCoor(center.x + col / 3, center.y + row), '\0');
                 } else
                 {
-                    SetTile(1, new MapCoor(center.x + col / 3, center.y + row), rowOfChars[col]);
+                    SetTile(1, new MapCoor(center.x + col / 3, center.y + row), 
+                        rowOfChars[col]);
                 }
             }
+        }
+    }
+
+    int leaderCoorX = 0;
+    int leaderCoorY = 0;
+
+    public void WrapMapOneColumn(MoveDir directionMoved)
+    {
+        switch(directionMoved)
+        {
+            case (MoveDir.UP):
+
+                leaderCoorY++;
+
+                if (leaderCoorY > mapHeight - 1)
+                {
+                    leaderCoorY = 0;
+                }
+
+                List<GameObject>[] topMostCol =
+                    new List<GameObject>[mapHeight];
+
+                topMostCol = instantiatedTiles.Cast<List<GameObject>>()
+                    .Skip(mapWidth * leaderCoorY).Take(mapWidth).ToArray();
+                for (int i = 0; i < topMostCol.Length; i++)
+                {
+                    for (int tileOnCoor = 0;
+                        tileOnCoor < topMostCol[i].Count; tileOnCoor++)
+                    {
+                        topMostCol[i][tileOnCoor].transform.position
+                            += new Vector3(0, mapHeight * 16);
+                    }
+                }
+                break;
+            case (MoveDir.DOWN):
+                leaderCoorY--;
+
+                if (leaderCoorY > mapHeight - 1)
+                {
+                    leaderCoorY = 0;
+                }
+
+                List<GameObject>[] bottomMostCol =
+                    new List<GameObject>[mapHeight];
+
+                bottomMostCol = instantiatedTiles.Cast<List<GameObject>>()
+                    .Skip(mapWidth * leaderCoorY).Take(mapWidth).ToArray();
+                for (int i = 0; i < bottomMostCol.Length; i++)
+                {
+                    for (int tileOnCoor = 0;
+                        tileOnCoor < bottomMostCol[i].Count; tileOnCoor++)
+                    {
+                        bottomMostCol[i][tileOnCoor].transform.position
+                            -= new Vector3(0, mapHeight * 16);
+                    }
+                }
+                break;
+            case (MoveDir.LEFT):
+
+                List<GameObject>[] rightmostCol =
+                    new List<GameObject>[mapHeight];
+                
+                rightmostCol = instantiatedTiles.Cast<List<GameObject>>()
+                    .Skip(mapHeight * leaderCoorX).Take(mapHeight).ToArray();
+                for (int i = 0; i < rightmostCol.Length; i++) {
+                    for (int tileOnCoor = 0; 
+                        tileOnCoor < rightmostCol[i].Count; tileOnCoor++)
+                    {
+                        rightmostCol[i][tileOnCoor].transform.position 
+                            -= new Vector3(mapWidth * 16, 0);
+                    }
+                }
+                leaderCoorX--;
+
+                if (leaderCoorX < 0)
+                {
+                    leaderCoorX = mapWidth;
+                }
+                break;
+            case (MoveDir.RIGHT):
+               
+                List<GameObject>[] leftMostCol =
+                    new List<GameObject>[mapHeight];
+
+                leftMostCol = instantiatedTiles.Cast<List<GameObject>>()
+                    .Skip(mapHeight * leaderCoorX).Take(mapHeight).ToArray();
+                for (int i = 0; i < leftMostCol.Length; i++)
+                {
+                    for (int tileOnCoor = 0;
+                        tileOnCoor < leftMostCol[i].Count; tileOnCoor++)
+                    {
+                        leftMostCol[i][tileOnCoor].transform.position
+                            += new Vector3(mapWidth * 16, 0);
+                    }
+                }
+                leaderCoorX++;
+                if (leaderCoorX > mapWidth - 1)
+                {
+                    leaderCoorX = 0;
+                }
+                break;
         }
     }
 

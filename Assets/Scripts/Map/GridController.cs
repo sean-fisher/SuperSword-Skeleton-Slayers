@@ -27,13 +27,6 @@ public class GridController : MonoBehaviour {
      * 4. Walk right
      * */
 
-    public enum MoveDir
-    {
-        UP,
-        DOWN,
-        LEFT,
-        RIGHT
-    }
 
     public List<MoveDir> inputList = new List<MoveDir>();
     protected Animator anim;
@@ -251,6 +244,7 @@ public class GridController : MonoBehaviour {
                     anim.SetInteger("WalkState", walkState);
                 }
 
+                MapGenerator.mg.WrapMapOneColumn(destination);
                 StartCoroutine(MovingOneSpace(destinationVector, canMoveAfter));
 
             }
@@ -405,4 +399,12 @@ public class GridController : MonoBehaviour {
             canMove = true;
         }
     }
+}
+
+public enum MoveDir
+{
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
 }
