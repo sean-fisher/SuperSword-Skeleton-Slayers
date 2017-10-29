@@ -7,11 +7,12 @@ public class AirshipTile : InteractableTile {
     GridController gc;
     public static bool canBoard = false;
 
-    bool isFlying = false;
+    public bool isFlying = false;
+    public int liftSpeed;
 
     private void Update()
     {
-        if (Input.GetButtonDown("AButton") && gc.canMove)
+        if (Input.GetButtonDown("AButton") && gc.canMove && gc.enabled)
         {
             SwitchGroundAir();
         }
@@ -44,23 +45,66 @@ public class AirshipTile : InteractableTile {
         gc.canMove = true;
         Camera.main.GetComponent<CamFollow>().targetToFollow = 
             gameObject.transform;
-        gc.speed = 100;
+        AirshipController.at = this;
+        gc.enabled = true;
+        //gc.speed = 100;
     }
 
-    void SwitchGroundAir()
+    public void SwitchGroundAir()
     {
         if (isFlying)
         {
-            GridController.encountersEnabled = false;
+            //Debug.Log("Air -> Ground");
+            GridController.encountersEnabled = true;
             GridController.clampToPixel = true;
             GridController.partyCanMove = false;
             Camera.main.GetComponent<CamFollow>().AirGroundViewSwitch(false);
+            StartCoroutine(MoveVert(false));
         } else
         {
+            //Debug.Log("Ground -> Air");
             Camera.main.GetComponent<CamFollow>().AirGroundViewSwitch(true);
+            StartCoroutine(MoveVert(true));
+        }
+    }
+
+    IEnumerator MoveVert(bool moveUp)
+    {
+        if (moveUp)
+        {
+            while (transform.position.z > -16)
+            {
+                transform.position -= new Vector3(0, -Time.deltaTime * liftSpeed * 2, Time.deltaTime * liftSpeed);
+                yield return null;
+            }
+            transform.position = new Vector3(transform.position.x, 
+                transform.position.y, -16);
+            RoundPositionToSixteens();
             GridController.encountersEnabled = false;
             GridController.clampToPixel = false;
             GridController.partyCanMove = false;
+
+        } else
+        {
+            while (transform.position.z < 0)
+            {
+                transform.position += new Vector3(0, -Time.deltaTime * liftSpeed * 2, Time.deltaTime * liftSpeed);
+                yield return null;
+            }
+            transform.position = new Vector3(transform.position.x, (int) transform.position.y, 0);
+            RoundPositionToSixteens();
         }
+        isFlying = moveUp;
+    }
+
+    void RoundPositionToSixteens()
+    {
+        float xCoor = transform.position.x / 16;
+        xCoor = Mathf.Round(xCoor);
+        float yCoor = (transform.position.y) / 16;
+        yCoor = Mathf.Round(yCoor);
+
+        transform.position = new Vector3(xCoor * 16, yCoor * 16, transform.position.z);
+        
     }
 }

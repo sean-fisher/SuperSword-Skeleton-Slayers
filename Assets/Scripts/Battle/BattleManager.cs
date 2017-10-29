@@ -16,7 +16,7 @@ public class BattleManager : MonoBehaviour {
     public AreaEncounters areaEncounters;
 
     public static HeroPartyManager hpm;
-    public static PartyManager epm;
+    public static EnemyPartyManager epm;
 
     public List<Turn> turnList;
 
@@ -37,8 +37,13 @@ public class BattleManager : MonoBehaviour {
     public static bool hasLost = false;
 
     public StandardAttack defaultAttackPrefab;
+    public ItemTurn itemTurnPrefab;
     public Wait defaultWaitPrefab;
     public Defend defaultDefendPrefab;
+    public Run defaultRunPrefab;
+
+    public LayerMask groundLayer;
+    public LayerMask oceanLayer;
 
     int totalGoldDrop = 0;
 
@@ -120,6 +125,8 @@ public class BattleManager : MonoBehaviour {
         }
     }
 
+    public static bool isFightingFinalBoss = false;
+
     public void StartBattle(string[] introMessage = null, 
         EnemyPartyManager enemyEncounter = null)
     {
@@ -128,8 +135,24 @@ public class BattleManager : MonoBehaviour {
 
         if (enemyEncounter == null)
         {
-            epm = GameObject.Instantiate(areaEncounters.GetRandomEncounter(GameManager.currAreaName).gameObject)
+            Collider2D currentTile = Physics2D.OverlapCircle(GameManager.gm.leader.transform.position, 4, groundLayer);
+
+            GroundTile ground = currentTile.GetComponent<GroundTile>();
+            if (ground)
+            {
+                if (!MazeGenerator.inMaze)
+                {
+                    RandomEncounterManager.SetCurrArea(ground.tileChar);
+                }
+            } else
+            {
+                Debug.Log("Invalid Ground");
+            }
+
+            epm = GameObject.Instantiate(areaEncounters
+                .GetRandomEncounter(RandomEncounterManager.currArea).gameObject)
                 .GetComponent<EnemyPartyManager>();
+            Debug.Log("encounter at " + RandomEncounterManager.currArea);
         } else
         {
             epm = enemyEncounter;
@@ -140,7 +163,7 @@ public class BattleManager : MonoBehaviour {
         {
             Destroy(allHeroStats.transform.GetChild(0).gameObject);
         }
-        
+
         // Activate the panels that display HP, MP, etc.
         for (int i = 0; i < hpm.activePartyMembers.Count; i++)
         {
@@ -156,6 +179,21 @@ public class BattleManager : MonoBehaviour {
         heroesAlive = hpm.activePartyMembers.Count;
 
         totalGoldDrop = 0;
+
+        // Set the background image
+        if (epm.background != null)
+        {
+            enviroImg.sprite = enemyEncounter.background;
+        }
+
+        // The Skeleton King's body parts shouldn't be lined up, 
+        // so disable the horizontal layout group.
+        if (isFightingFinalBoss)
+        {
+            enviroImg.GetComponent<HorizontalLayoutGroup>().enabled = false;
+        }
+        enviroImg.sprite = AreaEncounters.currBackground;
+
         // Instantiate the Enemy sprites
         for (int j = 0; j < epm.activePartyMembers.Count; j++)
         {
@@ -167,6 +205,13 @@ public class BattleManager : MonoBehaviour {
                 tempScale.y / enviroImg.transform.localScale.y, tempScale.z / enviroImg.transform.localScale.z);
             enemyObj.transform.localScale = tempScale;
             enemyObj.SetActive(false);
+
+            if (isFightingFinalBoss)
+            {
+                enemyObj.GetComponent<RectTransform>().localScale *= 2;
+                enemyObj.GetComponent<RectTransform>().position += new Vector3(enviroImg.rectTransform.rect.width / 2 * 1.5f, 
+                    -enviroImg.rectTransform.rect.height / 2 * 1.3f);
+            }
 
             totalGoldDrop += enemyObj.GetComponent<BaseCharacter>().goldDrop;
         }
@@ -214,6 +259,7 @@ public class BattleManager : MonoBehaviour {
             (float)(Screen.height / 5.05f));
         yield return new WaitForSeconds(.5f);
 
+
         // Enable the enemy sprites
         for (int i = 0; i < enviroImg.transform.childCount; i++)
         {
@@ -222,8 +268,12 @@ public class BattleManager : MonoBehaviour {
 
         messageBoxImg.gameObject.SetActive(true);
         allHeroStats.gameObject.SetActive(true);
-        yield return new WaitForSeconds(1);
 
+        while (TextBoxManager.tbm.isTyping)
+        {
+            yield return null;
+        }
+        yield return new WaitForSeconds(1);
         // Player now chooses actions
 
         messageBoxImg.gameObject.SetActive(false);
@@ -234,6 +284,16 @@ public class BattleManager : MonoBehaviour {
     public void AddAttackTurn(BaseCharacter attacker, BaseCharacter target, int attackIndex)
     {
         turnList.Add(new Turn(attacker, target, attacker.usableAttacks[attackIndex]));
+    }
+
+    public List<ItemData> itemsToUse = new List<ItemData>();
+
+    public void AddItemUseTurn(BaseCharacter attacker, BaseCharacter target, ItemData item)
+    {
+        Debug.Log("Add item turn: " + item.itemName);
+        itemTurnPrefab.itemBeingUsed = item;
+        itemsToUse.Add(item);
+        turnList.Add(new Turn(attacker, target, itemTurnPrefab));
     }
 
     public void AddStandardAttackTurn(BaseCharacter attacker, BaseCharacter target)
@@ -249,6 +309,20 @@ public class BattleManager : MonoBehaviour {
     public void AddDefendTurn(BaseCharacter defender)
     {
         turnList.Add(new Turn(defender, null, defaultDefendPrefab));
+    }
+
+    public void AddRunTurn(BaseCharacter runner)
+    {
+        turnList.Add(new Turn(runner, null, defaultRunPrefab));
+    }
+
+    public void RunAway()
+    {
+        turnList.Clear();
+
+        Destroy(epm.gameObject);
+
+        CheckDisableMenu();
     }
 
     public void CheckWin()
@@ -293,6 +367,13 @@ public class BattleManager : MonoBehaviour {
     {
         messageBoxImg.gameObject.SetActive(true);
         TextBoxManager.tbm.EnableTextBox(messageBoxImg.transform.GetChild(0).gameObject, "Game Over...");
+        StartCoroutine(WaitThenReturnToTitle());
+    }
+
+    IEnumerator WaitThenReturnToTitle()
+    {
+        yield return new WaitForSeconds(2);
+        GameObject.FindObjectOfType<SceneSwitcher>().SwitchToOtherScene("Title");
     }
 
 
@@ -311,6 +392,12 @@ public class BattleManager : MonoBehaviour {
 
     IEnumerator ClosingWindow()
     {
+        int enemyCount = enviroImg.transform.childCount;
+
+        for (int i = 0; i < enemyCount; i++)
+        {
+            Destroy(enviroImg.transform.GetChild(i).gameObject);
+        }
         yield return new WaitForSeconds(.8f);
         backgroundWindow.gameObject.SetActive(false);
         enviroImg.gameObject.SetActive(false);
@@ -319,11 +406,12 @@ public class BattleManager : MonoBehaviour {
         messageBoxImg.gameObject.SetActive(false);
         allHeroStats.gameObject.SetActive(false);
 
+
         int heroDisplayCount = allHeroStats.transform.childCount;
 
         for (int i = 0; i < heroDisplayCount; i++)
         {
-            Destroy(allHeroStats.transform.GetChild(0).gameObject);
+            Destroy(allHeroStats.transform.GetChild(i).gameObject);
         }
         for (int i = 0; i < hpm.activePartyMembers.Count; i++)
         {
@@ -332,7 +420,7 @@ public class BattleManager : MonoBehaviour {
         int attackCount = transform.childCount;
         for (int i = 0; i < attackCount; i++)
         {
-            Destroy(transform.GetChild(0).gameObject);
+            Destroy(transform.GetChild(i).gameObject);
         }
     }
 
@@ -345,6 +433,7 @@ public class BattleManager : MonoBehaviour {
     IEnumerator StartingInactiveTurn(Turn turn, List<Turn> turnList)
     {
         GameObject attackObj = GameObject.Instantiate(turn.attack.gameObject, transform);
+
         yield return null;
         StartCoroutine(attackObj.GetComponent<Attack>().UseAttack(turn.attacker, turn.target, turnList));
     }

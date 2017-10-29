@@ -120,10 +120,10 @@ public class TextBoxManager : MonoBehaviour {
                 }
                 else
                 {
-                    Debug.Log("Advance line " + currentLine + " " + textLines.Length);
+                    // Debug.Log("Advance line " + currentLine + " " + textLines.Length);
                     if (currentLine < textLines.Length)
                     {
-                        Debug.Log("Advance array");
+                        // Debug.Log("Advance array");
                         StartCoroutine(TextScroll(textLines[currentLine]));
                     } else
                     {
@@ -175,6 +175,7 @@ public class TextBoxManager : MonoBehaviour {
             typingStartedThisFrame = false;
         }
         activeText.text = lineOfText;
+        yield return new WaitForSeconds(.1f);
         isTyping = false;
         cancelTyping = false;
 
@@ -222,7 +223,7 @@ public class TextBoxManager : MonoBehaviour {
         }
     }
 
-    public void EnableTextBox(GameObject textBox = null, string[] texts = null, bool canAdvance = true, bool yesNo = false, bool enableAfter = false)
+    public void EnableTextBox(GameObject textBox = null, string[] texts = null, bool canAdvance = true, bool yesNo = false)
     {
         this.canAdvance = canAdvance;
         textLines = texts;
@@ -230,45 +231,6 @@ public class TextBoxManager : MonoBehaviour {
         endLine = texts.Length;
         StartCoroutine(TextScroll(textLines[currentLine], yesNo));
     }
-    /*
-    IEnumerator DisplayMultipleLines(GameObject textBox = null, string[] texts = null, bool canAdvance = true, bool yesNo = false, bool enableAfter = false)
-    {
-        for (int i = 0; i < texts.Length; i++)
-        {
-            Debug.Log(texts[i]);
-            Debug.Log(activeText.text);
-            this.canAdvance = canAdvance;
-            enableOnDisable = enableAfter;
-            typingStartedThisFrame = true;
-
-            if (textBox)
-            {
-                this.textBox = textBox;
-                this.activeText = textBox.GetComponentInChildren<Text>();
-            }
-            else
-            {
-                this.textBox = defaultMessageWindow;
-                textBox = defaultMessageWindow;
-                this.activeText = textBox.GetComponentInChildren<Text>();
-            }
-            this.textBox.SetActive(true);
-            isActive = true;
-            if (stopPlayerMovement)
-            {
-                player.DisableMovement();
-            }
-            if (texts == null)
-            {
-                StartCoroutine(TextScroll(textLines[currentLine], yesNo));
-            }
-            else
-            {
-                StartCoroutine(TextScroll(texts[i], yesNo));
-            }
-            yield return null;
-        }
-    }*/
 
     public void EnableTextBox(string text, bool enableOnDisable = true, 
         bool canAdvance = true)

@@ -10,7 +10,7 @@ public class DontDestroyOnLoad : MonoBehaviour {
     {
         if (exists)
         {
-            Destroy(this.gameObject);
+            //Destroy(this.gameObject);
         }
         else
         {

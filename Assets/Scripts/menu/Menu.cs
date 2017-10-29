@@ -61,13 +61,13 @@ public abstract class Menu : MonoBehaviour {
 
     public void InitializeListText<T>(int firstVisibleIndex, List<T> scrollableList)
     {
-        //Debug.Log("Initialize at " + firstVisibleIndex);
+        Debug.Log("Initialize at " + firstVisibleIndex + " with size of " + visibleSize + " and length " + listTexts.Length);
         if (scrollableList != null)
         {
             //scrollableListO = scrollableList as List<object>;
         }
         int i = 0;
-
+        
         for (; i < visibleSize; i++)
         {
             listTexts[i].GetComponent<Text>().text = tempSpellnames[i + firstVisibleIndex];

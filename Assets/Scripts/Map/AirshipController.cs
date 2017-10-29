@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class AirshipController : GridController {
     
-    SpriteRenderer sr2;
-    Animator anim2;
+    public static AirshipTile at;
 
     // Each grid space is 16 units wide; 1 unit represents one pixel. 
     // This always moves in increments of one pixel so as to 
@@ -13,13 +12,7 @@ public class AirshipController : GridController {
 
     // Use this for initialization
     void Start () {
-		if (!debugEnabled && GameManager.gm.leader == null)
-        {
-            GameManager.gm.leader = this;
-            TextBoxManager.player = this;
-        }
-        anim2 = GetComponent<Animator>();
-        sr2 = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();
 	}
 	
 	// Update is called once per frame
@@ -49,7 +42,43 @@ public class AirshipController : GridController {
             {
                 InspectTile();
             }
+            else if (Input.GetButtonDown("BButton"))
+            {
+                if (at.isFlying)
+                {
+                    at.SwitchGroundAir();
+                } else
+                {
+                    // Exit ship
+                    ExitShip(transform.position);
+                }
+            }
         }
+    }
+
+    void ExitShip(Vector2 placeToExitAt)
+    {
+        for (int i = 0; i < BattleManager.hpm.activePartyMembers.Count;
+            i++)
+        {
+            BaseCharacter characterBeingActivated = BattleManager.hpm
+                .activePartyMembers[i];
+
+            characterBeingActivated.GetComponent<SpriteRenderer>()
+                .enabled = true;
+            characterBeingActivated
+                .GetComponent<GridController>().enabled = true;
+            characterBeingActivated.transform.position
+                = new Vector3(transform.position.x,
+                placeToExitAt.y + 4);
+            characterBeingActivated.GetComponent<GridController>()
+                .inputList.Clear();
+        }
+        GameManager.gm.leader.enabled = true;
+        canMove = false;
+        Camera.main.GetComponent<CamFollow>().targetToFollow =
+            GameManager.gm.leader.gameObject.transform;
+        enabled = false;
     }
     
     MoveDir lastMove2 = MoveDir.DOWN;
@@ -92,108 +121,103 @@ public class AirshipController : GridController {
 
     void MoveOneSpace(MoveDir destination, bool canMoveAfter = true)
     {
-        canMove = false;
         int tempWalkState = 0;
-
+        
+        Vector3 destinationVector = Vector3.zero;
+        switch (destination)
         {
-            Vector3 destinationVector = Vector3.zero;
+            case (MoveDir.LEFT):
+                destinationVector = new Vector3(gameObject.transform.position.x - 16, gameObject.transform.position.y, transform.position.z);
+                tempWalkState = 3;
+                break;
+            case (MoveDir.RIGHT):
+                destinationVector = new Vector3(gameObject.transform.position.x + 16, gameObject.transform.position.y, transform.position.z);
+                tempWalkState = 4;
+                break;
+            case (MoveDir.DOWN):
+                destinationVector = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 16, transform.position.z);
+                tempWalkState = 2;
+                break;
+            case (MoveDir.UP):
+                destinationVector = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 16, transform.position.z);
+                tempWalkState = 1;
+                break;
+            default:
+                break;
+        }
+        if (anim)
+        {
+            anim.SetInteger("WalkState", tempWalkState);
+        }
+
+        // Checks if objects are already at the destination and 
+        // if they can be moved onto
+        Collider2D objectsAtDestination = Physics2D.OverlapCircle
+            (destinationVector, 4, wall);
+        if (objectsAtDestination == null)
+        {
+            objectsAtDestination = Physics2D.OverlapCircle(
+                destinationVector, 4, interactableTile);
+
+            // Prevent party from moving
+            canMove = objectsAtDestination == null
+                || objectsAtDestination.isTrigger;
+        }
+        else if (!at.isFlying)
+        {
+            canMove = false;
+            Debug.Log("blocked");
+            ExitShip(destinationVector);
+        }
+
+        
+
+        if (canMove)
+        {
+            canMove = false;
+            destinationVector = Vector3.zero;
             switch (destination)
             {
                 case (MoveDir.LEFT):
                     destinationVector = new Vector3(gameObject.transform.position.x - 16, gameObject.transform.position.y, transform.position.z);
                     tempWalkState = 3;
+
+                    currCoor.x--;
                     break;
                 case (MoveDir.RIGHT):
                     destinationVector = new Vector3(gameObject.transform.position.x + 16, gameObject.transform.position.y, transform.position.z);
                     tempWalkState = 4;
+
+                    currCoor.x++;
                     break;
                 case (MoveDir.DOWN):
                     destinationVector = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 16, transform.position.z);
                     tempWalkState = 2;
+
+                    currCoor.y++;
                     break;
                 case (MoveDir.UP):
                     destinationVector = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 16, transform.position.z);
                     tempWalkState = 1;
+
+                    currCoor.y--;
                     break;
                 default:
                     break;
             }
-
-            // Checks if objects are already at the destination and if they can be moved onto
-            Collider2D objectsAtDestination = Physics2D.OverlapCircle(destinationVector, 4, wall);
-            // Prevent party from moving
-            partyCanMove = objectsAtDestination == null;
-        }
-
-        if (partyCanMove)
+            destinationVector = new Vector3(Mathf.Round(destinationVector.x), Mathf.Round(destinationVector.y), destinationVector.z);
+            StartCoroutine(MovingOneSpace(destinationVector, canMoveAfter));
+            MapGenerator.mg.WrapMapOneColumn(destination);
+        } else
         {
-            inputList.Add(destination);
-
-            if (inputList.Count > placeInParty)
-            {
-
-                destination = inputList[0];
-                lastMove2 = destination;
-                inputList.RemoveAt(0);
-
-                Vector3 destinationVector = Vector3.zero;
-                switch (destination)
-                {
-                    case (MoveDir.LEFT):
-                        destinationVector = new Vector3(gameObject.transform.position.x - 16, gameObject.transform.position.y, transform.position.z);
-                        tempWalkState = 3;
-                        break;
-                    case (MoveDir.RIGHT):
-                        destinationVector = new Vector3(gameObject.transform.position.x + 16, gameObject.transform.position.y, transform.position.z);
-                        tempWalkState = 4;
-                        break;
-                    case (MoveDir.DOWN):
-                        destinationVector = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 16, transform.position.z);
-                        tempWalkState = 2;
-                        break;
-                    case (MoveDir.UP):
-                        destinationVector = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 16, transform.position.z);
-                        tempWalkState = 1;
-                        break;
-                    default:
-                        break;
-                }
-
-                walkState2 = tempWalkState;
-
-                destinationVector = new Vector3(Mathf.Round(destinationVector.x), Mathf.Round(destinationVector.y), destinationVector.z);
-                canMove = false;
-
-                if (anim2)
-                {
-                    anim2.SetInteger("WalkState", walkState2);
-                }
-
-                StartCoroutine(MovingOneSpace(destinationVector, canMoveAfter));
-
-            }
-            else
-            {
-                StartCoroutine(WaitWhileLeaderMoves());
-            }
+            canMove = true;
         }
-
-    }
-
-    IEnumerator WaitWhileLeaderMoves()
-    {
-        canMove = false;
-        while (!BattleManager.hpm.leader.gameObject.GetComponent<GridController>().canMove)
-        {
-            yield return null;
-        }
-        canMove = true;
     }
 
     int walkState2;
-
     IEnumerator MovingOneSpace(Vector3 tryDestination, bool canMoveAfter = true)
     {
+
         //Physics2D.OverlapSphere(tryDestination, 5f);
         InteractableTile.currentlyStandingOnInteractableTile = false;
 
@@ -202,10 +226,13 @@ public class AirshipController : GridController {
 
         if (false)
         {
-        } else
+        }
+        else
         {
-            int distanceX = Mathf.Abs((int)(tryDestination.x - gameObject.transform.position.x));
-            int distanceY = Mathf.Abs((int)(tryDestination.y - gameObject.transform.position.y));
+            int distanceX = Mathf.Abs(
+                (int)(tryDestination.x - gameObject.transform.position.x));
+            int distanceY = Mathf.Abs(
+                (int)(tryDestination.y - gameObject.transform.position.y));
 
             int MoveDirX = 1;
             if (tryDestination.x < gameObject.transform.position.x)
@@ -222,7 +249,8 @@ public class AirshipController : GridController {
             while (progress < distanceX)
             {
                 progress += Time.deltaTime * speed;
-                tempPosition = new Vector3(tempPosition.x + Time.deltaTime * speed * MoveDirX, tempPosition.y, tempPosition.z);
+                tempPosition = new Vector3(tempPosition.x + Time.deltaTime * speed
+                    * MoveDirX, tempPosition.y, tempPosition.z);
                 transform.position = ClampToPixel(tempPosition);
                 yield return null;
             }
@@ -235,36 +263,61 @@ public class AirshipController : GridController {
                 yield return null;
             }
             tempPosition = tryDestination;
-            gameObject.transform.position = tempPosition;
-
             Animator anim = GetComponent<Animator>();
             if (anim)
             {
                 anim.SetInteger("WalkState", 0);
             }
 
+            SetCoor(new MapCoor((int)tryDestination.x, (int)tryDestination.y));
+
             if (GameManager.gm.leader == this && !debugEnabled)
             {
-                char currGround = MapGenerator.mg.GetTile(transform.position, true);
+                //char currGround = MapGenerator.mg.GetTile(transform.position, true);
                 if (encountersEnabled)
                 {
-                    battleActivated = RandomEncounterManager.AdvanceStepCount(currGround);
+                    battleActivated = RandomEncounterManager.AdvanceStepCount(transform.position);
                 }
             }
+            Vector3 newPos = new Vector3(
+                currCoor.x * 16, currCoor.y * -16, transform.position.z);
+            //transform.position = newPos;
         }
-
+        RoundPositionToSixteens();
         //gameObject.transform.position = new Vector3((int)transform.position.x, (int)transform.position.y, (int)transform.position.z);
 
-        if (canMoveAfter && !battleActivated)
+        if (!at.isFlying && !battleActivated)
         {
             canMove = true;
             CheckTile(transform.position);
+        } else if (at.isFlying)
+        {
+            canMove = true;
         }
-
-        canMove = true;
-        // sr.sortingOrder = -(int)transform.position.y;
     }
 
+    void RoundPositionToSixteens()
+    {
+
+        if (at.isFlying)
+        {
+            float xCoor = transform.position.x / 16;
+            xCoor = Mathf.Round(xCoor);
+            float yCoor = (transform.position.y - 32) / 16;
+            yCoor = Mathf.Round(yCoor);
+
+            transform.position = new Vector3(xCoor * 16,32 + yCoor * 16, transform.position.z);
+        } else
+        {
+            float xCoor = transform.position.x / 16;
+            xCoor = Mathf.Round(xCoor);
+            float yCoor = transform.position.y / 16;
+            yCoor = Mathf.Round(yCoor);
+
+            transform.position = new Vector3(xCoor * 16, yCoor * 16, transform.position.z);
+        }
+    }
+    
     static Vector3 ClampToPixel(Vector3 unclamped)
     {
         if (clampToPixel)
@@ -280,10 +333,11 @@ public class AirshipController : GridController {
     {
         Collider2D checkedTileCol = Physics2D.OverlapCircle(positionToCheck, 4, interactableTile);
 
-        if (checkedTileCol)
+        if (checkedTileCol && checkedTileCol.GetComponent<AirshipTile>() == null)
         {
             InteractableTile it = checkedTileCol.gameObject.GetComponent<InteractableTile>();
             it.ActivateInteraction();
+            Debug.Log("interact" + checkedTileCol.gameObject.name);
             return true;
         }
         return false;

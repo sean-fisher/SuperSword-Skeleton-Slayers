@@ -10,6 +10,8 @@ public class Turn : IComparer<Turn> {
 
     public Attack attack;
 
+    ItemData itemToUse;
+
     // Use this for initialization
     void Start () {
 		
@@ -25,6 +27,13 @@ public class Turn : IComparer<Turn> {
         this.attacker = attacker;
         this.target = target;
         this.attack = attack;
+    }
+
+    public Turn(BaseCharacter attacker, BaseCharacter target, ItemTurn itemTurn, ItemData itemToUse)
+    {
+        this.attacker = attacker;
+        this.target = target;
+        this.itemToUse = itemToUse;
     }
 
     public int Compare(Turn turnOne, Turn turnTwo)

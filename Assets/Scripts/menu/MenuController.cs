@@ -31,10 +31,6 @@ public class MenuController : MonoBehaviour
 
     MenuType currMenu;
 
-    private void Awake()
-    {
-    }
-
     private void Start()
     {
         currMenu = MenuType.CLOSED;
