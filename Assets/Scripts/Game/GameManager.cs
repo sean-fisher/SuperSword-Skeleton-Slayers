@@ -101,6 +101,7 @@ public class GameManager : MonoBehaviour {
                 BattleManager.hpm.MovePartyTo(new Vector2(mapEntrance.exitPosition.x, mapEntrance.exitPosition.y - 4));
                 MazeGenerator.inMaze = false;
                 MazeGenerator.SetGroundType(mapEntrance.mazeToGenerate, true);
+                GridController.canWrapMap = true;
             } else
             {
                 // enter maze that has already been generated
@@ -108,6 +109,8 @@ public class GameManager : MonoBehaviour {
                 MazeGenerator.mazeGenerator.PlacePartyAtMazeEntrance
                     (ContinentType.GRASSLAND);
                 MazeGenerator.SetGroundType(mapEntrance.mazeToGenerate, false);
+                GridController.canWrapMap = false;
+                AreaEncounters.aeinstance.SetCurrArea(mapEntrance.mazeToGenerate);
             }
         } else
         {
@@ -118,6 +121,7 @@ public class GameManager : MonoBehaviour {
             mapEntrance.generateMap = false;
             MazeGenerator.mazeGenerator.PlacePartyAtMazeEntrance(ContinentType.FOREST);
             MazeGenerator.SetGroundType(mapEntrance.mazeToGenerate, false);
+            GridController.canWrapMap = false;
         }
         for (int i = 1; i < BattleManager.hpm.activePartyMembers.Count; i++)
         {

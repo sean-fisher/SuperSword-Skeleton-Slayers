@@ -12,11 +12,17 @@ public class BattleMenu : Menu {
     RectTransform[] actionSelect;
     RectTransform[] enemyRects;
     RectTransform[] heroRects;
+    RectTransform[] itemRects;
 
     RectTransform[] currRects;
 
     public Transform listSelectWindow;
+    public Transform itemSelectWindow;
 
+    public Transform targetNameWindow;
+
+    public ItemMenuBattle itemMenu;
+    
 
     /**
      * Layer 0: Select from Attack, Defend, etc.
@@ -85,8 +91,23 @@ public class BattleMenu : Menu {
         }
         listTexts = textList.ToArray();
 
+
+        textList.Clear();
+        // Finds the texts within row children of the menu
+        foreach (Transform child in itemSelectWindow)
+        {
+            foreach (Transform grandChild in child)
+            {
+                if (grandChild.GetComponent<Text>())
+                {
+                    textList.Add(grandChild.GetComponent<RectTransform>());
+                }
+            }
+        }
+        itemRects = textList.ToArray();
+
         //actionSelect = defaultActionMenu.transform.GetComponentsInChildren<RectTransform>();
-        
+
         isScrollable = false;
 
         cursor.SetActive(true);
@@ -139,6 +160,7 @@ public class BattleMenu : Menu {
                                     break;
                                 case (2):
                                     // Player chooses to use an item
+                                    OpenMenu(2, 0);
                                     break;
                                 case (3):
                                     // Player chooses to defend
@@ -172,16 +194,31 @@ public class BattleMenu : Menu {
                     CheckHeroesAndEnemies();
                     if (aPressed)
                     {
-                        if (attackIndex == 0)
+                        if (lastMenuLayer == 2)
                         {
-                            BattleManager.bManager.AddStandardAttackTurn(GetAttacker(), GetTarget());
-                        } else
-                        {
-                            BattleManager.bManager.AddAttackTurn(GetAttacker(), GetTarget(), attackIndex - 1);
-                        }
-                        NextHeroSelectsAttack(true);
-                        aPressed = false;
+                            // Item used on target
+                            itemSelectWindow.gameObject.SetActive(false);
 
+                            Debug.Log(itemMenu.selectedItem.itemName);
+                            BattleManager.bManager.AddItemUseTurn(GetAttacker(), GetTarget(), itemMenu.selectedItem);
+
+                            aPressed = false;
+                            NextHeroSelectsAttack(true);
+                        }
+                        else
+                        {
+                            if (attackIndex == 0)
+                            {
+                                BattleManager.bManager.AddStandardAttackTurn(GetAttacker(), GetTarget());
+                            }
+                            else
+                            {
+                                BattleManager.bManager.AddAttackTurn(GetAttacker(), GetTarget(), attackIndex - 1);
+                            }
+                            NextHeroSelectsAttack(true);
+                            aPressed = false;
+                        }
+                        targetNameWindow.gameObject.SetActive(false);
                         //CloseMenu(lastMenuLayer, 1);
                     }
                     else if (bPressed)
@@ -190,12 +227,17 @@ public class BattleMenu : Menu {
                         menuLayer = lastMenuLayer;
                         OpenMenu(lastMenuLayer);
                         waitFrame = false;
-                        
-                        UpdateCursor(currRects, 0);
+
+                        if (lastMenuLayer != 2)
+                        {
+                            UpdateCursor(currRects, 0);
+                        }
+                        targetNameWindow.gameObject.SetActive(false);
                     }
                     break;
                 case (2):
                     // Selecting an item
+
                     break;
                 case (3):
                     CheckInput<Attack>(currRects, 3, 3, emptyAttackList, false, 0, false, -Screen.width / 40);
@@ -242,13 +284,21 @@ public class BattleMenu : Menu {
 
     int attackIndex = 0;
 
-    void OpenMenu(int newMenuLayer, int lastMenuLayer = 0)
+    public void OpenMenu(int newMenuLayer, int lastMenuLayer = 0)
     {
         this.lastMenuLayer = lastMenuLayer;
         switch (newMenuLayer)
         {
             case (0): // Open action select menu
                 currRects = actionSelect;
+                menuLayer = 0;
+                cols = 3;
+                rows = 2;
+                visibleSize = 6;
+                currCursor = cursor;
+                isScrollable = false;
+                currRects = actionSelect;
+                UpdateCursor(actionSelect, 0);
                 break;
             case (1): // open target menu
                 menuLayer = 1;
@@ -256,6 +306,8 @@ public class BattleMenu : Menu {
                 List<RectTransform> enemyRectList = new List<RectTransform>();
                 RectTransform[] enemyRectsTemp = bm.enviroImg.transform
                     .GetComponentsInChildren<RectTransform>();
+
+                targetNameWindow.gameObject.SetActive(true);
 
                 for (int i = 1; i < enemyRectsTemp.Length; i++)
                 {
@@ -268,6 +320,20 @@ public class BattleMenu : Menu {
                 UpdateCursor(enemyRects, 0);
                 break;
             case (2):
+                // Open item menu
+                menuLayer = 2;
+
+                itemMenu.OpenMenu();/*
+                itemSelectWindow.gameObject.SetActive(true);
+                currRects = listTexts;
+                //isScrollable = true;
+                visibleSize = 9;
+                rows = 3;
+                cols = 3;
+                InitializeListText(0, GetAttacker().usableAttacks);
+
+                cursor2.SetActive(true);
+                UpdateCursor(currRects, 0, 2, -Screen.width / 40);*/
                 break;
             case (3): // open spell menu
                 menuLayer = 3;
@@ -295,6 +361,7 @@ public class BattleMenu : Menu {
             case (0): // Close main menu
                 break;
             case (1): // Close target menu
+                targetNameWindow.gameObject.SetActive(false);
                 break;
             case (2):
                 break;
@@ -477,10 +544,13 @@ public class BattleMenu : Menu {
         {
             heroCursorMoved = false;
         }
+
+        targetNameWindow.GetComponentInChildren<Text>().text = GetTarget().characterName;
     }
 
     void PickEnemyAttacks()
     {
+        bool usesAttack = true;
         selectingHeroIndex = -1;
 
         for (int i = 0; i < BattleManager.epm.activePartyMembers.Count; i++)
@@ -492,11 +562,32 @@ public class BattleMenu : Menu {
             int tries = 100;
             while (enemyAttack == null && --tries > 0)
             {
-                int randMoveIndex = UnityEngine.Random.Range(0, enemy.usableAttacks.Count);
-
-                if (occurrenceVal <= enemy.usableAttacks[randMoveIndex].occurrenceChance)
+                if (!BattleManager.isFightingFinalBoss)
                 {
-                    enemyAttack = enemy.usableAttacks[randMoveIndex];
+                    int randMoveIndex = UnityEngine.Random.Range(0, enemy.usableAttacks.Count);
+
+                    if (occurrenceVal <= enemy.usableAttacks[randMoveIndex].occurrenceChance)
+                    {
+                        enemyAttack = enemy.usableAttacks[randMoveIndex];
+                    }
+                } else
+                {
+                    // Lower chance of attacking since there are 5 body parts
+
+                    int randMoveIndex = UnityEngine.Random.Range(0, enemy.usableAttacks.Count);
+
+                    int usesMoveChance = UnityEngine.Random.Range(0, 5);
+
+                    if (usesMoveChance > 2)
+                    {
+                        if (occurrenceVal <= enemy.usableAttacks[randMoveIndex].occurrenceChance)
+                        {
+                            enemyAttack = enemy.usableAttacks[randMoveIndex];
+                        }
+                    } else
+                    {
+                        usesAttack = false;
+                    }
                 }
             }
             BaseCharacter target = null;
@@ -510,9 +601,13 @@ public class BattleMenu : Menu {
                     target = BattleManager.hpm.activePartyMembers[randHeroIndex];
                 }
             }
-            bm.turnList.Add(new Turn(enemy, target, enemyAttack));
+            if (usesAttack)
+            {
+                bm.turnList.Add(new Turn(enemy, target, enemyAttack));
+            }
         }
         ExecuteAttacks();
+        
     }
 
     void MovePanelVert(int heroIndex, int lowMidHigh)

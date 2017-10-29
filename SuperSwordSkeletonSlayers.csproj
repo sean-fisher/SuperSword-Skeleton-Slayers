@@ -91,6 +91,7 @@
     <Compile Include="Assets\Scripts\Battle\Effect.cs" />
     <Compile Include="Assets\Scripts\Battle\EnemyPartyManager.cs" />
     <Compile Include="Assets\Scripts\Battle\GenericAttack.cs" />
+    <Compile Include="Assets\Scripts\Battle\ItemTurn.cs" />
     <Compile Include="Assets\Scripts\Battle\NoDamage.cs" />
     <Compile Include="Assets\Scripts\Battle\ReusableAttack.cs" />
     <Compile Include="Assets\Scripts\Battle\Run.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="Assets\Scripts\Item\BaseItem.cs" />
     <Compile Include="Assets\Scripts\Item\Equipment.cs" />
     <Compile Include="Assets\Scripts\Item\Inventory.cs" />
+    <Compile Include="Assets\Scripts\Item\ItemGenerator.cs" />
     <Compile Include="Assets\Scripts\Item\Key.cs" />
     <Compile Include="Assets\Scripts\Item\Potion.cs" />
     <Compile Include="Assets\Scripts\Map\AirshipController.cs" />
@@ -120,6 +122,7 @@
     <Compile Include="Assets\Scripts\Map\EnemyOrItemChest.cs" />
     <Compile Include="Assets\Scripts\Map\EnemyTile.cs" />
     <Compile Include="Assets\Scripts\Map\GridController.cs" />
+    <Compile Include="Assets\Scripts\Map\GroundTile.cs" />
     <Compile Include="Assets\Scripts\Map\InteractableTile.cs" />
     <Compile Include="Assets\Scripts\Map\LockedChest.cs" />
     <Compile Include="Assets\Scripts\Map\MapEntrance.cs" />
@@ -131,12 +134,14 @@
     <Compile Include="Assets\Scripts\Map\TreasureChest.cs" />
     <Compile Include="Assets\Scripts\menu\BattleMenu\BattleMenu.cs" />
     <Compile Include="Assets\Scripts\menu\BattleMenu\SelectFromListMenu.cs" />
+    <Compile Include="Assets\Scripts\menu\CreditsScreen.cs" />
     <Compile Include="Assets\Scripts\menu\GridOptions.cs" />
     <Compile Include="Assets\Scripts\menu\HeroDisplayPanel.cs" />
     <Compile Include="Assets\Scripts\menu\Menu.cs" />
     <Compile Include="Assets\Scripts\menu\MenuController.cs" />
     <Compile Include="Assets\Scripts\menu\pauseMenu\InventoryEntry.cs" />
     <Compile Include="Assets\Scripts\menu\pauseMenu\ItemMenu.cs" />
+    <Compile Include="Assets\Scripts\menu\pauseMenu\ItemMenuBattle.cs" />
     <Compile Include="Assets\Scripts\menu\pauseMenu\PartySelectMenu.cs" />
     <Compile Include="Assets\Scripts\menu\pauseMenu\PauseMenu.cs" />
     <Compile Include="Assets\Scripts\menu\SceneSwitcher.cs" />

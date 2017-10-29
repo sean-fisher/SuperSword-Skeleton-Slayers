@@ -139,4 +139,38 @@ public class RandomEncounterManager : MonoBehaviour {
         }
         return false;
     }
+
+    public static void SetCurrArea(char groundChar)
+    {
+
+        switch (groundChar)
+        {
+            case ('g'):
+                currArea = ContinentType.GRASSLAND;
+                break;
+            case ('h'):
+                currArea = ContinentType.GLACIER;
+                break;
+            case ('b'):
+                currArea = ContinentType.GLACIER;
+                break;
+            case ('o'):
+                currArea = ContinentType.VOLCANO;
+                break;
+            case ('s'):
+                currArea = ContinentType.DESERT;
+                break;
+            case ('d'):
+                currArea = ContinentType.DESERT;
+                break;
+            case ('r'):
+                currArea = ContinentType.MOUNTAIN;
+                break;
+            case ('\0'):
+                currArea = ContinentType.OCEAN;
+                break;
+            default:
+                break;
+        }
+    }
 }

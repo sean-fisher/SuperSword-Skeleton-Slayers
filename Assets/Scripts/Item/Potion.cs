@@ -7,46 +7,12 @@ public class Potion : BaseItem
 {
 
     [SerializeField]
-    private SimpleItemData sitemData;
-
-    /*// Default Constructor; Sets all ints to 0 (incl. ID) and bools to false.
-    public SimpleItem() : this(0, 0, 0, 0, 0, 0,
-        false, false, false, false, "Default Constructor Item", "")
-    {
-    }
-
-    // Constructor used for items that only change HP
-    public SimpleItem(int ID, int bHP, String itemName, String desc) :
-        this(ID, bHP, 0, 0, 0, 0,
-        false, false, false, false, itemName, desc)
-    {
-    }
-
-    // Constructor that takes parameters for all possible variables
-    public SimpleItem(int ID, int bHP, int bATK, int bDEF, int bSKL, int bEVA,
-        bool revives, bool hPoison, bool hParal, bool hBurn,
-        String itemName, string itemDesc)
-    {
-        sitemData.itemID = ID;
-
-        sitemData.boostHP = bHP;
-        sitemData.boostATK = bATK;
-        sitemData.boostDEF = bDEF;
-        sitemData.boostSKL = bSKL;
-        sitemData.boostEVA = bEVA;
-        
-        sitemData.revives = revives;
-        sitemData.healsPoison = hPoison;
-        sitemData.healsParalysis = hParal;
-        sitemData.healsBurn = hBurn;
-        
-        sitemData.itemName = itemName;
-        sitemData.itemDescription = itemDesc;
-    }*/
+    private SimpleItemData itemData;
+    
 
     public override ItemData GetItemData()
     {
-        return sitemData;
+        return itemData;
     }
     
 }
@@ -67,6 +33,10 @@ public class SimpleItemData : ItemData
     public bool healsBurn;
 
     public bool usableOutsideBattle;
+    public bool usableInsideBattle;
+
+    // Format: {0} == user's name, {1} == target's name, {2} == item name, {3} == hp restored number
+    public string messageWhenUsedInBattle;
 
     public override int GetValue()
     {

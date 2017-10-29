@@ -23,13 +23,25 @@ public static class MapFeatures {
                                                        "   f  f  f   ",
                                                        };
     public static string[] darkForest = new string[]{
+                                                       "f  f  f  ",
+                                                       "f  f  f  ",
+                                                       "f  !  f  ",
+                                                       "-  -  -  ",
+                                                       };
+    /*public static string[] darkForest = new string[]{
                                                        "      m     m     ",
                                                        "m  f  f  f     m  ",
                                                        "m  f  f  f     m  ",
-                                                       "m  f  f  f     m  ",
+                                                       "m  f  !  f     m  ",
                                                        "   m        m     ",
-                                                       };
+                                                       };*/
 
+    public static string[] castle = new string[]{
+                                                       "-  -  -  ",
+                                                       "-  -  -  ",
+                                                       "-  .  -  ",
+                                                       "-  -  -  ",
+                                                       };
     public static string[] airshipSalesman = new string[]{
                                                         "a  0"
                                                        };
@@ -44,6 +56,8 @@ public static class MapFeatures {
                 return MapFeatures.darkForest;
             case (FeatureTypes.AIRSHIP_SALESMAN):
                 return MapFeatures.airshipSalesman;
+            case (FeatureTypes.CASTLE):
+                return MapFeatures.castle;
             default:
                 return MapFeatures.forestCircle;
         }
@@ -53,5 +67,6 @@ public enum FeatureTypes
 {
     FOREST_CIRCLE,
     DARK_FOREST,
-    AIRSHIP_SALESMAN
+    AIRSHIP_SALESMAN,
+    CASTLE
 }

@@ -5,16 +5,17 @@ using UnityEngine;
 public class TitleScreen : GridOptions {
 
     public SceneSwitcher sceneSwitcher;
-
+    public GameObject creditsWindow;
 
     public override void OpenMenu()
     {
-        throw new System.NotImplementedException();
+        canControl = true;
+        UpdateCursor(listTexts, 0);
     }
 
     public override void CloseMenu()
     {
-        throw new System.NotImplementedException();
+        canControl = false;
     }
 
     private void Start()
@@ -26,31 +27,26 @@ public class TitleScreen : GridOptions {
             temp[i - 1] = listTexts[i];
         }
         listTexts = temp;
-
-        //UpdateCursor(listTexts, 0, 0, 0);
-        /*cursor.transform.position = new Vector3(
-            listTexts[0].transform.position.x - (float)
-            (Screen.width / displaceCursorByOneOverThisTimesScreenWidth) + 0,
-            listTexts[0].transform.position.y + 4);*/
-        Debug.Log(listTexts[0].gameObject.name);
     }
 
     protected override void MakeMenuSelection(int menuIndex)
     {
-        Debug.Log("Make menu selection");
+        Debug.Log("Make menu selection: " + menuIndex);
         switch (menuIndex)
         {
             case (0):
                 // Start new game
-                Debug.Log("Start game");
                 sceneSwitcher.SwitchToOtherScene("MapGenTest");
                 StartCoroutine(StartingGame());
                 break;
-            case (2):
+            case (1):
                 // View Controls
+                Debug.Log("Go to Controls");
                 break;
-            case (3):
-                // Go to credits
+            case (2):
+                // Go to credits\
+                CloseMenu();
+                creditsWindow.GetComponent<CreditsScreen>().OpenMenu();
                 break;
         }
     }

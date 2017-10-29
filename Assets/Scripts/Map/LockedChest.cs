@@ -20,6 +20,8 @@ public class LockedChest : InteractableTile
                 if (!opened)
                 {
                     if (GameManager.gm.gameObject.GetComponent<Inventory>().ContainsItem(key.GetItemData())){
+                        //Debug.Log((GameManager.gm.gameObject.GetComponent<Inventory>().)
+                        Debug.Log(key.GetItemData().itemName);
                         TextBoxManager textManager = TextBoxManager.tbm;
                         textManager.currentLine = 0;
                         textManager.endLine = 0; // Controls how many windows
