@@ -31,6 +31,7 @@ public class MapGenerator : MonoBehaviour {
     public GameObject igloo;                // e
     public GameObject lockedTreasureChest;  // l
     public GameObject castle;               // .
+    public GameObject pyramid;              // ^
 
     [Header("Entrances")]
     public GameObject darkForestEntrance;   // !
@@ -121,7 +122,7 @@ public class MapGenerator : MonoBehaviour {
     IEnumerator WaitThenGenerate()
     {
         yield return null;
-        GenerateMap(96, 96, 5, 2.5f);
+        GenerateMap(80, 80, 5, 2.5f);
     }
 
     void GenerateMap(int width, int height, int numContinents, float continentSize)
@@ -222,7 +223,6 @@ public class MapGenerator : MonoBehaviour {
                     //leaderCoorY = (int)(Mathf.Abs(center.y / 16));
                     
                     walkLevelGrid[(int)center.x - 5, (int)center.y] = 'c';
-                    walkLevelGrid[(int)center.x - 4, (int)center.y] = 'p';
                     walkLevelGrid[(int)center.x - 6, (int)center.y] = 'l';
                     //dontCheckGrid[(int)center.x  + 4, (int)center.y - 4] = '.';
                     featuresToPlaceOnMap.Add(new FeatureCenterPair(new MapCoor((int)center.x + 4, (int)center.y - 4), FeatureTypes.CASTLE));
@@ -320,8 +320,20 @@ public class MapGenerator : MonoBehaviour {
                     }
                     break;
                 case (ContinentType.MOUNTAIN):
-                    // TODO: Make continent surrounded by mountains. This likely can't be done in this switch, 
-                    // and will be implemented after the whole continent land mass has been created.
+                    if (randGeoFeature < 5)
+                    {
+                        // Place a mouuntain
+                        walkLevelGrid[((int)tempCenter.x) % mapWidth,
+                            ((int)tempCenter.y) % mapHeight] = 'm';
+                    }
+                    break;
+                case (ContinentType.DESERT):
+                    if (randGeoFeature < 5)
+                    {
+                        // Place a pyramid
+                        walkLevelGrid[((int)tempCenter.x) % mapWidth,
+                            ((int)tempCenter.y) % mapHeight] = '^';
+                    }
                     break;
             }
             // Features that are only added with the last land circle
@@ -1143,7 +1155,6 @@ public class MapGenerator : MonoBehaviour {
                 break;
         }
     }
-
 }
 
 // This struct is currently not used, but may be used later to prevent continents from overlapping.

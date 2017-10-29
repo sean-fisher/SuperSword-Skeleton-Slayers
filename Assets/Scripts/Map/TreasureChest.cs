@@ -10,6 +10,11 @@ public class TreasureChest : InteractableTile
 
     bool heroStandingOnThisTile = false;
 
+    private void Start()
+    {
+        treasure = ItemGenerator.instance.GetTreasureBasedOnLocation();
+    }
+
     private void Update()
     {
         if (heroStandingOnThisTile && Input.GetButtonDown("AButton"))
@@ -31,6 +36,8 @@ public class TreasureChest : InteractableTile
 
                     hasBeenOpened = true;
                     heroStandingOnThisTile = false;
+
+                    StartCoroutine(WaitUntilMessageDoneThenDestroy());
                 }
                 else
                 {
@@ -41,6 +48,16 @@ public class TreasureChest : InteractableTile
                 heroStandingOnThisTile = false;
             }
         }
+    }
+
+    protected IEnumerator WaitUntilMessageDoneThenDestroy()
+    {
+        yield return new WaitForSeconds(1);
+        while (TextBoxManager.tbm.isTyping)
+        {
+            yield return null;
+        }
+        Destroy(this.gameObject);
     }
 
     public override void ActivateInteraction()

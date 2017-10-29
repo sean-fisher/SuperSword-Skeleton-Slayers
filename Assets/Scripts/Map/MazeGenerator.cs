@@ -23,6 +23,8 @@ public class MazeGenerator : MonoBehaviour {
     char[,] walkLevelArray;
 
     public GameObject moneyChest;
+    public GameObject enemyOrTreasureChest;
+    public GameObject treasureChest;
     public GameObject swordChest;
     public GameObject forestWallTile;
     public GameObject iceWallTile;
@@ -139,44 +141,44 @@ public class MazeGenerator : MonoBehaviour {
         switch (continentType)
         {
             case (ContinentType.FOREST):
-                objectsToAdd.Add(moneyChest.gameObject);
-                objectsToAdd.Add(swordChest.gameObject);
+                objectsToAdd.Add(moneyChest);
+                objectsToAdd.Add(swordChest);
                 groundType = 'g';
                 wallTile = forestWallTile;
                 currMazeParent = forestMazeParent;
                 break;
             case (ContinentType.ICECAVE):
-                objectsToAdd.Add(moneyChest.gameObject);
-                objectsToAdd.Add(swordChest.gameObject);
+                objectsToAdd.Add(moneyChest);
+                objectsToAdd.Add(swordChest);
                 groundType = 'h';
                 wallTile = iceWallTile;
                 currMazeParent = iceCaveParent;
                 break;
             case (ContinentType.PYRAMID):
-                objectsToAdd.Add(moneyChest.gameObject);
-                objectsToAdd.Add(swordChest.gameObject);
+                objectsToAdd.Add(enemyOrTreasureChest);
+                objectsToAdd.Add(treasureChest);
                 groundType = 's';
-                wallTile = mountainWallTile;
+                wallTile = pyramidWallTile;
                 currMazeParent = pyramidParent;
                 break;
             case (ContinentType.MOUNTAINCAVE):
-                objectsToAdd.Add(moneyChest.gameObject);
-                objectsToAdd.Add(swordChest.gameObject);
+                objectsToAdd.Add(moneyChest);
+                objectsToAdd.Add(swordChest);
                 groundType = 'd';
                 wallTile = mountainWallTile;
                 currMazeParent = mountainCaveParent;
                 break;
             case (ContinentType.LAVACAVE):
-                objectsToAdd.Add(moneyChest.gameObject);
-                objectsToAdd.Add(swordChest.gameObject);
+                objectsToAdd.Add(moneyChest);
+                objectsToAdd.Add(swordChest);
                 groundType = 'r';
                 wallTile = lavaWallTile;
                 currMazeParent = lavaCaveParent;
                 break;
             default:
                 Debug.Log("Invalid continent type provided");
-                objectsToAdd.Add(moneyChest.gameObject);
-                objectsToAdd.Add(swordChest.gameObject);
+                objectsToAdd.Add(moneyChest);
+                objectsToAdd.Add(swordChest);
                 break;
         }
         RandomEncounterManager.currArea = continentType;
@@ -195,7 +197,7 @@ public class MazeGenerator : MonoBehaviour {
         for (int i = 0; i < branchPoints.Count; i++)
         {
             GeneratePathFrom(branchPoints[i].coor.x, branchPoints[i].coor.y,
-                branchPoints[i].pathLength);
+                branchPoints[i].pathLength, 'c');
         }
 
         StartCoroutine(InstantiateTiles());

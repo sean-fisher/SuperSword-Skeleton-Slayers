@@ -1,25 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 //NOTE PART OF THIS SCRIPT WAS COPYPASTED FROM TitleScreen.cs SO SOME CODE MAY BE OBSOLETE
 public class CreditsScreen : GridOptions
 {
 
-    public GameObject mainWindow;
-
+    public TitleScreen mainWindow;
 
     public override void OpenMenu()
     {
-        throw new System.NotImplementedException();
+        gameObject.SetActive(true);
+        canControl = true;
     }
 
     public override void CloseMenu()
     {
-        throw new System.NotImplementedException();
+        gameObject.SetActive(false);
+        canControl = false;
     }
 
-    private void Start()
+    private void OnEnable()
     {
         listTexts = transform.GetComponentsInChildren<RectTransform>();
         RectTransform[] temp = new RectTransform[1];
@@ -28,13 +30,7 @@ public class CreditsScreen : GridOptions
             temp[i - (listTexts.Length - 1)] = listTexts[i];
         }
         listTexts = temp;
-
-        //UpdateCursor(listTexts, 0, 0, 0);
-        /*cursor.transform.position = new Vector3(
-            listTexts[0].transform.position.x - (float)
-            (Screen.width / displaceCursorByOneOverThisTimesScreenWidth) + 0,
-            listTexts[0].transform.position.y + 4);*/
-        Debug.Log(listTexts[0].gameObject.name);
+        UpdateCursor(listTexts, 0);
     }
 
     protected override void MakeMenuSelection(int menuIndex)
@@ -44,8 +40,9 @@ public class CreditsScreen : GridOptions
             case (0):
                 // Return to main menu
                 Debug.Log("Return");
-                mainWindow.SetActive(true);
+                mainWindow.OpenMenu();
                 this.gameObject.SetActive(false);
+                mainWindow.GetComponent<GridOptions>().OpenMenu();
                 break;
         }
     }

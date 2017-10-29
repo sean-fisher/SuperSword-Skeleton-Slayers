@@ -58,12 +58,14 @@ public class AirshipTile : InteractableTile {
             GridController.encountersEnabled = true;
             GridController.clampToPixel = true;
             GridController.partyCanMove = false;
+            gc.canMove = false;
             Camera.main.GetComponent<CamFollow>().AirGroundViewSwitch(false);
             StartCoroutine(MoveVert(false));
         } else
         {
             //Debug.Log("Ground -> Air");
             Camera.main.GetComponent<CamFollow>().AirGroundViewSwitch(true);
+            gc.canMove = false;
             StartCoroutine(MoveVert(true));
         }
     }
@@ -82,6 +84,7 @@ public class AirshipTile : InteractableTile {
             RoundPositionToSixteens();
             GridController.encountersEnabled = false;
             GridController.clampToPixel = false;
+            gc.canMove = true;
             GridController.partyCanMove = false;
 
         } else
@@ -92,6 +95,7 @@ public class AirshipTile : InteractableTile {
                 yield return null;
             }
             transform.position = new Vector3(transform.position.x, (int) transform.position.y, 0);
+            gc.canMove = true;
             RoundPositionToSixteens();
         }
         isFlying = moveUp;

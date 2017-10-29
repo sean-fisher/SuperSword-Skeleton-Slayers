@@ -19,6 +19,8 @@ public class BattleMenu : Menu {
     public Transform listSelectWindow;
     public Transform itemSelectWindow;
 
+    public Transform targetNameWindow;
+
     public ItemMenuBattle itemMenu;
     
 
@@ -216,6 +218,7 @@ public class BattleMenu : Menu {
                             NextHeroSelectsAttack(true);
                             aPressed = false;
                         }
+                        targetNameWindow.gameObject.SetActive(false);
                         //CloseMenu(lastMenuLayer, 1);
                     }
                     else if (bPressed)
@@ -229,6 +232,7 @@ public class BattleMenu : Menu {
                         {
                             UpdateCursor(currRects, 0);
                         }
+                        targetNameWindow.gameObject.SetActive(false);
                     }
                     break;
                 case (2):
@@ -303,6 +307,8 @@ public class BattleMenu : Menu {
                 RectTransform[] enemyRectsTemp = bm.enviroImg.transform
                     .GetComponentsInChildren<RectTransform>();
 
+                targetNameWindow.gameObject.SetActive(true);
+
                 for (int i = 1; i < enemyRectsTemp.Length; i++)
                 {
                     enemyRectList.Add(enemyRectsTemp[i]);
@@ -355,6 +361,7 @@ public class BattleMenu : Menu {
             case (0): // Close main menu
                 break;
             case (1): // Close target menu
+                targetNameWindow.gameObject.SetActive(false);
                 break;
             case (2):
                 break;
@@ -537,6 +544,8 @@ public class BattleMenu : Menu {
         {
             heroCursorMoved = false;
         }
+
+        targetNameWindow.GetComponentInChildren<Text>().text = GetTarget().characterName;
     }
 
     void PickEnemyAttacks()

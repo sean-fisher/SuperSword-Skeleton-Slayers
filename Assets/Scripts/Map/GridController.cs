@@ -198,7 +198,7 @@ public class GridController : MonoBehaviour {
 
             if (inputList.Count > placeInParty)
             {
-
+                // Start to move
                 destination = inputList[0];
                 lastMove = destination;
                 inputList.RemoveAt(0);
@@ -255,6 +255,45 @@ public class GridController : MonoBehaviour {
             {
                 StartCoroutine(WaitWhileLeaderMoves());
             }
+        } else
+        {
+            if (placeInParty == 0)
+            {
+                // The leader turns to face the inputted direction
+                lastMove = destination;
+                switch (destination)
+                {
+                    case (MoveDir.LEFT):
+                        tempWalkState = 3;
+                        break;
+                    case (MoveDir.RIGHT):
+                        tempWalkState = 4;
+                        break;
+                    case (MoveDir.DOWN):
+                        tempWalkState = 2;
+                        break;
+                    case (MoveDir.UP):
+                        tempWalkState = 1;
+                        break;
+                    default:
+                        break;
+                }
+                walkState = tempWalkState;
+                if (anim)
+                {
+                    anim.SetInteger("WalkState", walkState);
+                }
+                StartCoroutine(WaitThenStopWalk());
+            }
+        }
+    }
+
+    IEnumerator WaitThenStopWalk()
+    {
+        yield return null;
+        if (anim)
+        {
+            anim.SetInteger("WalkState", 0);
         }
     }
 

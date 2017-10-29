@@ -8,6 +8,12 @@ public class EnemyOrItemChest : InteractableTile
     public ContinentType whereDoesThisAppear;
     bool heroOnTile = false;
     bool alreadyOpened = false;
+    public BaseItem treasure;
+
+    private void Start()
+    {
+        treasure = ItemGenerator.instance.GetTreasureBasedOnLocation(whereDoesThisAppear);
+    }
 
     private void Update()
     {
@@ -16,13 +22,41 @@ public class EnemyOrItemChest : InteractableTile
             if (currentlyStandingOnInteractableTile)
             {
                 alreadyOpened = true;
-                StartCoroutine(ShowMessageThenStartBattle());
+                if (Random.Range(0, 2) == 0)
+                {
+                    StartCoroutine(ShowMessageThenStartBattle());
+                } else
+                {
+
+                    GameManager.gm.leader.DisableMovement();
+                    TextBoxManager textManager = TextBoxManager.tbm;
+                    textManager.currentLine = 0;
+                    textManager.endLine = 0; // Controls how many windows
+
+                    string boxMessage = "Inside the chest, you found a " + treasure.GetItemData().itemName + ".";
+                    TextBoxManager.tbm.EnableTextBox(null, boxMessage, true, false, true);
+                    // TODO: Open box animation
+                    GameManager.gm.gameObject.GetComponent<Inventory>().AddToInventory(treasure.GetItemData());
+
+                }
+                StartCoroutine(WaitUntilMessageDoneThenDestroy());
             }
             else
             {
                 heroOnTile = false;
             }
         }
+    }
+
+    protected IEnumerator WaitUntilMessageDoneThenDestroy()
+    {
+        yield return new WaitForSeconds(1);
+        while (TextBoxManager.tbm.isTyping)
+        {
+            yield return null;
+        }
+        yield return new WaitForSeconds(1);
+        Destroy(this.gameObject);
     }
 
     IEnumerator ShowMessageThenStartBattle()
@@ -36,9 +70,8 @@ public class EnemyOrItemChest : InteractableTile
         }
 
         BattleManager.bManager.StartBattle(null, GameObject.Instantiate
-            (BattleManager.bManager.areaEncounters
-            .GetChestEnemy(whereDoesThisAppear).gameObject)
-            .GetComponent<EnemyPartyManager>());
+            (AreaEncounters.aeinstance.GetRandomEncounter(whereDoesThisAppear)
+            .GetComponent<EnemyPartyManager>()));
 
     }
 
