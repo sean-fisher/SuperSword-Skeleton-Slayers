@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TitleScreen : GridOptions {
+//NOTE PART OF THIS SCRIPT WAS COPYPASTED FROM TitleScreen.cs SO SOME CODE MAY BE OBSOLETE
+public class CreditsScreen : GridOptions
+{
 
-    public SceneSwitcher sceneSwitcher;
-    public GameObject creditsWindow;
+    public GameObject mainWindow;
+
 
     public override void OpenMenu()
     {
@@ -20,10 +22,10 @@ public class TitleScreen : GridOptions {
     private void Start()
     {
         listTexts = transform.GetComponentsInChildren<RectTransform>();
-        RectTransform[] temp = new RectTransform[3];
-        for (int i = 1; i < listTexts.Length; i++)
+        RectTransform[] temp = new RectTransform[1];
+        for (int i = listTexts.Length - 1; i < listTexts.Length; i++)
         {
-            temp[i - 1] = listTexts[i];
+            temp[i - (listTexts.Length - 1)] = listTexts[i];
         }
         listTexts = temp;
 
@@ -37,35 +39,15 @@ public class TitleScreen : GridOptions {
 
     protected override void MakeMenuSelection(int menuIndex)
     {
-        Debug.Log("Make menu selection");
         switch (menuIndex)
         {
             case (0):
-                // Start new game
-                Debug.Log("Start game");
-                sceneSwitcher.SwitchToOtherScene("MapGenTest");
-                StartCoroutine(StartingGame());
-                break;
-            case (1):
-                // View Controls
-                Debug.Log("Go to Controls");
-                break;
-            case (2):
-                // Go to credits
-                Debug.Log("Go to Credits");
-                creditsWindow.SetActive(true);
+                // Return to main menu
+                Debug.Log("Return");
+                mainWindow.SetActive(true);
                 this.gameObject.SetActive(false);
                 break;
         }
     }
 
-    IEnumerator StartingGame()
-    {
-        while (sceneSwitcher.isSwitching)
-        {
-            yield return null;
-        }
-
-        yield return new WaitForSeconds(2);
-    }
 }
