@@ -31,11 +31,6 @@ public class SpiralTransition : ScreenTransition
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            //StartCoroutine(InOut(Screen.width, Screen.height, 50, 50));
-            SpiralOut(Screen.width, Screen.height, 0, 0);
-        }
     }
 
     public void InOutMethod(float spiralWidth, float spiralheight, int x, int y)

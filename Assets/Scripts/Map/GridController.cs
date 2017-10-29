@@ -244,7 +244,10 @@ public class GridController : MonoBehaviour {
                     anim.SetInteger("WalkState", walkState);
                 }
 
-                MapGenerator.mg.WrapMapOneColumn(destination);
+                if (canWrapMap)
+                {
+                    MapGenerator.mg.WrapMapOneColumn(destination);
+                }
                 StartCoroutine(MovingOneSpace(destinationVector, canMoveAfter));
 
             }
@@ -254,6 +257,8 @@ public class GridController : MonoBehaviour {
             }
         }
     }
+
+    public static bool canWrapMap = true;
 
     //void CheckMap
 

@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
     <UnityVersion>2017.1.1f1</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -78,6 +80,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Battle\ItemTurn.cs" />
     <Compile Include="Assets\Scripts\Battle\Attack.cs" />
     <Compile Include="Assets\Scripts\Battle\AttackType.cs" />
     <Compile Include="Assets\Scripts\Battle\BattleManager.cs" />
@@ -117,6 +120,7 @@
     <Compile Include="Assets\Scripts\Map\AirshipController.cs" />
     <Compile Include="Assets\Scripts\Map\AirshipTile.cs" />
     <Compile Include="Assets\Scripts\Map\CastleDoor.cs" />
+    <Compile Include="Assets\Scripts\Map\GroundTile.cs" />
     <Compile Include="Assets\Scripts\Map\EnemyOrItemChest.cs" />
     <Compile Include="Assets\Scripts\Map\EnemyTile.cs" />
     <Compile Include="Assets\Scripts\Map\GridController.cs" />
@@ -136,6 +140,7 @@
     <Compile Include="Assets\Scripts\menu\Menu.cs" />
     <Compile Include="Assets\Scripts\menu\MenuController.cs" />
     <Compile Include="Assets\Scripts\menu\pauseMenu\InventoryEntry.cs" />
+    <Compile Include="Assets\Scripts\menu\pauseMenu\ItemMenuBattle.cs" />
     <Compile Include="Assets\Scripts\menu\pauseMenu\ItemMenu.cs" />
     <Compile Include="Assets\Scripts\menu\pauseMenu\PartySelectMenu.cs" />
     <Compile Include="Assets\Scripts\menu\pauseMenu\PauseMenu.cs" />

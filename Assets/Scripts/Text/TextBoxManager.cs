@@ -120,10 +120,10 @@ public class TextBoxManager : MonoBehaviour {
                 }
                 else
                 {
-                    Debug.Log("Advance line " + currentLine + " " + textLines.Length);
+                    // Debug.Log("Advance line " + currentLine + " " + textLines.Length);
                     if (currentLine < textLines.Length)
                     {
-                        Debug.Log("Advance array");
+                        // Debug.Log("Advance array");
                         StartCoroutine(TextScroll(textLines[currentLine]));
                     } else
                     {

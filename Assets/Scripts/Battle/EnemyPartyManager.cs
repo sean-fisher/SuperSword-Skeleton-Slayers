@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EnemyPartyManager : PartyManager {
+
+    public Sprite background;
 
     // Can be 1 to 5, 5 being the most common.
     public int occurrenceRate;

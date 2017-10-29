@@ -16,7 +16,7 @@ public class BattleManager : MonoBehaviour {
     public AreaEncounters areaEncounters;
 
     public static HeroPartyManager hpm;
-    public static PartyManager epm;
+    public static EnemyPartyManager epm;
 
     public List<Turn> turnList;
 
@@ -37,9 +37,13 @@ public class BattleManager : MonoBehaviour {
     public static bool hasLost = false;
 
     public StandardAttack defaultAttackPrefab;
+    public ItemTurn itemTurnPrefab;
     public Wait defaultWaitPrefab;
     public Defend defaultDefendPrefab;
     public Run defaultRunPrefab;
+
+    public LayerMask groundLayer;
+    public LayerMask oceanLayer;
 
     int totalGoldDrop = 0;
 
@@ -121,6 +125,8 @@ public class BattleManager : MonoBehaviour {
         }
     }
 
+    public static bool isFightingFinalBoss = false;
+
     public void StartBattle(string[] introMessage = null, 
         EnemyPartyManager enemyEncounter = null)
     {
@@ -129,10 +135,24 @@ public class BattleManager : MonoBehaviour {
 
         if (enemyEncounter == null)
         {
+            Collider2D currentTile = Physics2D.OverlapCircle(GameManager.gm.leader.transform.position, 4, groundLayer);
+
+            GroundTile ground = currentTile.GetComponent<GroundTile>();
+            if (ground)
+            {
+                if (!MazeGenerator.inMaze)
+                {
+                    RandomEncounterManager.SetCurrArea(ground.tileChar);
+                }
+            } else
+            {
+                Debug.Log("Invalid Ground");
+            }
+
             epm = GameObject.Instantiate(areaEncounters
                 .GetRandomEncounter(RandomEncounterManager.currArea).gameObject)
                 .GetComponent<EnemyPartyManager>();
-            Debug.Log("encounter");
+            Debug.Log("encounter at " + RandomEncounterManager.currArea);
         } else
         {
             epm = enemyEncounter;
@@ -143,7 +163,7 @@ public class BattleManager : MonoBehaviour {
         {
             Destroy(allHeroStats.transform.GetChild(0).gameObject);
         }
-        
+
         // Activate the panels that display HP, MP, etc.
         for (int i = 0; i < hpm.activePartyMembers.Count; i++)
         {
@@ -159,6 +179,21 @@ public class BattleManager : MonoBehaviour {
         heroesAlive = hpm.activePartyMembers.Count;
 
         totalGoldDrop = 0;
+
+        // Set the background image
+        if (epm.background != null)
+        {
+            enviroImg.sprite = enemyEncounter.background;
+        }
+
+        // The Skeleton King's body parts shouldn't be lined up, 
+        // so disable the horizontal layout group.
+        if (isFightingFinalBoss)
+        {
+            enviroImg.GetComponent<HorizontalLayoutGroup>().enabled = false;
+        }
+        enviroImg.sprite = AreaEncounters.currBackground;
+
         // Instantiate the Enemy sprites
         for (int j = 0; j < epm.activePartyMembers.Count; j++)
         {
@@ -170,6 +205,13 @@ public class BattleManager : MonoBehaviour {
                 tempScale.y / enviroImg.transform.localScale.y, tempScale.z / enviroImg.transform.localScale.z);
             enemyObj.transform.localScale = tempScale;
             enemyObj.SetActive(false);
+
+            if (isFightingFinalBoss)
+            {
+                enemyObj.GetComponent<RectTransform>().localScale *= 2;
+                enemyObj.GetComponent<RectTransform>().position += new Vector3(enviroImg.rectTransform.rect.width / 2 * 1.5f, 
+                    -enviroImg.rectTransform.rect.height / 2 * 1.3f);
+            }
 
             totalGoldDrop += enemyObj.GetComponent<BaseCharacter>().goldDrop;
         }
@@ -242,6 +284,16 @@ public class BattleManager : MonoBehaviour {
     public void AddAttackTurn(BaseCharacter attacker, BaseCharacter target, int attackIndex)
     {
         turnList.Add(new Turn(attacker, target, attacker.usableAttacks[attackIndex]));
+    }
+
+    public List<ItemData> itemsToUse = new List<ItemData>();
+
+    public void AddItemUseTurn(BaseCharacter attacker, BaseCharacter target, ItemData item)
+    {
+        Debug.Log("Add item turn: " + item.itemName);
+        itemTurnPrefab.itemBeingUsed = item;
+        itemsToUse.Add(item);
+        turnList.Add(new Turn(attacker, target, itemTurnPrefab));
     }
 
     public void AddStandardAttackTurn(BaseCharacter attacker, BaseCharacter target)
@@ -341,7 +393,7 @@ public class BattleManager : MonoBehaviour {
     IEnumerator ClosingWindow()
     {
         int enemyCount = enviroImg.transform.childCount;
-        Debug.Log(enemyCount);
+
         for (int i = 0; i < enemyCount; i++)
         {
             Destroy(enviroImg.transform.GetChild(i).gameObject);
@@ -381,6 +433,7 @@ public class BattleManager : MonoBehaviour {
     IEnumerator StartingInactiveTurn(Turn turn, List<Turn> turnList)
     {
         GameObject attackObj = GameObject.Instantiate(turn.attack.gameObject, transform);
+
         yield return null;
         StartCoroutine(attackObj.GetComponent<Attack>().UseAttack(turn.attacker, turn.target, turnList));
     }

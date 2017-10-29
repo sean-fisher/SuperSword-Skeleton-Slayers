@@ -57,7 +57,6 @@ public class MazeGenerator : MonoBehaviour {
 
     public void EnableMazeParent(ContinentType mazeToEnter, bool disableIfFalse)
     {
-        Debug.Log(mazeToEnter + " " + disableIfFalse);
         switch (mazeToEnter)
         {
             case (ContinentType.FOREST):
@@ -133,7 +132,6 @@ public class MazeGenerator : MonoBehaviour {
 
     public void GenerateMaze(ContinentType continentType, Vector2 enteredFrom)
     {
-        Debug.Log("Generate Maze");
         objectsToAdd = new List<GameObject>();
 
         this.enteredFrom = enteredFrom;

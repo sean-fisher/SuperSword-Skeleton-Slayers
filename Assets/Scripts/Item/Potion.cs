@@ -7,12 +7,12 @@ public class Potion : BaseItem
 {
 
     [SerializeField]
-    private SimpleItemData sitemData;
+    private SimpleItemData itemData;
     
 
     public override ItemData GetItemData()
     {
-        return sitemData;
+        return itemData;
     }
     
 }
@@ -33,6 +33,7 @@ public class SimpleItemData : ItemData
     public bool healsBurn;
 
     public bool usableOutsideBattle;
+    public bool usableInsideBattle;
 
     // Format: {0} == user's name, {1} == target's name, {2} == item name, {3} == hp restored number
     public string messageWhenUsedInBattle;

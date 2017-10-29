@@ -10,7 +10,6 @@ public class MapGenerator : MonoBehaviour {
 
     [Header("Ground Tiles")]                // CHARACTER GUIDE: each tile is represented by a character
     public GameObject grassTile;            // g
-    public GameObject hillTile;             // h
     public GameObject rockTile;             // r
                                             // n
     public GameObject sandTile;             // s
@@ -20,6 +19,7 @@ public class MapGenerator : MonoBehaviour {
     public GameObject iceTile;              // h
     public GameObject icebergTile;          // b
     public GameObject obsidianTile;         // o
+    public GameObject volcanoTile;         // v
                                             // 
     [Header("Interactable Tiles")]          // 
     public GameObject airship;              // a
@@ -27,6 +27,7 @@ public class MapGenerator : MonoBehaviour {
     public GameObject mountainTile;         // m
     public GameObject forestTile;           // f
     public GameObject treasureChest;        // c
+    public GameObject potionChest;          // p
     public GameObject igloo;                // e
     public GameObject lockedTreasureChest;  // l
     public GameObject castle;               // .
@@ -42,6 +43,7 @@ public class MapGenerator : MonoBehaviour {
     public GameObject airshipSalesman;      // 0
     public GameObject penguinSalesman;      // 1
 
+    public GameObject emptyGameObject;
 
                                             // EACH TILE TYPE MUST HAVE:
                                             //  Appropriate GameObject GetTileObj(...) code
@@ -74,8 +76,8 @@ public class MapGenerator : MonoBehaviour {
     int forestCircleCounter = 0;
 
 
-    const int darkForestFrequency = 5;
-    int darkForestCounter = 1;
+    const int darkForestFrequency = 3;
+    int darkForestCounter = 0;
 
     const int numAirshipSalesmen = 1;
     int numAirshipSalesmenPlaced = 0;
@@ -83,7 +85,7 @@ public class MapGenerator : MonoBehaviour {
     void ResetValues()
     {
         numAirshipSalesmenPlaced = 0;
-        forestCircleCounter = 0;
+        forestCircleCounter = 3;
     }
 
 
@@ -218,11 +220,12 @@ public class MapGenerator : MonoBehaviour {
                         .AddKnight(center);
                     //leaderCoorX = (int) center.x / 16;
                     //leaderCoorY = (int)(Mathf.Abs(center.y / 16));
-
-                    dontCheckGrid[(int)center.x, (int)center.y + 2] = '!';
+                    
                     walkLevelGrid[(int)center.x - 5, (int)center.y] = 'c';
+                    walkLevelGrid[(int)center.x - 4, (int)center.y] = 'p';
                     walkLevelGrid[(int)center.x - 6, (int)center.y] = 'l';
-                    //walkLevelGrid[(int)center.x, (int)center.y - 8] = '.';
+                    //dontCheckGrid[(int)center.x  + 4, (int)center.y - 4] = '.';
+                    featuresToPlaceOnMap.Add(new FeatureCenterPair(new MapCoor((int)center.x + 4, (int)center.y - 4), FeatureTypes.CASTLE));
                 } else
                 {
                 }
@@ -263,6 +266,12 @@ public class MapGenerator : MonoBehaviour {
             {
                 case (ContinentType.GRASSLAND):
 
+                    if (circleNum == 3 && darkForestCounter-- == 0)
+                    {
+                        featuresToPlaceOnMap.Add(new FeatureCenterPair(
+                            new MapCoor(tempCenter),
+                            FeatureTypes.DARK_FOREST));
+                    }
                     if (randGeoFeature < 6)
                     {
                         // create a forest
@@ -281,15 +290,6 @@ public class MapGenerator : MonoBehaviour {
 
                                 forestCircleCounter = forestCircleFrequency;
 
-                                if (--darkForestCounter < 0)
-                                {
-                                    //Debug.Log("Add dark forest at " + tempCenter);
-                                    featuresToPlaceOnMap.Add(new FeatureCenterPair(
-                                        new MapCoor(tempCenter), 
-                                        FeatureTypes.DARK_FOREST));
-
-                                    darkForestCounter = darkForestFrequency;
-                                }
                             }
                             else
                             {
@@ -422,7 +422,7 @@ public class MapGenerator : MonoBehaviour {
                             case ('o'):
                                 coastType = 'n';
                                 walkLevelGrid[Mathf.Abs((x - 1) % mapWidth), y]
-                                    = 'm';
+                                    = 'v';
                                 dontCheckGrid[Mathf.Abs((x - 1) % mapWidth), y]
                                     = 'n';
                                 dontCheckGrid[Mathf.Abs((x - 2) % mapWidth), y]
@@ -732,6 +732,8 @@ public class MapGenerator : MonoBehaviour {
                 return airship;
             case ('c'):
                 return treasureChest;
+            case ('p'):
+                return potionChest;
             case ('d'):
                 return sandTileDark;
             case ('g'):
@@ -755,6 +757,8 @@ public class MapGenerator : MonoBehaviour {
                 return rockTile;
             case ('o'):
                 return obsidianTile;
+            case ('v'):
+                return volcanoTile;
             case ('b'):
                 return icebergTile;
             case ('l'):
@@ -771,6 +775,8 @@ public class MapGenerator : MonoBehaviour {
                 return mountaincaveEntrance;
             case ('%'):
                 return lavaCaveEntrance;
+            case ('-'):
+                return emptyGameObject;
             case ('0'):
                 return airshipSalesman;
             case ('1'):
@@ -889,8 +895,9 @@ public class MapGenerator : MonoBehaviour {
 
 
                 tile = GetTileObj(walkLevelGrid[x, y], 1);
-                if (tile != null)// && dontCheckGrid[x, y] == '\0')
+                if (tile != null && dontCheckGrid[x, y] == '\0' && walkLevelGrid[x, y] != '-')
                 {
+
                     SetSortLayerByY sslby = tile.GetComponent<SetSortLayerByY>();
                     tile = GameObject.Instantiate(tile, transform);
                     if (sslby)
@@ -909,19 +916,21 @@ public class MapGenerator : MonoBehaviour {
                 tile = GetTileObj(dontCheckGrid[x, y], 2);
                 if (tile != null)
                 {
-                    SetSortLayerByY sslby = tile.GetComponent<SetSortLayerByY>();
-                    tile = GameObject.Instantiate(tile, transform);
-                    if (sslby)
                     {
-                        tile.transform.position = new Vector2(
-                            16 * x + sslby.spriteOffsetX,
-                            -16 * y + sslby.spriteOffsetY);
+                        SetSortLayerByY sslby = tile.GetComponent<SetSortLayerByY>();
+                        tile = GameObject.Instantiate(tile, transform);
+                        if (sslby)
+                        {
+                            tile.transform.position = new Vector2(
+                                16 * x + sslby.spriteOffsetX,
+                                -16 * y + sslby.spriteOffsetY);
+                        }
+                        else
+                        {
+                            tile.transform.position = new Vector2(16 * x, -16 * y);
+                        }
+                        instantiatedTiles[x, y].Add(tile);
                     }
-                    else
-                    {
-                        tile.transform.position = new Vector2(16 * x, -16 * y);
-                    }
-                    instantiatedTiles[x, y].Add(tile);
                 }
             }
             yield return null;
@@ -982,6 +991,11 @@ public class MapGenerator : MonoBehaviour {
 
         string[] mapFeature = MapFeatures.GetFeature(featureType);
 
+        int layer = 1;
+        if (fcp.featureType == FeatureTypes.CASTLE)
+        {
+            layer = 2;
+        }
         if (fcp.mirrored)
         {
             string[] copy = mapFeature;
@@ -1003,18 +1017,18 @@ public class MapGenerator : MonoBehaviour {
             {
                 if (rowOfChars[col] == ' ')
                 {
-                    SetTile(1, new MapCoor(center.x + col / 3, center.y + row), '\0');
+                    SetTile(layer, new MapCoor(center.x + col / 3, center.y + row), '\0');
                 } else
                 {
-                    SetTile(1, new MapCoor(center.x + col / 3, center.y + row), 
+                    SetTile(layer, new MapCoor(center.x + col / 3, center.y + row), 
                         rowOfChars[col]);
                 }
             }
         }
     }
 
-    int leaderCoorX = 0;
-    int leaderCoorY = 0;
+    int leaderCoorX;
+    int leaderCoorY;
 
     public void WrapMapOneColumn(MoveDir directionMoved)
     {
@@ -1022,57 +1036,82 @@ public class MapGenerator : MonoBehaviour {
         {
             case (MoveDir.UP):
 
-                leaderCoorY++;
 
-                if (leaderCoorY > mapHeight - 1)
-                {
-                    leaderCoorY = 0;
-                }
-
-                List<GameObject>[] topMostCol =
+                List<GameObject>[] bottomMostRow =
                     new List<GameObject>[mapHeight];
 
-                topMostCol = instantiatedTiles.Cast<List<GameObject>>()
-                    .Skip(mapWidth * leaderCoorY).Take(mapWidth).ToArray();
-                for (int i = 0; i < topMostCol.Length; i++)
+                for (int i = 0; i < mapWidth; i++)
+                {
+                    for (int j = 0; j < instantiatedTiles[i, leaderCoorY].Count; j++)
+                    {
+                        if (bottomMostRow[i] == null)
+                        {
+                            bottomMostRow[i] = new List<GameObject>();
+                        }
+                        bottomMostRow[i].Add(instantiatedTiles[i, mapHeight - 1 - leaderCoorY][0]);
+                    }
+                }
+
+                for (int i = 0; i < bottomMostRow.Length; i++)
                 {
                     for (int tileOnCoor = 0;
-                        tileOnCoor < topMostCol[i].Count; tileOnCoor++)
+                        tileOnCoor < bottomMostRow[i].Count; tileOnCoor++)
                     {
-                        topMostCol[i][tileOnCoor].transform.position
+                        bottomMostRow[i][tileOnCoor].transform.position
                             += new Vector3(0, mapHeight * 16);
                     }
                 }
-                break;
-            case (MoveDir.DOWN):
-                leaderCoorY--;
-
+                leaderCoorY++;
                 if (leaderCoorY > mapHeight - 1)
                 {
                     leaderCoorY = 0;
                 }
+                break;
+            case (MoveDir.DOWN):
 
-                List<GameObject>[] bottomMostCol =
+                leaderCoorY--;
+                if (leaderCoorY < 0)
+                {
+                    leaderCoorY = mapHeight - 1;
+                }
+
+                List<GameObject>[] topMostRow =
                     new List<GameObject>[mapHeight];
 
-                bottomMostCol = instantiatedTiles.Cast<List<GameObject>>()
-                    .Skip(mapWidth * leaderCoorY).Take(mapWidth).ToArray();
-                for (int i = 0; i < bottomMostCol.Length; i++)
+                for (int i = 0; i < mapWidth; i ++)
+                {
+                    for (int j = 0; j < instantiatedTiles[i, leaderCoorY].Count; j++)
+                    {
+                        if (topMostRow[i] == null)
+                        {
+                            topMostRow[i] = new List<GameObject>();
+                        }
+                        topMostRow[i].Add(instantiatedTiles[i, mapHeight - 1 - leaderCoorY][0]);
+                    }
+                }
+                
+                for (int i = 0; i < topMostRow.Length; i++)
                 {
                     for (int tileOnCoor = 0;
-                        tileOnCoor < bottomMostCol[i].Count; tileOnCoor++)
+                        tileOnCoor < topMostRow[i].Count; tileOnCoor++)
                     {
-                        bottomMostCol[i][tileOnCoor].transform.position
+                        topMostRow[i][tileOnCoor].transform.position
                             -= new Vector3(0, mapHeight * 16);
                     }
                 }
+
+
                 break;
             case (MoveDir.LEFT):
 
-                List<GameObject>[] rightmostCol =
-                    new List<GameObject>[mapHeight];
-                
-                rightmostCol = instantiatedTiles.Cast<List<GameObject>>()
+                leaderCoorX--;
+
+                if (leaderCoorX < 0)
+                {
+                    leaderCoorX = mapWidth;
+                }
+
+                List<GameObject>[] rightmostCol = instantiatedTiles.Cast<List<GameObject>>()
                     .Skip(mapHeight * leaderCoorX).Take(mapHeight).ToArray();
                 for (int i = 0; i < rightmostCol.Length; i++) {
                     for (int tileOnCoor = 0; 
@@ -1082,19 +1121,10 @@ public class MapGenerator : MonoBehaviour {
                             -= new Vector3(mapWidth * 16, 0);
                     }
                 }
-                leaderCoorX--;
-
-                if (leaderCoorX < 0)
-                {
-                    leaderCoorX = mapWidth;
-                }
                 break;
             case (MoveDir.RIGHT):
                
-                List<GameObject>[] leftMostCol =
-                    new List<GameObject>[mapHeight];
-
-                leftMostCol = instantiatedTiles.Cast<List<GameObject>>()
+                List<GameObject>[] leftMostCol = instantiatedTiles.Cast<List<GameObject>>()
                     .Skip(mapHeight * leaderCoorX).Take(mapHeight).ToArray();
                 for (int i = 0; i < leftMostCol.Length; i++)
                 {

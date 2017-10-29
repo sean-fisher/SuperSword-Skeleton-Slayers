@@ -50,30 +50,35 @@ public class AirshipController : GridController {
                 } else
                 {
                     // Exit ship
-
-                    for (int i = 0; i < BattleManager.hpm.activePartyMembers.Count; 
-                        i++)
-                    {
-                        BaseCharacter characterBeingActivated = BattleManager.hpm
-                            .activePartyMembers[i];
-
-                        characterBeingActivated.GetComponent<SpriteRenderer>()
-                            .enabled = true;
-                        characterBeingActivated                            
-                            .GetComponent<GridController>().enabled = true;
-                        characterBeingActivated.transform.position 
-                            = new Vector3(transform.position.x, 
-                            transform.position.y + 4, transform.position.z);
-                        characterBeingActivated.GetComponent<GridController>()
-                            .inputList.Clear();
-                    }
-                    GameManager.gm.leader.enabled = true;
-                    canMove = false;
-                    Camera.main.GetComponent<CamFollow>().targetToFollow =
-                        GameManager.gm.leader.gameObject.transform;
+                    ExitShip(transform.position);
                 }
             }
         }
+    }
+
+    void ExitShip(Vector2 placeToExitAt)
+    {
+        for (int i = 0; i < BattleManager.hpm.activePartyMembers.Count;
+            i++)
+        {
+            BaseCharacter characterBeingActivated = BattleManager.hpm
+                .activePartyMembers[i];
+
+            characterBeingActivated.GetComponent<SpriteRenderer>()
+                .enabled = true;
+            characterBeingActivated
+                .GetComponent<GridController>().enabled = true;
+            characterBeingActivated.transform.position
+                = new Vector3(transform.position.x,
+                placeToExitAt.y + 4);
+            characterBeingActivated.GetComponent<GridController>()
+                .inputList.Clear();
+        }
+        GameManager.gm.leader.enabled = true;
+        canMove = false;
+        Camera.main.GetComponent<CamFollow>().targetToFollow =
+            GameManager.gm.leader.gameObject.transform;
+        enabled = false;
     }
     
     MoveDir lastMove2 = MoveDir.DOWN;
@@ -118,50 +123,52 @@ public class AirshipController : GridController {
     {
         int tempWalkState = 0;
         
-            Vector3 destinationVector = Vector3.zero;
-            switch (destination)
-            {
-                case (MoveDir.LEFT):
-                    destinationVector = new Vector3(gameObject.transform.position.x - 16, gameObject.transform.position.y, transform.position.z);
-                    tempWalkState = 3;
-                    break;
-                case (MoveDir.RIGHT):
-                    destinationVector = new Vector3(gameObject.transform.position.x + 16, gameObject.transform.position.y, transform.position.z);
-                    tempWalkState = 4;
-                    break;
-                case (MoveDir.DOWN):
-                    destinationVector = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 16, transform.position.z);
-                    tempWalkState = 2;
-                    break;
-                case (MoveDir.UP):
-                    destinationVector = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 16, transform.position.z);
-                    tempWalkState = 1;
-                    break;
-                default:
-                    break;
-            }
-            if (anim)
-            {
-                anim.SetInteger("WalkState", tempWalkState);
-            }
+        Vector3 destinationVector = Vector3.zero;
+        switch (destination)
+        {
+            case (MoveDir.LEFT):
+                destinationVector = new Vector3(gameObject.transform.position.x - 16, gameObject.transform.position.y, transform.position.z);
+                tempWalkState = 3;
+                break;
+            case (MoveDir.RIGHT):
+                destinationVector = new Vector3(gameObject.transform.position.x + 16, gameObject.transform.position.y, transform.position.z);
+                tempWalkState = 4;
+                break;
+            case (MoveDir.DOWN):
+                destinationVector = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 16, transform.position.z);
+                tempWalkState = 2;
+                break;
+            case (MoveDir.UP):
+                destinationVector = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 16, transform.position.z);
+                tempWalkState = 1;
+                break;
+            default:
+                break;
+        }
+        if (anim)
+        {
+            anim.SetInteger("WalkState", tempWalkState);
+        }
 
-            // Checks if objects are already at the destination and 
-            // if they can be moved onto
-            Collider2D objectsAtDestination = Physics2D.OverlapCircle
-                (destinationVector, 4, wall);
-            if (objectsAtDestination == null)
-            {
-                objectsAtDestination = Physics2D.OverlapCircle(
-                    destinationVector, 4, interactableTile);
+        // Checks if objects are already at the destination and 
+        // if they can be moved onto
+        Collider2D objectsAtDestination = Physics2D.OverlapCircle
+            (destinationVector, 4, wall);
+        if (objectsAtDestination == null)
+        {
+            objectsAtDestination = Physics2D.OverlapCircle(
+                destinationVector, 4, interactableTile);
 
-                // Prevent party from moving
-                partyCanMove = objectsAtDestination == null
-                    || objectsAtDestination.isTrigger;
-            }
-            else
-            {
-                partyCanMove = false;
-            }
+            // Prevent party from moving
+            canMove = objectsAtDestination == null
+                || objectsAtDestination.isTrigger;
+        }
+        else if (!at.isFlying)
+        {
+            canMove = false;
+            Debug.Log("blocked");
+            ExitShip(destinationVector);
+        }
 
         
 
@@ -200,6 +207,10 @@ public class AirshipController : GridController {
             }
             destinationVector = new Vector3(Mathf.Round(destinationVector.x), Mathf.Round(destinationVector.y), destinationVector.z);
             StartCoroutine(MovingOneSpace(destinationVector, canMoveAfter));
+            MapGenerator.mg.WrapMapOneColumn(destination);
+        } else
+        {
+            canMove = true;
         }
     }
 
@@ -255,7 +266,6 @@ public class AirshipController : GridController {
             Animator anim = GetComponent<Animator>();
             if (anim)
             {
-                Debug.Log("set zero");
                 anim.SetInteger("WalkState", 0);
             }
 

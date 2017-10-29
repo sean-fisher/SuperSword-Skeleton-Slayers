@@ -12,7 +12,7 @@ public class AirshipTile : InteractableTile {
 
     private void Update()
     {
-        if (Input.GetButtonDown("AButton") && gc.canMove)
+        if (Input.GetButtonDown("AButton") && gc.canMove && gc.enabled)
         {
             SwitchGroundAir();
         }
@@ -46,6 +46,7 @@ public class AirshipTile : InteractableTile {
         Camera.main.GetComponent<CamFollow>().targetToFollow = 
             gameObject.transform;
         AirshipController.at = this;
+        gc.enabled = true;
         //gc.speed = 100;
     }
 
@@ -53,7 +54,7 @@ public class AirshipTile : InteractableTile {
     {
         if (isFlying)
         {
-            Debug.Log("Air -> Ground");
+            //Debug.Log("Air -> Ground");
             GridController.encountersEnabled = true;
             GridController.clampToPixel = true;
             GridController.partyCanMove = false;
@@ -61,7 +62,7 @@ public class AirshipTile : InteractableTile {
             StartCoroutine(MoveVert(false));
         } else
         {
-            Debug.Log("Ground -> Air");
+            //Debug.Log("Ground -> Air");
             Camera.main.GetComponent<CamFollow>().AirGroundViewSwitch(true);
             StartCoroutine(MoveVert(true));
         }

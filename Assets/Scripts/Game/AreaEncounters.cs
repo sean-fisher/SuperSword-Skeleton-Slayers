@@ -4,24 +4,63 @@ using UnityEngine;
 
 public class AreaEncounters : MonoBehaviour {
 
-    public List<EnemyPartyManager> grasslandParties;
-    public List<EnemyPartyManager> mountainParties;
-    public List<EnemyPartyManager> glacierParties;
-    public List<EnemyPartyManager> volcanoParties;
-    public List<EnemyPartyManager> desertParties;
-    public List<EnemyPartyManager> forestParties;
-    public List<EnemyPartyManager> iceCaveParties;
-    public List<EnemyPartyManager> pyramidParties;
-    public List<EnemyPartyManager> mountainCaveParties;
-    public List<EnemyPartyManager> lavaCaveParties;
+    public static AreaEncounters aeinstance;
+
+    public Transform grasslandParties;
+    public Transform mountainParties;
+    public Transform glacierParties;
+    public Transform volcanoParties;
+    public Transform desertParties;
+    public Transform forestParties;
+    public Transform iceCaveParties;
+    public Transform pyramidParties;
+    public Transform mountainCaveParties;
+    public Transform lavaCaveParties;
 
     public EnemyPartyManager bossParty;
     public EnemyPartyManager glacierEnemyChestEncounter;
 
+    public Sprite grasslandBackground;
+    public Sprite forestBackground;
+    public Sprite glacierBackground;
+    public Sprite icecaveBackground;
+    public Sprite desertBackground;
+    public Sprite pyramidBackground;
+    public Sprite mountainBackground;
+    public Sprite caveBackground;
+    public Sprite volcanoBackground;
+    public Sprite lavacaveBackground;
+
+    public static Sprite currBackground;
+
+    EnemyPartyManager[] grasslandPartiesList;
+    EnemyPartyManager[] mountainPartiesList;
+    EnemyPartyManager[] glacierPartiesList;
+    EnemyPartyManager[] volcanoPartiesList;
+    EnemyPartyManager[] desertPartiesList;
+    EnemyPartyManager[] forestPartiesList;
+    EnemyPartyManager[] iceCavePartiesList;
+    EnemyPartyManager[] pyramidPartiesList;
+    EnemyPartyManager[] mountainCavePartiesList;
+    EnemyPartyManager[] lavaCavePartiesList;
+
+
     // Use this for initialization
     void Start () {
-		
-	}
+        if (aeinstance == null)
+        {
+            aeinstance = this;
+        }
+        grasslandPartiesList = grasslandParties.GetComponentsInChildren<EnemyPartyManager>();
+        mountainPartiesList = mountainParties.GetComponentsInChildren<EnemyPartyManager>();
+        glacierPartiesList = glacierParties.GetComponentsInChildren<EnemyPartyManager>();
+        volcanoPartiesList = volcanoParties.GetComponentsInChildren<EnemyPartyManager>();
+        desertPartiesList = desertParties.GetComponentsInChildren<EnemyPartyManager>();
+        forestPartiesList = forestParties.GetComponentsInChildren<EnemyPartyManager>();
+        iceCavePartiesList = iceCaveParties.GetComponentsInChildren<EnemyPartyManager>();
+        pyramidPartiesList = pyramidParties.GetComponentsInChildren<EnemyPartyManager>();
+        mountainCavePartiesList = mountainCaveParties.GetComponentsInChildren<EnemyPartyManager>();
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -29,54 +68,64 @@ public class AreaEncounters : MonoBehaviour {
 	}
 
     int tries = 100;
+    static EnemyPartyManager[] currAreaList = null;
 
     public EnemyPartyManager GetRandomEncounter(ContinentType currArea)
     {
 
-        List<EnemyPartyManager> currAreaList = null;
         switch (currArea)
         {
             case (ContinentType.GRASSLAND):
-                currAreaList = forestParties;
+                currAreaList = grasslandPartiesList;
+                currBackground = grasslandBackground;
                 break;
             case (ContinentType.MOUNTAIN):
-                currAreaList = mountainParties;
+                currAreaList = mountainPartiesList;
+                currBackground = caveBackground;
                 break;
             case (ContinentType.GLACIER):
-                currAreaList = glacierParties;
+                currAreaList = glacierPartiesList;
+                currBackground = glacierBackground;
                 break;
             case (ContinentType.DESERT):
-                currAreaList = desertParties;
+                currAreaList = desertPartiesList;
+                currBackground = desertBackground;
                 break;
             case (ContinentType.VOLCANO):
-                currAreaList = volcanoParties;
+                currAreaList = volcanoPartiesList;
+                currBackground = volcanoBackground;
                 break;
             case (ContinentType.FOREST):
-                currAreaList = forestParties;
+                currAreaList = forestPartiesList;
+                currBackground = forestBackground;
                 break;
             case (ContinentType.MOUNTAINCAVE):
-                currAreaList = mountainCaveParties;
+                currAreaList = mountainCavePartiesList;
+                currBackground = caveBackground;
                 break;
             case (ContinentType.LAVACAVE):
-                currAreaList = lavaCaveParties;
+                currAreaList = lavaCavePartiesList;
+                currBackground = lavacaveBackground;
                 break;
             case (ContinentType.PYRAMID):
-                currAreaList = pyramidParties;
+                currAreaList = pyramidPartiesList;
+                currBackground = pyramidBackground;
                 break;
             case (ContinentType.ICECAVE):
-                currAreaList = iceCaveParties;
+                currAreaList = iceCavePartiesList;
+                currBackground = icecaveBackground;
                 break;
             default:
-                currAreaList = grasslandParties;
+                currAreaList = grasslandPartiesList;
+                currBackground = grasslandBackground;
                 break;
         }
 
-        int randPartyIndex = UnityEngine.Random.Range(0, currAreaList.Count);
+        int randPartyIndex = UnityEngine.Random.Range(0, currAreaList.Length);
         int occurrenceChance = UnityEngine.Random.Range(1, 6);
 
         if (occurrenceChance <= currAreaList[randPartyIndex].occurrenceRate)
         {
-            Debug.Log(currArea);
             return currAreaList[randPartyIndex];
         }
         else
@@ -86,6 +135,57 @@ public class AreaEncounters : MonoBehaviour {
                 throw new System.Exception("Invalid party Occurrence rate!");
             }
             return GetRandomEncounter(currArea);
+        }
+    }
+
+    public void SetCurrArea(ContinentType currArea)
+    {
+        switch (currArea)
+        {
+            case (ContinentType.GRASSLAND):
+                currAreaList = grasslandPartiesList;
+                currBackground = grasslandBackground;
+                break;
+            case (ContinentType.MOUNTAIN):
+                currAreaList = mountainPartiesList;
+                currBackground = caveBackground;
+                break;
+            case (ContinentType.GLACIER):
+                currAreaList = glacierPartiesList;
+                currBackground = glacierBackground;
+                break;
+            case (ContinentType.DESERT):
+                currAreaList = desertPartiesList;
+                currBackground = desertBackground;
+                break;
+            case (ContinentType.VOLCANO):
+                currAreaList = volcanoPartiesList;
+                currBackground = volcanoBackground;
+                break;
+            case (ContinentType.FOREST):
+                currAreaList = forestPartiesList;
+                currBackground = forestBackground;
+                break;
+            case (ContinentType.MOUNTAINCAVE):
+                currAreaList = mountainCavePartiesList;
+                currBackground = caveBackground;
+                break;
+            case (ContinentType.LAVACAVE):
+                currAreaList = lavaCavePartiesList;
+                currBackground = lavacaveBackground;
+                break;
+            case (ContinentType.PYRAMID):
+                currAreaList = pyramidPartiesList;
+                currBackground = pyramidBackground;
+                break;
+            case (ContinentType.ICECAVE):
+                currAreaList = iceCavePartiesList;
+                currBackground = icecaveBackground;
+                break;
+            default:
+                currAreaList = grasslandPartiesList;
+                currBackground = grasslandBackground;
+                break;
         }
     }
 
