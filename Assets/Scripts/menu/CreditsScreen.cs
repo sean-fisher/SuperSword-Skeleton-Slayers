@@ -39,7 +39,6 @@ public class CreditsScreen : GridOptions
 
     protected override void MakeMenuSelection(int menuIndex)
     {
-        Debug.Log("Make credits selection");
         switch (menuIndex)
         {
             case (0):

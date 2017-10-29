@@ -5,7 +5,7 @@ using UnityEngine;
 public class TitleScreen : GridOptions {
 
     public SceneSwitcher sceneSwitcher;
-
+    public GameObject creditsWindow;
 
     public override void OpenMenu()
     {
@@ -46,11 +46,15 @@ public class TitleScreen : GridOptions {
                 sceneSwitcher.SwitchToOtherScene("MapGenTest");
                 StartCoroutine(StartingGame());
                 break;
-            case (2):
+            case (1):
                 // View Controls
+                Debug.Log("Go to Controls");
                 break;
-            case (3):
+            case (2):
                 // Go to credits
+                Debug.Log("Go to Credits");
+                creditsWindow.SetActive(true);
+                this.gameObject.SetActive(false);
                 break;
         }
     }
