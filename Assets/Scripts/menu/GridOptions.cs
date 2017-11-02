@@ -192,8 +192,6 @@ public abstract class GridOptions : MonoBehaviour {
             enableScrollingUp = false;
         }
         cursorMoved = true;
-        //InitializeListText<Attack>(firstVisibleIndex, null); // this line was problematic, fix when scrolling is necessary
-        //cursorMarker = firstVisibleIndex;
     }
 
 

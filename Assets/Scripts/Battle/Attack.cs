@@ -95,7 +95,7 @@ public abstract class Attack : MonoBehaviour {
         {
             if (!BattleManager.hasLost && !BattleManager.hasWon)
             {
-                //ReturnToMenu();
+                ReturnToMenu();
             }
             else if (BattleManager.hasLost)
             {

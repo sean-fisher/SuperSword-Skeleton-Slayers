@@ -179,11 +179,11 @@ public class BattleManager : MonoBehaviour {
         heroesAlive = hpm.activePartyMembers.Count;
 
         totalGoldDrop = 0;
-
+        
         // Set the background image
         if (epm.background != null)
         {
-            enviroImg.sprite = enemyEncounter.background;
+            enviroImg.sprite = epm.background;
         }
 
         // The Skeleton King's body parts shouldn't be lined up, 
@@ -191,8 +191,11 @@ public class BattleManager : MonoBehaviour {
         if (isFightingFinalBoss)
         {
             enviroImg.GetComponent<HorizontalLayoutGroup>().enabled = false;
+        } else
+        {
+            enviroImg.GetComponent<HorizontalLayoutGroup>().enabled = true;
+            enviroImg.sprite = AreaEncounters.currBackground;
         }
-        enviroImg.sprite = AreaEncounters.currBackground;
 
         // Instantiate the Enemy sprites
         for (int j = 0; j < epm.activePartyMembers.Count; j++)
@@ -209,8 +212,9 @@ public class BattleManager : MonoBehaviour {
             if (isFightingFinalBoss)
             {
                 enemyObj.GetComponent<RectTransform>().localScale *= 2;
-                enemyObj.GetComponent<RectTransform>().position += new Vector3(enviroImg.rectTransform.rect.width / 2 * 1.5f, 
-                    -enviroImg.rectTransform.rect.height / 2 * 1.3f);
+                enemyObj.GetComponent<RectTransform>().position += new Vector3((enviroImg.rectTransform.rect.width / 2) * 1.5f, 
+                    (-enviroImg.rectTransform.rect.height / 2) * 1.3f);
+                enemyObj.GetComponent<RectTransform>().position = new Vector3(Screen.width / 2, Screen.height / 2);
             }
 
             totalGoldDrop += enemyObj.GetComponent<BaseCharacter>().goldDrop;

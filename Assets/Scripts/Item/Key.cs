@@ -7,11 +7,11 @@ public class Key : BaseItem
 {
 
     [SerializeField]
-    private SimpleItemData sitemData;
+    private SimpleItemData itemData;
 
     public override ItemData GetItemData()
     {
-        return sitemData;
+        return itemData;
     }
 
 }

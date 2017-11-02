@@ -61,7 +61,7 @@ public abstract class Menu : MonoBehaviour {
 
     public void InitializeListText<T>(int firstVisibleIndex, List<T> scrollableList)
     {
-        Debug.Log("Initialize at " + firstVisibleIndex + " with size of " + visibleSize + " and length " + listTexts.Length);
+        //Debug.Log("Initialize at " + firstVisibleIndex + " with size of " + visibleSize + " and length " + listTexts.Length);
         if (scrollableList != null)
         {
             //scrollableListO = scrollableList as List<object>;
@@ -104,7 +104,7 @@ public abstract class Menu : MonoBehaviour {
     }
 
     // Move the cursor to a RectTransform (i.e. an enemy's image)
-    protected void UpdateCursor(RectTransform[] visibleRectArr, int newIndex, int cursorNum = 0, float offsetNum = 0)
+    protected void UpdateCursor(RectTransform[] visibleRectArr, int newIndex, int cursorNum = 0, float offsetNum = 0, bool isSelectingEnemies = false)
     {
         if (cursorNum == 2)
         {
@@ -136,6 +136,7 @@ public abstract class Menu : MonoBehaviour {
             enableScrollingDown = true;
         }
         currCursor.SetActive(true);
+        
         //Debug.Log(tempCursor);
         //cursorMarker = tempCursor % visibleSize - 1;
     }
