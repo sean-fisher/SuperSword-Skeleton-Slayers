@@ -82,11 +82,6 @@ public abstract class GridOptions : MonoBehaviour {
                     throw new System.Exception("Error while comparing to ItemData or attack");
                 }
             }
-            else
-            {
-                listTexts[i].GetComponent<Text>().text = "";
-
-            }
         }
     }
 
@@ -120,7 +115,7 @@ public abstract class GridOptions : MonoBehaviour {
                     throw new System.Exception("Error while comparing to ItemData or attack");
                 }
             }
-            else
+            else if (i < listTexts.Length)
             {
                 listTexts[i].GetComponentInChildren<Text>(true).text = "";
 
@@ -208,7 +203,10 @@ public abstract class GridOptions : MonoBehaviour {
         array[current].transform.GetChild(0).gameObject.SetActive(false);
         array[newIndex].transform.GetChild(0).gameObject.SetActive(true);
         tempCursor = newIndex;
+        OnMoveCursor();
     }
+
+    protected virtual void OnMoveCursor() { }
 
     void CheckInput(Text[] array, int width, int height = 0)
     {

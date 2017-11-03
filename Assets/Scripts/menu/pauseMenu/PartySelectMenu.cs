@@ -26,6 +26,7 @@ public class PartySelectMenu : GridOptions {
     }
 
     public bool openedFromItemMenu = false;
+    public bool openedFromEquipMenu = false;
     public int itemToUseUnsortedIndex;
 	
 	// Update is called once per frame
@@ -54,15 +55,120 @@ public class PartySelectMenu : GridOptions {
         if (openedFromItemMenu)
         {
             ItemData itemToUse = Inventory.unsortedList[itemToUseUnsortedIndex];
-            itemToUse.Effect(BattleManager.hpm.activePartyMembers[menuIndex]);
-            bool hasItemStock = GameManager.gm.inventory.DecrementSupply(itemToUseUnsortedIndex);
 
-            if (!hasItemStock)
+            if (itemToUse.itemType == ItemTypes.ITEM && itemToUse.usableOutsideBattle)
             {
-                CloseMenu();
-                PauseMenu.itemMenu.OpenMenu();
+                itemToUse.Effect(BattleManager.hpm.activePartyMembers[menuIndex]);
+                bool hasItemStock = GameManager.gm.inventory.DecrementSupply(itemToUseUnsortedIndex);
+
+                if (!hasItemStock)
+                {
+                    CloseMenu();
+                    PauseMenu.itemMenu.OpenMenu();
+                }
+                PauseMenu.itemMenu.UpdateItemCounts(false, itemToUseUnsortedIndex);
+            } else
+            {
+                Debug.Log("Can't use this item!");
             }
-            PauseMenu.itemMenu.UpdateItemCounts(false, menuIndex);
+        } else if (openedFromEquipMenu)
+        {
+
+            ItemData itemToUse = Inventory.equipList[itemToUseUnsortedIndex];
+            if (itemToUse.itemType == ItemTypes.EQUIPMENT)
+            {
+                EquipData newEquip = (EquipData)itemToUse;
+                EquipData oldEquip;
+                
+                switch (newEquip.equipType)
+                {
+                    case (EquipType.ARMOR):
+                        // Remove old armor
+                        oldEquip = BattleManager.hpm.activePartyMembers[menuIndex].armor;
+                        
+                        // add old armor back into inventory
+                        if (oldEquip != null)
+                        {
+                            GameManager.gm.inventory.AddToInventory(oldEquip);
+                        }
+
+                        // Equip new armor
+                        BattleManager.hpm.activePartyMembers[menuIndex].armor
+                            = (EquipData)itemToUse;
+
+                        break;
+                    case (EquipType.WEAPON):
+                        // Remove old weapon
+                        oldEquip = BattleManager.hpm.activePartyMembers[menuIndex].weapon;
+                        
+                        // add old weapon back into inventory
+                        if (oldEquip != null)
+                        {
+                            GameManager.gm.inventory.AddToInventory(oldEquip);
+                        }
+
+                        // Equip new weapon
+                        BattleManager.hpm.activePartyMembers[menuIndex].weapon
+                            = (EquipData)itemToUse;
+
+                        break;
+                    case (EquipType.HEADGEAR):
+                        // Remove old headgear
+                        oldEquip = BattleManager.hpm.activePartyMembers[menuIndex].headgear;
+                        
+                        // add old headgear back into inventory
+                        if (oldEquip != null)
+                        {
+                            GameManager.gm.inventory.AddToInventory(oldEquip);
+                        }
+
+                        // Equip new headgear
+                        BattleManager.hpm.activePartyMembers[menuIndex].headgear
+                            = (EquipData)itemToUse;
+
+                        break;
+                    case (EquipType.ACCESSORY):
+                        // Remove old accessory
+                        oldEquip = BattleManager.hpm.activePartyMembers[menuIndex].accessory;
+                        
+                        // add old accessory back into inventory
+                        if (oldEquip != null)
+                        {
+                            GameManager.gm.inventory.AddToInventory(oldEquip);
+                        }
+
+                        // Equip new accessory
+                        BattleManager.hpm.activePartyMembers[menuIndex].accessory
+                            = (EquipData)itemToUse;
+
+                        break;
+                }
+
+                // Subtract from inventory
+                int hasItemStock = GameManager.gm.inventory.DecrementSupply(itemToUse);
+
+                if (hasItemStock == 0)
+                {
+                    // no more of this item
+                }
+                PauseMenu.pauseMenu.equipMenu
+                    .UpdateItemCounts(true);
+
+                CloseMenu();
+                    PauseMenu.pauseMenu.equipMenu.OpenMenu();
+            }
+            else
+            {
+                Debug.Log("Can't use this item!");
+            }
+        }
+    }
+
+    protected override void OnMoveCursor()
+    {
+        if (openedFromEquipMenu)
+        {
+            PauseMenu.pauseMenu.equipMenu.UpdateHeroEquipsWindow(tempCursor);
         }
     }
 
@@ -83,14 +189,15 @@ public class PartySelectMenu : GridOptions {
         visibleSize = rows;
 
         UpdateCursor(listTexts, 0);
-    }
+     }
 
     public override void CloseMenu()
     {
         canControl = false;
         if (openedFromItemMenu)
         {
-            PauseMenu.itemMenu.OpenMenu();
+            PauseMenu.pauseMenu.itemWindow.GetComponent<ItemMenu>().OpenMenu();
+            //PauseMenu.itemMenu.OpenMenu();
         }
         openedFromItemMenu = false;
     }

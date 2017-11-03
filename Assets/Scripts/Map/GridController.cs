@@ -185,6 +185,14 @@ public class GridController : MonoBehaviour {
                 // Prevent party from moving
                 partyCanMove = objectsAtDestination == null 
                     || objectsAtDestination.isTrigger;
+                if (!partyCanMove)
+                {
+                    if (!touchedDamageTile && objectsAtDestination.GetComponent<Cactus>())
+                    {
+                        touchedDamageTile = true;
+                        objectsAtDestination.GetComponent<Cactus>().ActivateInteraction();
+                    }
+                }
             } else
             {
                 partyCanMove = false;
@@ -288,6 +296,8 @@ public class GridController : MonoBehaviour {
         }
     }
 
+    bool touchedDamageTile = false;
+
     IEnumerator WaitThenStopWalk()
     {
         yield return null;
@@ -385,6 +395,7 @@ public class GridController : MonoBehaviour {
             canMove = true;
             CheckTile(transform.position);
         }
+        touchedDamageTile = false;
     }
 
     Vector3 ClampToPixel(Vector3 unclamped)

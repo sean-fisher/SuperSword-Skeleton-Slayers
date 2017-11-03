@@ -23,6 +23,8 @@ public abstract class ItemData
     public string itemDescription;
     public int itemID;
     public int itemCost;
+    public bool usableOutsideBattle;
+    public bool usableInsideBattle;
 
     public ItemTypes itemType;
 

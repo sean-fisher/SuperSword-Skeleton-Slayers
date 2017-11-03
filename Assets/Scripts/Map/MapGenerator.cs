@@ -32,6 +32,8 @@ public class MapGenerator : MonoBehaviour {
     public GameObject lockedTreasureChest;  // l
     public GameObject castle;               // .
     public GameObject pyramid;              // ^
+    public GameObject armorChest;              // *
+    public GameObject cactus;              // *
 
     [Header("Entrances")]
     public GameObject darkForestEntrance;   // !
@@ -222,8 +224,10 @@ public class MapGenerator : MonoBehaviour {
                     //leaderCoorX = (int) center.x / 16;
                     //leaderCoorY = (int)(Mathf.Abs(center.y / 16));
                     
-                    walkLevelGrid[(int)center.x - 5, (int)center.y] = 'c';
-                    walkLevelGrid[(int)center.x - 6, (int)center.y] = 'l';
+                    dontCheckGrid[(int)center.x - 6, (int)center.y] = 'l';
+                    dontCheckGrid[(int)center.x - 5, (int)center.y] = '*';
+                    dontCheckGrid[(int)center.x - 4, (int)center.y] = '*';
+                    dontCheckGrid[(int)center.x - 3, (int)center.y] = '*';
                     //dontCheckGrid[(int)center.x  + 4, (int)center.y - 4] = '.';
                     featuresToPlaceOnMap.Add(new FeatureCenterPair(new MapCoor((int)center.x + 4, (int)center.y - 4), FeatureTypes.CASTLE));
                 } else
@@ -310,8 +314,8 @@ public class MapGenerator : MonoBehaviour {
                     if (randGeoFeature < 5)
                     {
                         // Place a penguin salesman
-                        walkLevelGrid[((int)tempCenter.x) % mapWidth,
-                            ((int)tempCenter.y) % mapHeight] = '1';
+                        walkLevelGrid[(Mathf.Abs((int)tempCenter.x) % mapWidth),
+                            Mathf.Abs(((int)tempCenter.y) % mapHeight)] = '1';
                     } else if (randGeoFeature < 10)
                     {
                         // Place an igloo
@@ -333,6 +337,11 @@ public class MapGenerator : MonoBehaviour {
                         // Place a pyramid
                         walkLevelGrid[((int)tempCenter.x) % mapWidth,
                             ((int)tempCenter.y) % mapHeight] = '^';
+                    } else
+                    {
+                        // Place a cactus
+                        walkLevelGrid[((int)tempCenter.x) % mapWidth,
+                            ((int)tempCenter.y) % mapHeight] = '*';
                     }
                     break;
             }
@@ -420,10 +429,9 @@ public class MapGenerator : MonoBehaviour {
                         {
                             case ('r'):
                                 coastType = 'd';
-                                walkLevelGrid[Mathf.Abs((x - 1) % mapWidth), y] 
-                                    = 'm';
-                                dontCheckGrid[Mathf.Abs((x - 1) % mapWidth), y] = 'd';
-                                dontCheckGrid[Mathf.Abs((x - 2) % mapWidth), y]  = 'd';
+                                //dontCheckGrid[Mathf.Abs((x - 1) % mapWidth), y]                                     = 'm';
+                                groundGrid[Mathf.Abs((x - 1) % mapWidth), y] = 'd';
+                                //groundGrid[Mathf.Abs((x - 2) % mapWidth), y]  = 'd';
                                 break;
                             case ('h'):
                                 coastType = 'b';
@@ -433,12 +441,12 @@ public class MapGenerator : MonoBehaviour {
                                 break;
                             case ('o'):
                                 coastType = 'n';
-                                walkLevelGrid[Mathf.Abs((x - 1) % mapWidth), y]
-                                    = 'v';
                                 dontCheckGrid[Mathf.Abs((x - 1) % mapWidth), y]
+                                    = 'v';
+                                groundGrid[Mathf.Abs((x - 1) % mapWidth), y]
                                     = 'n';
-                                dontCheckGrid[Mathf.Abs((x - 2) % mapWidth), y]
-                                    = 'n';
+                                //groundGrid[Mathf.Abs((x - 2) % mapWidth), y]
+                                //    = 'n';
                                 break;
                             default:
                                 coastType = 's';
@@ -456,14 +464,14 @@ public class MapGenerator : MonoBehaviour {
                             coastType = 'd';
                             if (GetTile(new MapCoor(x + 1, y), false) != 'm')
                             {
-                                walkLevelGrid[(x + 2) % mapWidth, y] = 'm';
-                                dontCheckGrid[(x + 2) % mapWidth, y] = 'd';
-                                dontCheckGrid[(x + 1) % mapWidth, y] = 'd';
+                                //dontCheckGrid[(x + 2) % mapWidth, y] = 'm';
+                                //groundGrid[(x + 2) % mapWidth, y] = 'd';
+                                //groundGrid[(x + 1) % mapWidth, y] = 'd';
                             }
                             break;
                         case ('d'):
-                            dontCheckGrid[(x + 2) % mapWidth, y] = 'd';
-                            dontCheckGrid[(x + 1) % mapWidth, y] = 'd';
+                            //groundGrid[(x + 2) % mapWidth, y] = 'd';
+                            //groundGrid[(x + 1) % mapWidth, y] = 'd';
                             break;
                         case ('h'):
                             coastType = 'b';
@@ -475,9 +483,9 @@ public class MapGenerator : MonoBehaviour {
                             coastType = 'n';
                             if (GetTile(new MapCoor(x + 1, y), false) != 'm')
                             {
-                                walkLevelGrid[(x + 2) % mapWidth, y] = 'm';
-                                dontCheckGrid[(x + 2) % mapWidth, y] = 'n';
-                                dontCheckGrid[(x + 1) % mapWidth, y] = 'n';
+                                //dontCheckGrid[(x + 2) % mapWidth, y] = 'm';
+                                //groundGrid[(x + 2) % mapWidth, y] = 'n';
+                                //groundGrid[(x + 1) % mapWidth, y] = 'n';
                             }
                             break;
                         default:
@@ -510,18 +518,18 @@ public class MapGenerator : MonoBehaviour {
                                 coastType = 'd';
                                 if (GetTile(new MapCoor(x - 1, y), false) != 'm')
                                 {
-                                    walkLevelGrid[x, y] = 'm';
-                                    dontCheckGrid[x, y] = 'd';
-                                    dontCheckGrid[Mathf.Abs((x - 1) % mapWidth), y] = 'd';
+                                    //dontCheckGrid[x, y] = 'm';
+                                    //groundGrid[x, y] = 'd';
+                                    //groundGrid[Mathf.Abs((x - 1) % mapWidth), y] = 'd';
                                 }
                                 break;
                             case ('d'):
                                 coastType = 'd';
                                 if (GetTile(new MapCoor(x - 1, y), false) != 'm')
                                 {
-                                    walkLevelGrid[x, y] = 'm';
-                                    dontCheckGrid[x, y] = 'd';
-                                    dontCheckGrid[Mathf.Abs((x - 1) % mapWidth), y] = 'd';
+                                    //dontCheckGrid[x, y] = 'm';
+                                    //groundGrid[x, y] = 'd';
+                                    //groundGrid[Mathf.Abs((x - 1) % mapWidth), y] = 'd';
                                 }
                                 break;
                             case ('h'):
@@ -534,18 +542,18 @@ public class MapGenerator : MonoBehaviour {
                                 coastType = 'n';
                                 if (GetTile(new MapCoor(x - 1, y), false) != 'm')
                                 {
-                                    walkLevelGrid[x, y] = 'm';
-                                    dontCheckGrid[x, y] = 'n';
-                                    SetTile(2, new MapCoor(x - 1, y), 'n');
+                                    //dontCheckGrid[x, y] = 'm';
+                                    //groundGrid[x, y] = 'n';
+                                    //SetTile(2, new MapCoor(x - 1, y), 'n');
                                 }
                                 break;
                             case ('o'):
                                 coastType = 'n';
                                 if (GetTile(new MapCoor(x - 1, y), false) != 'm')
                                 {
-                                    walkLevelGrid[x, y] = 'm';
-                                    dontCheckGrid[x, y] = 'n';
-                                    SetTile(2, new MapCoor(x - 1, y), 'n');
+                                    //dontCheckGrid[x, y] = 'm';
+                                    //groundGrid[x, y] = 'n';
+                                    //SetTile(2, new MapCoor(x - 1, y), 'n');
                                 }
                                 break;
                             default:
@@ -566,9 +574,9 @@ public class MapGenerator : MonoBehaviour {
                             coastType = 'd';
                             if (GetTile(new MapCoor(x - 1, y), false) != 'm')
                             {
-                                walkLevelGrid[x, y] = 'm';
-                                dontCheckGrid[x, y] = 'r';
-                                SetTile(2, new MapCoor(x - 1, y), 'r');
+                                //dontCheckGrid[x, y] = 'm';
+                                //groundGrid[x, y] = 'r';
+                                //SetTile(2, new MapCoor(x - 1, y), 'r');
                             }
                             //groundGrid[x, y - 1] = 'r';
                             break;
@@ -577,9 +585,9 @@ public class MapGenerator : MonoBehaviour {
                             coastType = 'n';
                             if (GetTile(new MapCoor(x - 1, y), false) != 'm')
                             {
-                                walkLevelGrid[x, y] = 'm';
-                                dontCheckGrid[x, y] = 'o';
-                                SetTile(2, new MapCoor(x - 1, y), 'o');
+                                //dontCheckGrid[x, y] = 'm';
+                                //groundGrid[x, y] = 'o';
+                                //SetTile(2, new MapCoor(x - 1, y), 'o');
                             }
                             //groundGrid[x, y - 1] = 'r';
                             break;
@@ -588,9 +596,9 @@ public class MapGenerator : MonoBehaviour {
                             if (GetTile(new MapCoor(x - 1, y), false) != 'm')
                             {
                                 nCOunt++;
-                                walkLevelGrid[x, y] = 'm';
-                                dontCheckGrid[x, y] = 'n';
-                                SetTile(2, new MapCoor(x - 1, y), 'n');
+                                //dontCheckGrid[x, y] = 'm';
+                                //groundGrid[x, y] = 'n';
+                                //SetTile(2, new MapCoor(x - 1, y), 'n');
                             }
                             //groundGrid[x, y - 1] = 'r';
                             break;
@@ -599,9 +607,9 @@ public class MapGenerator : MonoBehaviour {
                             if (GetTile(new MapCoor(x - 1, y), false) != 'm')
                             {
                                 dCOunt++;
-                                walkLevelGrid[x, y] = 'm';
-                                dontCheckGrid[x, y] = 'd';
-                                SetTile(2, new MapCoor(x - 1, y), 'd');
+                                //dontCheckGrid[x, y] = 'm';
+                                //groundGrid[x, y] = 'd';
+                                //SetTile(2, new MapCoor(x - 1, y), 'd');
                             }
                             //groundGrid[x, y - 1] = 'r';
                             break;
@@ -793,6 +801,10 @@ public class MapGenerator : MonoBehaviour {
                 return airshipSalesman;
             case ('1'):
                 return penguinSalesman;
+            case ('&'):
+                return armorChest;
+            case ('*'):
+                return cactus;
             default:
                 if (tileType != '\0')
                 {

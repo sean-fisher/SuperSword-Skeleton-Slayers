@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
@@ -24,12 +25,14 @@ public class GameManager : MonoBehaviour {
     public AllEffects allEffects;
 
     public GameObject circleOfLight;
+    public Image redScreen;
 
     public AudioSource musicPlayer;
 
 
     private void Start()
     {
+        Cactus.redScreen = redScreen;
         fadeTransition = GetComponent<FadeTransition>();
         fsTransition = GetComponent<FourSideTransition>();
         gm = this;

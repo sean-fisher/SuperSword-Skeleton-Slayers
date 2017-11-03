@@ -11,6 +11,7 @@ public class PauseMenu : GridOptions {
 
     
     public static ItemMenu itemMenu;
+    public EquipMenu equipMenu;
     public static PartySelectMenu partySelectMenu;
     public static PauseMenu pauseMenu;
 
@@ -52,8 +53,12 @@ public class PauseMenu : GridOptions {
         switch(menuIndex)
         {
             case (0):
+                // Open Item Window
                 menuOptions[0].OpenMenu();
-                //itemWindow.SetActive(true);
+                break;
+            case (1):
+                // Open Equip Window
+                equipMenu.OpenMenu();
                 break;
             default:
                 break;

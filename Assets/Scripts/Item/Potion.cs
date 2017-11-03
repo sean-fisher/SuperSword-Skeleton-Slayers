@@ -32,8 +32,6 @@ public class SimpleItemData : ItemData
     public bool healsParalysis;
     public bool healsBurn;
 
-    public bool usableOutsideBattle;
-    public bool usableInsideBattle;
 
     // Format: {0} == user's name, {1} == target's name, {2} == item name, {3} == hp restored number
     public string messageWhenUsedInBattle;
