@@ -76,6 +76,18 @@ public class HeroPartyManager : PartyManager {
             (int)knightCoor.x, (int)knightCoor.y));
     }
 
+    public void InstantiateAndAdd(BaseCharacter characterPrefab)
+    {
+
+        GameObject heroObj = GameObject.Instantiate(characterPrefab.gameObject);
+        AddCharacterToParty(heroObj.GetComponent<BaseCharacter>());
+        Vector3 partyPos = GameManager.gm.leader.transform.position;
+        heroObj.GetComponent<GridController>().isLeader = true;
+        heroObj.GetComponent<GridController>().SetCoor(new MapCoor(
+            (int)partyPos.x, (int)partyPos.y));
+
+    }
+
     public void AddCharacterToActive(BaseCharacter newHero)
     {
         // This check is redundant if adding from 

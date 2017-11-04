@@ -23,9 +23,9 @@ public static class MapFeatures {
                                                        "   f  f  f   ",
                                                        };
     public static string[] darkForest = new string[]{
+                                                       "   f     ",
                                                        "f  f  f  ",
-                                                       "f  f  f  ",
-                                                       "f  !  f  ",
+                                                       "   !     ",
                                                        "-  -  -  ",
                                                        };
     /*public static string[] darkForest = new string[]{

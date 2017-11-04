@@ -20,8 +20,7 @@ public class Defend : Attack {
     public override IEnumerator UseAttack(BaseCharacter attacker, BaseCharacter target, List<Turn> turnList)
     {
         yield return null;
-        Turn nextTurn = turnList[0];
-        turnList.RemoveAt(0);
-        BattleManager.bManager.StartInactiveTurn(nextTurn, turnList);
+
+        EndTurnCheck(turnList);
     }
 }

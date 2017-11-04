@@ -25,5 +25,6 @@ public enum HeroClasses
     MAGE,
     MONK,
     NINJA,
-    CHEF
+    CHEF,
+    ARCHER
 }

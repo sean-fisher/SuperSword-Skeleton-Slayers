@@ -95,6 +95,7 @@ public class PauseMenu : GridOptions {
     {
         gameObject.SetActive(false);
         GameManager.gm.leader.canMove = true;
+        BattleManager.hpm.EnablePartyMovement();
         cursor.SetActive(false);
         cursor3.SetActive(false);
         cursor2.SetActive(false);
@@ -136,6 +137,8 @@ public class PauseMenu : GridOptions {
         }
         mainOptions = tempRectList.ToArray();
 
+        UpdateHeroDisplay();
+
         tempRectList.Clear();
         for (int i = 0; i < additionalStatsTexts.Length; i++)
         {
@@ -148,5 +151,25 @@ public class PauseMenu : GridOptions {
         rows = visibleSize;
         cols = 1;
         UpdateCursor(mainOptions, 0, 0, -Screen.width / 30);
+    }
+
+    void UpdateHeroDisplay()
+    {
+        // Display the current hereoes and stats
+
+        HeroDisplayPanel[] fourMenuDisplays = heroDisplayHolder.GetComponentsInChildren<HeroDisplayPanel>(true);
+        Debug.Log("Children: " + fourMenuDisplays.Length);
+        for (int i = 0; i < fourMenuDisplays.Length; i++)
+        {
+            if (i < BattleManager.hpm.activePartyMembers.Count)
+            {
+                fourMenuDisplays[i].gameObject.SetActive(true);
+                fourMenuDisplays[i].GetComponent<HeroDisplayPanel>().UpdateDisplay(BattleManager.hpm.activePartyMembers[i]);
+            }
+            else
+            {
+                fourMenuDisplays[i].gameObject.SetActive(false);
+            }
+        }
     }
 }

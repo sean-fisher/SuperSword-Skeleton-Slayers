@@ -201,7 +201,6 @@ public class BattleMenu : Menu {
 
                             Debug.Log(itemMenu.selectedItem.itemName);
                             BattleManager.bManager.AddItemUseTurn(GetAttacker(), GetTarget(), itemMenu.selectedItem);
-
                             aPressed = false;
                             NextHeroSelectsAttack(true);
                         }
@@ -215,6 +214,9 @@ public class BattleMenu : Menu {
                             {
                                 BattleManager.bManager.AddAttackTurn(GetAttacker(), GetTarget(), attackIndex - 1);
                             }
+                            Debug.Log("targetingENemies: " + targetingEnemies);
+
+                            Debug.Log("Target: " + BattleManager.hpm.activePartyMembers[heroEnemyCursor].characterName);
                             NextHeroSelectsAttack(true);
                             aPressed = false;
                         }
@@ -466,7 +468,7 @@ public class BattleMenu : Menu {
 
     BaseCharacter GetTarget()
     {
-        if (currRects == heroRects)
+        if (!targetingEnemies)
         {
             return BattleManager.hpm.activePartyMembers[heroEnemyCursor];
         } else
@@ -479,6 +481,8 @@ public class BattleMenu : Menu {
     {
         return BattleManager.hpm.activePartyMembers[selectingHeroIndex];
     }
+
+    bool targetingEnemies = true;
 
     void CheckHeroesAndEnemies()
     {
@@ -503,7 +507,8 @@ public class BattleMenu : Menu {
             } else if (Input.GetAxis("Vertical") > 0 && currRects == heroRects)
             {
                 currRects = enemyRects;
-                Debug.Log("Move cursor to heroes");
+                Debug.Log("Move cursor to enemies");
+                targetingEnemies = true;
                 // Move cursor from enemies to heroes
                 UpdateCursor(currRects, heroEnemyCursor % bm.enemiesAlive);
 
@@ -513,7 +518,7 @@ public class BattleMenu : Menu {
             {
                 currRects = heroRects;
                 // Move cursor from heroes to enemies
-                Debug.Log(heroEnemyCursor);
+
                 heroEnemyCursor = Mathf.Abs(heroEnemyCursor % bm.heroesAlive);
                 if (heroEnemyCursor >= currRects.Length)
                 {
@@ -521,6 +526,7 @@ public class BattleMenu : Menu {
                 }
                 UpdateCursor(currRects, heroEnemyCursor);
 
+                targetingEnemies = false;
                 Debug.Log("Move cursor to heroes");
 
                 heroCursorMoved = true;

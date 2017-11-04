@@ -133,6 +133,7 @@
     <Compile Include="Assets\Scripts\Map\MazeGenerator.cs" />
     <Compile Include="Assets\Scripts\Map\MoneyChest.cs" />
     <Compile Include="Assets\Scripts\Map\NPCTile.cs" />
+    <Compile Include="Assets\Scripts\Map\PartyJoiner.cs" />
     <Compile Include="Assets\Scripts\Map\TreasureChest.cs" />
     <Compile Include="Assets\Scripts\menu\BattleMenu\BattleMenu.cs" />
     <Compile Include="Assets\Scripts\menu\BattleMenu\SelectFromListMenu.cs" />

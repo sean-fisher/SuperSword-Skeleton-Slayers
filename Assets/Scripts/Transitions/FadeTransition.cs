@@ -19,7 +19,6 @@ public class FadeTransition : ScreenTransition {
 
     private void OnEnable()
     {
-        Transition();
     }
 
     int inOrOut = 1;
@@ -80,12 +79,13 @@ public class FadeTransition : ScreenTransition {
     
     public void Transition(string sceneName = null)
     {
-        StartCoroutine(TransitioningIn(sceneName));
+        Debug.Log("Transition");
+        StartCoroutine(TransitioningInOut(sceneName));
     }
 
     // Transitions out and then in. Waits one second between to allow changing onscreen objects if necessary
 
-    IEnumerator TransitioningIn(string sceneName)
+    IEnumerator TransitioningInOut(string sceneName)
     {
         enabled = true;
         transitioning = true;

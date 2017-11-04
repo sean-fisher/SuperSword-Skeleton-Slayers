@@ -5,7 +5,7 @@ using UnityEngine;
 public class ItemGenerator : MonoBehaviour {
 
     public List<BaseItem> itemsToSpawn = new List<BaseItem>();
-    public List<BaseItem> mazeSpawns = new List<BaseItem>();
+    public List<BaseItem> mazeItemSpawns = new List<BaseItem>();
     public static ItemGenerator instance;
 
     private void Start()
@@ -18,15 +18,15 @@ public class ItemGenerator : MonoBehaviour {
         switch (area)
         {
             case (ContinentType.FOREST):
-                return mazeSpawns[Random.Range(0, mazeSpawns.Count)];
+                return mazeItemSpawns[Random.Range(0, mazeItemSpawns.Count)];
             case (ContinentType.ICECAVE):
-                return mazeSpawns[Random.Range(0, mazeSpawns.Count)];
+                return mazeItemSpawns[Random.Range(0, mazeItemSpawns.Count)];
             case (ContinentType.LAVACAVE):
-                return mazeSpawns[Random.Range(0, mazeSpawns.Count)];
+                return mazeItemSpawns[Random.Range(0, mazeItemSpawns.Count)];
             case (ContinentType.MOUNTAINCAVE):
-                return mazeSpawns[Random.Range(0, mazeSpawns.Count)];
+                return mazeItemSpawns[Random.Range(0, mazeItemSpawns.Count)];
             case (ContinentType.PYRAMID):
-                return mazeSpawns[Random.Range(0, mazeSpawns.Count)];
+                return mazeItemSpawns[Random.Range(0, mazeItemSpawns.Count)];
             default:
                 return itemsToSpawn[Random.Range(0, itemsToSpawn.Count)];
 

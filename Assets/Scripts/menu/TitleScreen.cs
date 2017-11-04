@@ -36,7 +36,7 @@ public class TitleScreen : GridOptions {
         {
             case (0):
                 // Start new game
-                sceneSwitcher.SwitchToOtherScene("MapGenTest");
+                sceneSwitcher.SwitchToMapScene("MapGenTest");
                 StartCoroutine(StartingGame());
                 break;
             case (1):
@@ -44,7 +44,7 @@ public class TitleScreen : GridOptions {
                 Debug.Log("Go to Controls");
                 break;
             case (2):
-                // Go to credits\
+                // Go to credits
                 CloseMenu();
                 creditsWindow.GetComponent<CreditsScreen>().OpenMenu();
                 break;

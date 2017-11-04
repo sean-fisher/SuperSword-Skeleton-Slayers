@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class EquipMenu : GridOptions {
 
+    public Text heroNameText;
     public Text armorText;
     public Text weaponText;
     public Text accessoryText;
@@ -63,6 +64,9 @@ public class EquipMenu : GridOptions {
     public void UpdateHeroEquipsWindow(int heroIndex)
     {
         BaseCharacter currHero = BattleManager.hpm.activePartyMembers[heroIndex];
+
+        heroNameText.text = currHero.characterName;
+
         if (currHero.armor != null) {
             armorText.text = currHero.armor.itemName;
         } else

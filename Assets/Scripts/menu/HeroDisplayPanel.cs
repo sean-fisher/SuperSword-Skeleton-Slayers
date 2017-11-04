@@ -17,6 +17,23 @@ public class HeroDisplayPanel : MonoBehaviour {
     {
         hpText.text = "HP: " + hero.currentHP + "/" + hero.baseHP;
         mpText.text = "MP: " + hero.currentMP + "/" + hero.baseMP;
+
+        if (!isBattleDisplay)
+        {
+            nameText.text = hero.characterName;
+            switch (hero.heroClass)
+            {
+                case (HeroClasses.KNIGHT):
+                    classNameText.text = "Knight";
+                    break;
+                case (HeroClasses.MAGE):
+                    classNameText.text = "Mage";
+                    break;
+                case (HeroClasses.ARCHER):
+                    classNameText.text = "Archer";
+                    break;
+            }
+        }
     }
 
     public void InitiatePanel(BaseCharacter hero)

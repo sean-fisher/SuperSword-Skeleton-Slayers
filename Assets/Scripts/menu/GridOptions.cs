@@ -145,6 +145,8 @@ public abstract class GridOptions : MonoBehaviour {
         }
         else
         {
+            newIndex = newIndex < 0 ? 0 : newIndex;
+            tempCursor = newIndex;
             optionPosition = visibleRectArr[newIndex % visibleSize].transform.position;
         }
 
@@ -160,6 +162,8 @@ public abstract class GridOptions : MonoBehaviour {
             enableScrollingDown = true;
         }
         cursor.SetActive(true);
+
+        OnMoveCursor();
     }
 
 
@@ -280,8 +284,6 @@ public abstract class GridOptions : MonoBehaviour {
     {
         if (!cursorMoved)
         {
-            rows = height;
-            cols = width;
             // If only part of the visibleTextArr should be able to be scrolled through, pass a height smaller than the visibleTextArr's length
             int length; // length is the number of slots to scroll through
             if (height > 0)

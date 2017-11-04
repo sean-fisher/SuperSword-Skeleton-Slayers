@@ -37,7 +37,6 @@ public class Inventory : MonoBehaviour {
 
     public bool AddToInventory(ItemData newItem)
     {
-        Debug.Log("Add: " + newItem.itemName);
         if (newItem == null)
         {
             return true;

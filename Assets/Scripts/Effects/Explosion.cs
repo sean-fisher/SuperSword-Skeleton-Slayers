@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Explosion : MonoBehaviour {
 
+    public static bool isExploding = false;
+
 	// Use this for initialization
 	void Start () {
         Explode();
@@ -27,6 +29,7 @@ public class Explosion : MonoBehaviour {
 
     private IEnumerator ExplodeAnimate()
     {
+        isExploding = true;
         GameObject b1 = GameObject.Instantiate(bubble1, transform);
         GameObject s1 = GameObject.Instantiate(smoke1, transform);
         GameObject b2 = GameObject.Instantiate(bubble1, transform);
@@ -56,6 +59,7 @@ public class Explosion : MonoBehaviour {
         Destroy(s2);
         Destroy(s3);
         Destroy(this.gameObject);
+        isExploding = false;
     }
 
     void Explode()

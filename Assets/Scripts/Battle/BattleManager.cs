@@ -121,7 +121,7 @@ public class BattleManager : MonoBehaviour {
         if (!BattleManager.hasLost && !BattleManager.hasWon)
         {
             //yield return new WaitForSeconds(1);
-            battleMenu.ReturnToMenu();
+            //battleMenu.ReturnToMenu();
         }
     }
 

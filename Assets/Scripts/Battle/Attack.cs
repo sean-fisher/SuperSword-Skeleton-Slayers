@@ -27,8 +27,9 @@ public abstract class Attack : MonoBehaviour {
     public int state;
 
     public GameObject attackAnimation;
-    
-    
+
+    public int mpUsed;
+
     // What an attack does after the player has selected all his/her characters' moves and the move is used.
     // If turnList is empty, all turns are over and the player gets to select moves again (assuming the player is alive)
     public virtual IEnumerator UseAttack(BaseCharacter attacker, BaseCharacter target, List<Turn> turnList)
@@ -90,6 +91,16 @@ public abstract class Attack : MonoBehaviour {
 
     protected void EndTurnCheck(List<Turn> turnList)
     {
+        StartCoroutine(WaitThenReturnToMenu(turnList));
+    }
+
+    IEnumerator WaitThenReturnToMenu(List<Turn> turnList)
+    {
+        while (Explosion.isExploding)
+        {
+            yield return null;
+        }
+
         // If all of this phase's turns are over, a win/lose double check occurs.
         if (turnList.Count == 0)
         {
@@ -104,11 +115,14 @@ public abstract class Attack : MonoBehaviour {
         }
         else if (!BattleManager.hasWon && !BattleManager.hasLost)
         {
+
             // The phase continues, and another hero or enemy takes his/her turn
             Turn nextTurn = turnList[0];
             turnList.RemoveAt(0);
             BattleManager.bManager.StartInactiveTurn(nextTurn, turnList);
-        } else {
+        }
+        else
+        {
             //BattleManager.bManager.GameOver();
         }
     }
@@ -170,8 +184,15 @@ public abstract class Attack : MonoBehaviour {
             damageDealt = CalcAttackDamage(attack, targetCharacter, attacker, canCrit);
         }
 
-        //damage is dealt to the enemy's target hero
-        targetCharacter.currentHP -= damageDealt;
+        if (attack.attackType != AttackType.HEALING)
+        {
+            //damage is dealt to the enemy's target hero
+            targetCharacter.currentHP -= damageDealt;
+        } else
+        {
+            targetCharacter.currentHP += damageDealt;
+
+        }
 
 
         //damageDealt is displayed over hero's head.
@@ -194,7 +215,22 @@ public abstract class Attack : MonoBehaviour {
                 if (attack.attackType == AttackType.HEALING)
                 {
                     // update health
-                    throw new System.NotImplementedException("update target's health");
+                    targetCharacter.currentHP += Mathf.Abs(damageDealt);
+                    if (targetCharacter.currentHP > targetCharacter.baseHP)
+                    {
+                        targetCharacter.currentHP = targetCharacter.baseHP;
+                    }
+
+                    // Update health display
+                    if (BattleManager.hpm.activePartyMembers.Contains(attacker))
+                    {
+                        BattleManager.bManager.battleMenu.UpdatePanel(attacker);
+                    }
+                    // Update health display
+                    if (BattleManager.hpm.activePartyMembers.Contains(targetCharacter))
+                    {
+                        BattleManager.bManager.battleMenu.UpdatePanel(targetCharacter);
+                    }
                 }
             }
             else if (targetIsDead) //if the target was revived, heroesAlive is incremented.
@@ -220,6 +256,12 @@ public abstract class Attack : MonoBehaviour {
         {
             damageDealt = attack.damage + targetCharacter.currentSKL;
         }
+        damageDealt = attack.damage + user.currentATK;
+
+        if (user.weapon != null)
+        {
+            damageDealt += user.weapon.boostATK;
+        }
 
         //If the enemy is weak to the Attack's type, damage is doubled.
         if (targetCharacter.weakness == attack.attackType)
@@ -243,6 +285,7 @@ public abstract class Attack : MonoBehaviour {
                 // Check for armor
                 if (armor != null)
                 {
+                    Debug.Log("Armor resisted damage");
                     damageDealt -= armor.boostDEF;
                     if (armor.strongAgainst.Contains(attack.attackType))
                     {
