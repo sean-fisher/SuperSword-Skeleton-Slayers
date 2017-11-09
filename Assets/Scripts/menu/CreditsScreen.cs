@@ -41,7 +41,7 @@ public class CreditsScreen : GridOptions
                 // Return to main menu
                 Debug.Log("Return");
                 mainWindow.OpenMenu();
-                this.gameObject.SetActive(false);
+                this.CloseMenu();
                 mainWindow.GetComponent<GridOptions>().OpenMenu();
                 break;
         }
