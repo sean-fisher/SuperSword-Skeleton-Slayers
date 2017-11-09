@@ -116,8 +116,10 @@
     <Compile Include="Assets\Scripts\Item\ItemGenerator.cs" />
     <Compile Include="Assets\Scripts\Item\Key.cs" />
     <Compile Include="Assets\Scripts\Item\Potion.cs" />
+    <Compile Include="Assets\Scripts\Item\SimpleEquip.cs" />
     <Compile Include="Assets\Scripts\Map\AirshipController.cs" />
     <Compile Include="Assets\Scripts\Map\AirshipTile.cs" />
+    <Compile Include="Assets\Scripts\Map\Cactus.cs" />
     <Compile Include="Assets\Scripts\Map\CastleDoor.cs" />
     <Compile Include="Assets\Scripts\Map\EnemyOrItemChest.cs" />
     <Compile Include="Assets\Scripts\Map\EnemyTile.cs" />
@@ -131,6 +133,7 @@
     <Compile Include="Assets\Scripts\Map\MazeGenerator.cs" />
     <Compile Include="Assets\Scripts\Map\MoneyChest.cs" />
     <Compile Include="Assets\Scripts\Map\NPCTile.cs" />
+    <Compile Include="Assets\Scripts\Map\PartyJoiner.cs" />
     <Compile Include="Assets\Scripts\Map\TreasureChest.cs" />
     <Compile Include="Assets\Scripts\menu\BattleMenu\BattleMenu.cs" />
     <Compile Include="Assets\Scripts\menu\BattleMenu\SelectFromListMenu.cs" />
@@ -139,6 +142,7 @@
     <Compile Include="Assets\Scripts\menu\HeroDisplayPanel.cs" />
     <Compile Include="Assets\Scripts\menu\Menu.cs" />
     <Compile Include="Assets\Scripts\menu\MenuController.cs" />
+    <Compile Include="Assets\Scripts\menu\pauseMenu\EquipMenu.cs" />
     <Compile Include="Assets\Scripts\menu\pauseMenu\InventoryEntry.cs" />
     <Compile Include="Assets\Scripts\menu\pauseMenu\ItemMenu.cs" />
     <Compile Include="Assets\Scripts\menu\pauseMenu\ItemMenuBattle.cs" />

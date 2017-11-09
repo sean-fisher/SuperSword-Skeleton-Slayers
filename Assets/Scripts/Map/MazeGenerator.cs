@@ -32,6 +32,9 @@ public class MazeGenerator : MonoBehaviour {
     public GameObject mountainWallTile;
     public GameObject lavaWallTile;
 
+    public PartyJoiner archer;
+    public PartyJoiner mage;
+
     GameObject wallTile;
 
     public GameObject entrance;
@@ -141,7 +144,9 @@ public class MazeGenerator : MonoBehaviour {
         switch (continentType)
         {
             case (ContinentType.FOREST):
+                Debug.Log("Added forest objects");
                 objectsToAdd.Add(moneyChest);
+                objectsToAdd.Add(archer.gameObject);
                 objectsToAdd.Add(swordChest);
                 groundType = 'g';
                 wallTile = forestWallTile;
@@ -150,6 +155,7 @@ public class MazeGenerator : MonoBehaviour {
             case (ContinentType.ICECAVE):
                 objectsToAdd.Add(moneyChest);
                 objectsToAdd.Add(swordChest);
+                objectsToAdd.Add(mage.gameObject);
                 groundType = 'h';
                 wallTile = iceWallTile;
                 currMazeParent = iceCaveParent;
@@ -325,19 +331,22 @@ public class MazeGenerator : MonoBehaviour {
                 /*
                 if (mazeArray[x, y] != 'p')
                 {*/
-                    if (walkLevelArray[x, y] == 'c')
+                if (walkLevelArray[x, y] == 'c')
+                {
+                    if (objectsToAdd.Count > 0 && objectsToAdd[0] != null)
                     {
-                        if (objectsToAdd.Count > 0 && objectsToAdd[0] != null)
-                        {
-                            tile = GameObject.Instantiate(
-                                objectsToAdd[0], currMazeParent.transform);
-                            objectsToAdd.RemoveAt(0);
-                            tile.transform.position = new Vector2
-                                (transform.position.x + 16 * x,
-                                transform.position.y + -16 * y);
-                        }
+                        tile = GameObject.Instantiate(
+                            objectsToAdd[0], currMazeParent.transform);
+                        objectsToAdd.RemoveAt(0);
+                        tile.transform.position = new Vector2
+                            (transform.position.x + 16 * x,
+                            transform.position.y + -16 * y);
+                 
+                    } else
+                    {
                     }
-                if (walkLevelArray[x, y] == 'e')
+                }
+                if (walkLevelArray[x, y] == 'e') // PLACE THE EXIT
                 {
                     tile = GameObject.Instantiate(
                         entrance, currMazeParent.transform);

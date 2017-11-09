@@ -7,12 +7,16 @@ public class TreasureChest : InteractableTile
 {
     public BaseItem treasure;
     public bool hasBeenOpened = false;
+    public bool randomizeTreasure = true;
 
     bool heroStandingOnThisTile = false;
 
     private void Start()
     {
-        treasure = ItemGenerator.instance.GetTreasureBasedOnLocation();
+        if (treasure == null || randomizeTreasure)
+        {
+            treasure = ItemGenerator.instance.GetTreasureBasedOnLocation();
+        }
     }
 
     private void Update()

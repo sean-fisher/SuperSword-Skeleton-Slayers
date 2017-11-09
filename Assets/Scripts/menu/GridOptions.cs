@@ -82,11 +82,6 @@ public abstract class GridOptions : MonoBehaviour {
                     throw new System.Exception("Error while comparing to ItemData or attack");
                 }
             }
-            else
-            {
-                listTexts[i].GetComponent<Text>().text = "";
-
-            }
         }
     }
 
@@ -120,7 +115,7 @@ public abstract class GridOptions : MonoBehaviour {
                     throw new System.Exception("Error while comparing to ItemData or attack");
                 }
             }
-            else
+            else if (i < listTexts.Length)
             {
                 listTexts[i].GetComponentInChildren<Text>(true).text = "";
 
@@ -150,6 +145,8 @@ public abstract class GridOptions : MonoBehaviour {
         }
         else
         {
+            newIndex = newIndex < 0 ? 0 : newIndex;
+            tempCursor = newIndex;
             optionPosition = visibleRectArr[newIndex % visibleSize].transform.position;
         }
 
@@ -165,6 +162,8 @@ public abstract class GridOptions : MonoBehaviour {
             enableScrollingDown = true;
         }
         cursor.SetActive(true);
+
+        OnMoveCursor();
     }
 
 
@@ -208,7 +207,10 @@ public abstract class GridOptions : MonoBehaviour {
         array[current].transform.GetChild(0).gameObject.SetActive(false);
         array[newIndex].transform.GetChild(0).gameObject.SetActive(true);
         tempCursor = newIndex;
+        OnMoveCursor();
     }
+
+    protected virtual void OnMoveCursor() { }
 
     void CheckInput(Text[] array, int width, int height = 0)
     {
@@ -282,8 +284,6 @@ public abstract class GridOptions : MonoBehaviour {
     {
         if (!cursorMoved)
         {
-            rows = height;
-            cols = width;
             // If only part of the visibleTextArr should be able to be scrolled through, pass a height smaller than the visibleTextArr's length
             int length; // length is the number of slots to scroll through
             if (height > 0)

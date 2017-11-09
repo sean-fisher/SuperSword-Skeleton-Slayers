@@ -6,7 +6,7 @@ public class Inventory : MonoBehaviour {
 
     // The key is the ItemID, the second is the number of that item.
 
-    // Every item ID in the inventory along with the number of said item
+    // Every item ID in the player's inventory along with the number of said item
     public static Dictionary<int, int> allItems = new Dictionary<int, int>(); 
     public static Dictionary<int, int> equipment = new Dictionary<int, int>();
 
@@ -129,6 +129,7 @@ public class Inventory : MonoBehaviour {
     {
         ItemData decrementItem = unsortedList[unsortedIndex];
 
+        Debug.Log("Remove: " + decrementItem.itemName);
 
         if (--allItems[decrementItem.itemID] < 1)
         {
@@ -178,6 +179,7 @@ public class Inventory : MonoBehaviour {
      * */
     public int DecrementSupply(ItemData decrementItem)
     {
+        Debug.Log("Remove: " + decrementItem.itemName);
         if (decrementItem == null) {
             return 2;
         }
@@ -279,6 +281,23 @@ public class Inventory : MonoBehaviour {
 
             return true;
         }
+    }
+
+    public static List<ItemData> equipList;
+
+    public static List<ItemData> GetEquipList()
+    {
+        List<ItemData> equips = new List<ItemData>();
+
+        for (int i = 0; i < unsortedList.Length; i++)
+        {
+            if (unsortedList[i] != null && unsortedList[i].itemType == ItemTypes.EQUIPMENT)
+            {
+                equips.Add(unsortedList[i]);
+            }
+        }
+        equipList = equips;
+        return equips;
     }
 }
 [System.Serializable]

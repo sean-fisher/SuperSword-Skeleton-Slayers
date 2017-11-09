@@ -5,50 +5,76 @@ using UnityEngine;
 
 public class DefaultAttack : Attack {
 
+
     public override IEnumerator UseAttack(BaseCharacter attacker, BaseCharacter target, List<Turn> turnList)
     {
         if (attacker)
         {
-            bool targetIsHero = false;
-            if (BattleManager.hpm.PartyContainsCharacter(attacker))//.activePartyMembers.Contains(attacker))
+            if (attacker.currentMP >= mpUsed)
             {
-                // A hero is attacking
-                if (!BattleManager.epm.PartyContainsCharacter(target))//.activePartyMembers.Contains(target))
+                bool targetIsHero = false;
+                if (BattleManager.hpm.PartyContainsCharacter(attacker))//.activePartyMembers.Contains(attacker))
                 {
-                    // The enemy target is dead, find a new target
-                    target = BattleManager.epm.activePartyMembers[0];
+                    if (BattleManager.hpm.PartyContainsCharacter(target))
+                    {
+                        // Hero Attacking/healing a hero
+                    } else
+                    // A hero is attacking
+                    if (!BattleManager.epm.PartyContainsCharacter(target))//.activePartyMembers.Contains(target))
+                    {
+                        // The enemy target is dead, find a new target
+                        target = BattleManager.epm.activePartyMembers[0];
+                    }
                 }
-            } else if (BattleManager.epm.activePartyMembers.Contains(attacker))
-            {
-                // An enemy is attacking
-                targetIsHero = true;
+                else if (BattleManager.epm.activePartyMembers.Contains(attacker))
+                {
+                    // An enemy is attacking
+                    targetIsHero = true;
 
-            }
+                }
 
-            // visual effects, message
-            int damageDealt = CalcAttackDamage(this, target, attacker);
-            string battleMessage = String.Format("{0} uses {1} on {2}, scoring {3} damage!", attacker.characterName, this.attackName, target.characterName, damageDealt);
-            TextBoxManager.tbm.EnableTextBox(battleMessageWindow, battleMessage, false);
+                // visual effects, message
+                int damageDealt = CalcAttackDamage(this, target, attacker);
+                string battleMessage;
+                if (attackType != AttackType.HEALING) {
+                    battleMessage = String.Format("{0} uses {1} on {2}, scoring {3} damage!", attacker.characterName, this.attackName, target.characterName, damageDealt);
+                } else
+                {
+                    battleMessage = String.Format("{0} uses {1} on {2}, healing {3} HP!", attacker.characterName, this.attackName, target.characterName, Mathf.Abs(damageDealt));
+                    damageDealt = Mathf.Abs(damageDealt);
+                }
+                TextBoxManager.tbm.EnableTextBox(battleMessageWindow, battleMessage, false);
 
-            while (TextBoxManager.tbm.isTyping)
-            {
+                while (TextBoxManager.tbm.isTyping)
+                {
+                    yield return null;
+                }
+                yield return new WaitForSeconds(.3f);
+
+
+                DealDamage(this, attacker, target, false, damageDealt);
+
+                attacker.currentMP -= mpUsed;
+
+                // update health display if hero
                 yield return null;
-            }
-            yield return new WaitForSeconds(.3f);
 
 
-            DealDamage(this, attacker, target, false, damageDealt);
-
-
-            // update health display if hero
-            yield return null;
-
-
-            if (targetIsHero)
+                if (targetIsHero)
+                {
+                    BattleManager.bManager.battleMenu.UpdatePanel(target);
+                }
+            } else
             {
-                BattleManager.bManager.battleMenu.UpdatePanel(target);
-            }
+                // Mp isn't high enough
+                TextBoxManager.tbm.EnableTextBox(battleMessageWindow, attacker.characterName + " tried to use " + this.attackName + ", but didn't have enough MP!", false);
 
+                while (TextBoxManager.tbm.isTyping)
+                {
+                    yield return null;
+                }
+                yield return new WaitForSeconds(.3f);
+            }
 
             EndTurnCheck(turnList);
         } else if (!BattleManager.hasLost && !BattleManager.hasWon)

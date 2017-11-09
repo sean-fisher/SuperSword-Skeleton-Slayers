@@ -51,4 +51,13 @@ public class MoneyChest : InteractableTile
             heroStandingOnThisTile = true;
         }
     }
+
+    IEnumerator WaitThenDestroy()
+    {
+        while (TextBoxManager.tbm.isTyping)
+        {
+            yield return null;
+        }
+        Destroy(this.gameObject);
+    }
 }

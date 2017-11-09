@@ -54,6 +54,12 @@ public class AirshipTile : InteractableTile {
     {
         if (isFlying)
         {
+            Collider[] thingsAtDestination = Physics.OverlapSphere(new Vector3(transform.position.x, transform.position.y), 5f);
+            for (int i = 0; i < thingsAtDestination.Length; i++)
+            {
+                Debug.Log(thingsAtDestination[i].name);
+            }
+
             //Debug.Log("Air -> Ground");
             GridController.encountersEnabled = true;
             GridController.clampToPixel = true;

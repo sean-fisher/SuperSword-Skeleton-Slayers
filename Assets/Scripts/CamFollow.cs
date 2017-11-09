@@ -8,6 +8,7 @@ public class CamFollow : MonoBehaviour {
 
     public Transform targetToFollow;
     Camera cam;
+    public bool canFollow = false;
 
     private Matrix4x4 ortho,
                       perspective;
@@ -31,7 +32,7 @@ public class CamFollow : MonoBehaviour {
     
     private void LateUpdate()
     {
-        if (targetToFollow)
+        if (targetToFollow && canFollow)
         {
             if (isFlying)
             {

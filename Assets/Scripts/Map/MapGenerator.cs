@@ -25,6 +25,7 @@ public class MapGenerator : MonoBehaviour {
     public GameObject airship;              // a
     public GameObject invisibleChest;       // i
     public GameObject mountainTile;         // m
+    public GameObject smallMountainTile;    // /
     public GameObject forestTile;           // f
     public GameObject treasureChest;        // c
     public GameObject potionChest;          // p
@@ -32,6 +33,8 @@ public class MapGenerator : MonoBehaviour {
     public GameObject lockedTreasureChest;  // l
     public GameObject castle;               // .
     public GameObject pyramid;              // ^
+    public GameObject armorChest;              // *
+    public GameObject cactus;              // *
 
     [Header("Entrances")]
     public GameObject darkForestEntrance;   // !
@@ -44,7 +47,7 @@ public class MapGenerator : MonoBehaviour {
     public GameObject airshipSalesman;      // 0
     public GameObject penguinSalesman;      // 1
 
-    public GameObject emptyGameObject;
+    public GameObject emptyGameObject;      // -
 
                                             // EACH TILE TYPE MUST HAVE:
                                             //  Appropriate GameObject GetTileObj(...) code
@@ -192,6 +195,9 @@ public class MapGenerator : MonoBehaviour {
         StartCoroutine(InstantiateTiles());
     }
 
+    bool castlePlaced = false;
+    MapCoor knightStartPoint;
+
     void CreateContinent(Vector2 center, int largestRadius, int complexity, 
         ContinentType continentType, bool hasCoast = true)
     {
@@ -219,13 +225,17 @@ public class MapGenerator : MonoBehaviour {
                 {
                     GameManager.gm.GetComponent<HeroPartyManager>()
                         .AddKnight(center);
+                    knightStartPoint = new MapCoor((int)center.x, (int)center.y);
+
+                    walkLevelGrid[knightStartPoint.x, knightStartPoint.y] = '-';
+                    dontCheckGrid[knightStartPoint.x, knightStartPoint.y] = '-';
                     //leaderCoorX = (int) center.x / 16;
                     //leaderCoorY = (int)(Mathf.Abs(center.y / 16));
-                    
-                    walkLevelGrid[(int)center.x - 5, (int)center.y] = 'c';
-                    walkLevelGrid[(int)center.x - 6, (int)center.y] = 'l';
-                    //dontCheckGrid[(int)center.x  + 4, (int)center.y - 4] = '.';
-                    featuresToPlaceOnMap.Add(new FeatureCenterPair(new MapCoor((int)center.x + 4, (int)center.y - 4), FeatureTypes.CASTLE));
+
+                    // @@@@ Place test tiles @@@@
+                    dontCheckGrid[(int)center.x - 6, (int)center.y] = '&';
+                    dontCheckGrid[(int)center.x - 5, (int)center.y] = '&';
+                    //featuresToPlaceOnMap.Add(new FeatureCenterPair(new MapCoor((int)center.x + 4, (int)center.y - 4), FeatureTypes.CASTLE));
                 } else
                 {
                 }
@@ -257,7 +267,7 @@ public class MapGenerator : MonoBehaviour {
 
             int radius = largestRadius;
 
-            int randGeoFeature = UnityEngine.Random.Range(0, 13);
+            int randGeoFeature = UnityEngine.Random.Range(0, 14);
 
             // Create geographical features particular to the continentType; 
             // this is where the majority of the environmental features 
@@ -277,7 +287,7 @@ public class MapGenerator : MonoBehaviour {
                         // create a forest
                         CreateForest(tempCenter, largestRadius, 10);
                     }
-                    else if (randGeoFeature < 11)
+                    else if (randGeoFeature < 12)
                     {
                         // create a forest circle (TODO)
                         if (--forestCircleCounter < 0)
@@ -285,7 +295,7 @@ public class MapGenerator : MonoBehaviour {
                             if (radius > 5)
                             {
                                 featuresToPlaceOnMap.Add(new FeatureCenterPair(
-                                    new MapCoor(tempCenter), 
+                                    new MapCoor(tempCenter),
                                     FeatureTypes.FOREST_CIRCLE));
 
                                 forestCircleCounter = forestCircleFrequency;
@@ -297,12 +307,12 @@ public class MapGenerator : MonoBehaviour {
                             }
                         }
                     }
-                    else if (randGeoFeature < 12)
+                    else
                     {
-                        // create a mountain circle (TODO)
-                    } else
-                    {
-                        // create nothing
+                        // Place a chest
+
+                        walkLevelGrid[(Mathf.Abs((int)tempCenter.x) % mapWidth),
+                            Mathf.Abs(((int)tempCenter.y) % mapHeight)] = 'c';
                     }
                     break;
                 case (ContinentType.GLACIER):
@@ -310,29 +320,75 @@ public class MapGenerator : MonoBehaviour {
                     if (randGeoFeature < 5)
                     {
                         // Place a penguin salesman
-                        walkLevelGrid[((int)tempCenter.x) % mapWidth,
-                            ((int)tempCenter.y) % mapHeight] = '1';
+                        walkLevelGrid[(Mathf.Abs((int)tempCenter.x) % mapWidth),
+                            Mathf.Abs(((int)tempCenter.y) % mapHeight)] = '1';
                     } else if (randGeoFeature < 10)
                     {
                         // Place an igloo
-                        walkLevelGrid[((int)tempCenter.x) % mapWidth, 
-                            ((int)tempCenter.y) % mapHeight] = 'e';
+                        walkLevelGrid[(Mathf.Abs((int)tempCenter.x) % mapWidth),
+                            Mathf.Abs(((int)tempCenter.y) % mapHeight)] = 'e';
+                    }
+                    else if (randGeoFeature > 11)
+                    {
+                        // Place a chest
+
+                        walkLevelGrid[(Mathf.Abs((int)tempCenter.x) % mapWidth),
+                            Mathf.Abs(((int)tempCenter.y) % mapHeight)] = 'c';
                     }
                     break;
                 case (ContinentType.MOUNTAIN):
                     if (randGeoFeature < 5)
                     {
                         // Place a mouuntain
-                        walkLevelGrid[((int)tempCenter.x) % mapWidth,
-                            ((int)tempCenter.y) % mapHeight] = 'm';
+                        walkLevelGrid[Mathf.Abs(((int)tempCenter.x) % mapWidth),
+                            Mathf.Abs(((int)tempCenter.y) % mapHeight)] = 'm';
+                    }
+                    else if (randGeoFeature > 11)
+                    {
+                        // Place a chest
+
+                        walkLevelGrid[(Mathf.Abs((int)tempCenter.x) % mapWidth),
+                            Mathf.Abs(((int)tempCenter.y) % mapHeight)] = 'c';
                     }
                     break;
                 case (ContinentType.DESERT):
-                    if (randGeoFeature < 5)
+                    if (randGeoFeature < 4)
                     {
                         // Place a pyramid
                         walkLevelGrid[((int)tempCenter.x) % mapWidth,
                             ((int)tempCenter.y) % mapHeight] = '^';
+                    } else if (randGeoFeature < 11)
+                    {
+                        // Place a cactus
+                        walkLevelGrid[((int)tempCenter.x) % mapWidth,
+                            ((int)tempCenter.y) % mapHeight] = '*';
+                    }
+                    else if (randGeoFeature > 11)
+                    {
+                        // Place a chest
+
+                        walkLevelGrid[(Mathf.Abs((int)tempCenter.x) % mapWidth),
+                            Mathf.Abs(((int)tempCenter.y) % mapHeight)] = 'c';
+                    }
+                    break;
+                case (ContinentType.VOLCANO):
+                    if (!castlePlaced && circleNum > 3)
+                    {
+                        castlePlaced = true;
+
+                        featuresToPlaceOnMap.Add(new FeatureCenterPair(new MapCoor((int)center.x + 4, (int)center.y - 4), FeatureTypes.CASTLE));
+                    } else if (randGeoFeature < 5)
+                    {
+                        // Place a mouuntain
+                        walkLevelGrid[Mathf.Abs(((int)tempCenter.x) % mapWidth),
+                            Mathf.Abs(((int)tempCenter.y) % mapHeight)] = 'm';
+                    }
+                    else if (randGeoFeature > 11)
+                    {
+                        // Place a chest
+
+                        walkLevelGrid[(Mathf.Abs((int)tempCenter.x) % mapWidth),
+                            Mathf.Abs(((int)tempCenter.y) % mapHeight)] = 'c';
                     }
                     break;
             }
@@ -420,10 +476,8 @@ public class MapGenerator : MonoBehaviour {
                         {
                             case ('r'):
                                 coastType = 'd';
-                                walkLevelGrid[Mathf.Abs((x - 1) % mapWidth), y] 
-                                    = 'm';
-                                dontCheckGrid[Mathf.Abs((x - 1) % mapWidth), y] = 'd';
-                                dontCheckGrid[Mathf.Abs((x - 2) % mapWidth), y]  = 'd';
+                                walkLevelGrid[Mathf.Abs((x) % mapWidth), y] = '/';
+                                groundGrid[Mathf.Abs((x) % mapWidth), y] = 'd';
                                 break;
                             case ('h'):
                                 coastType = 'b';
@@ -433,12 +487,11 @@ public class MapGenerator : MonoBehaviour {
                                 break;
                             case ('o'):
                                 coastType = 'n';
-                                walkLevelGrid[Mathf.Abs((x - 1) % mapWidth), y]
-                                    = 'v';
                                 dontCheckGrid[Mathf.Abs((x - 1) % mapWidth), y]
+                                    = 'v';
+                                groundGrid[Mathf.Abs((x - 1) % mapWidth), y]
                                     = 'n';
-                                dontCheckGrid[Mathf.Abs((x - 2) % mapWidth), y]
-                                    = 'n';
+                                //walkLevelGrid[Mathf.Abs((x - 1) % mapWidth), y] = '/';
                                 break;
                             default:
                                 coastType = 's';
@@ -454,16 +507,9 @@ public class MapGenerator : MonoBehaviour {
                     {
                         case ('r'):
                             coastType = 'd';
-                            if (GetTile(new MapCoor(x + 1, y), false) != 'm')
-                            {
-                                walkLevelGrid[(x + 2) % mapWidth, y] = 'm';
-                                dontCheckGrid[(x + 2) % mapWidth, y] = 'd';
-                                dontCheckGrid[(x + 1) % mapWidth, y] = 'd';
-                            }
+                            walkLevelGrid[(x) % mapWidth, y] = '/';
                             break;
                         case ('d'):
-                            dontCheckGrid[(x + 2) % mapWidth, y] = 'd';
-                            dontCheckGrid[(x + 1) % mapWidth, y] = 'd';
                             break;
                         case ('h'):
                             coastType = 'b';
@@ -473,12 +519,7 @@ public class MapGenerator : MonoBehaviour {
                             break;
                         case ('o'):
                             coastType = 'n';
-                            if (GetTile(new MapCoor(x + 1, y), false) != 'm')
-                            {
-                                walkLevelGrid[(x + 2) % mapWidth, y] = 'm';
-                                dontCheckGrid[(x + 2) % mapWidth, y] = 'n';
-                                dontCheckGrid[(x + 1) % mapWidth, y] = 'n';
-                            }
+                            //walkLevelGrid[(x + 1) % mapWidth, y] = '/';
                             break;
                         default:
                             coastType = 's';
@@ -508,21 +549,11 @@ public class MapGenerator : MonoBehaviour {
                         {
                             case ('r'):
                                 coastType = 'd';
-                                if (GetTile(new MapCoor(x - 1, y), false) != 'm')
-                                {
-                                    walkLevelGrid[x, y] = 'm';
-                                    dontCheckGrid[x, y] = 'd';
-                                    dontCheckGrid[Mathf.Abs((x - 1) % mapWidth), y] = 'd';
-                                }
+                                walkLevelGrid[Mathf.Abs((x) % mapWidth), y] = '/';
                                 break;
                             case ('d'):
                                 coastType = 'd';
-                                if (GetTile(new MapCoor(x - 1, y), false) != 'm')
-                                {
-                                    walkLevelGrid[x, y] = 'm';
-                                    dontCheckGrid[x, y] = 'd';
-                                    dontCheckGrid[Mathf.Abs((x - 1) % mapWidth), y] = 'd';
-                                }
+                                walkLevelGrid[Mathf.Abs((x) % mapWidth), y] = '/';
                                 break;
                             case ('h'):
                                 coastType = 'b';
@@ -532,21 +563,10 @@ public class MapGenerator : MonoBehaviour {
                                 break;
                             case ('n'):
                                 coastType = 'n';
-                                if (GetTile(new MapCoor(x - 1, y), false) != 'm')
-                                {
-                                    walkLevelGrid[x, y] = 'm';
-                                    dontCheckGrid[x, y] = 'n';
-                                    SetTile(2, new MapCoor(x - 1, y), 'n');
-                                }
                                 break;
                             case ('o'):
                                 coastType = 'n';
-                                if (GetTile(new MapCoor(x - 1, y), false) != 'm')
-                                {
-                                    walkLevelGrid[x, y] = 'm';
-                                    dontCheckGrid[x, y] = 'n';
-                                    SetTile(2, new MapCoor(x - 1, y), 'n');
-                                }
+                                //walkLevelGrid[Mathf.Abs((x) % mapWidth), y] = '/';
                                 break;
                             default:
                                 coastType = 's';
@@ -564,46 +584,19 @@ public class MapGenerator : MonoBehaviour {
                         case ('r'):
                             rCount++;
                             coastType = 'd';
-                            if (GetTile(new MapCoor(x - 1, y), false) != 'm')
-                            {
-                                walkLevelGrid[x, y] = 'm';
-                                dontCheckGrid[x, y] = 'r';
-                                SetTile(2, new MapCoor(x - 1, y), 'r');
-                            }
-                            //groundGrid[x, y - 1] = 'r';
+                            walkLevelGrid[Mathf.Abs((x) % mapWidth), y] = '/';
                             break;
                         case ('o'):
                             oCount ++;
                             coastType = 'n';
-                            if (GetTile(new MapCoor(x - 1, y), false) != 'm')
-                            {
-                                walkLevelGrid[x, y] = 'm';
-                                dontCheckGrid[x, y] = 'o';
-                                SetTile(2, new MapCoor(x - 1, y), 'o');
-                            }
-                            //groundGrid[x, y - 1] = 'r';
+                            //walkLevelGrid[Mathf.Abs((x) % mapWidth), y] = '/';
                             break;
                         case ('n'):
                             coastType = 'n';
-                            if (GetTile(new MapCoor(x - 1, y), false) != 'm')
-                            {
-                                nCOunt++;
-                                walkLevelGrid[x, y] = 'm';
-                                dontCheckGrid[x, y] = 'n';
-                                SetTile(2, new MapCoor(x - 1, y), 'n');
-                            }
-                            //groundGrid[x, y - 1] = 'r';
                             break;
                         case ('d'):
                             coastType = 'd';
-                            if (GetTile(new MapCoor(x - 1, y), false) != 'm')
-                            {
-                                dCOunt++;
-                                walkLevelGrid[x, y] = 'm';
-                                dontCheckGrid[x, y] = 'd';
-                                SetTile(2, new MapCoor(x - 1, y), 'd');
-                            }
-                            //groundGrid[x, y - 1] = 'r';
+                            //walkLevelGrid[Mathf.Abs((x) % mapWidth), y] = '/';
                             break;
                         case ('h'):
                             coastType = 'b';
@@ -758,6 +751,8 @@ public class MapGenerator : MonoBehaviour {
                 return invisibleChest;
             case ('m'):
                 return mountainTile;
+            case ('/'):
+                return smallMountainTile;
             case ('r'):
                 return rockTile;
             case ('s'):
@@ -793,6 +788,12 @@ public class MapGenerator : MonoBehaviour {
                 return airshipSalesman;
             case ('1'):
                 return penguinSalesman;
+            case ('&'):
+                return armorChest;
+            case ('*'):
+                return cactus;
+            case ('^'):
+                return pyramid;
             default:
                 if (tileType != '\0')
                 {
@@ -886,8 +887,11 @@ public class MapGenerator : MonoBehaviour {
         }
     }
 
+    bool instantiating = true;
+
     IEnumerator InstantiateTiles()
     {
+        instantiating = true;
         for (int x = 0; x < mapWidth; x++)
         {
             for (int y = 0; y < mapHeight; y++)
@@ -947,6 +951,15 @@ public class MapGenerator : MonoBehaviour {
             }
             yield return null;
         }
+
+        // Wrap the map so the knight is in the center
+        int distanceFromCenter = mapWidth - (int)knightStartPoint.x;
+        while (distanceFromCenter > 0)
+        {
+            WrapMapOneColumn(MoveDir.RIGHT);
+            distanceFromCenter--;
+        }
+        instantiating = false;
     }
 
     /*

@@ -163,7 +163,7 @@ public class AirshipController : GridController {
             canMove = objectsAtDestination == null
                 || objectsAtDestination.isTrigger;
         }
-        else if (!at.isFlying)
+        else if (!at.isFlying && objectsAtDestination.tag != "Mountain")
         {
             canMove = false;
             Debug.Log("blocked");

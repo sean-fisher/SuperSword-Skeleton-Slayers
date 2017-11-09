@@ -40,8 +40,10 @@ public class ItemMenu : GridOptions {
         cursor = GameManager.gm.cursor;
         currCursor = cursor;
 
-        inventoryEntries = transform.GetChild(0).GetComponentsInChildren<InventoryEntry>();
-
+        if (inventoryEntries == null)
+        {
+            inventoryEntries = transform.GetChild(0).GetComponentsInChildren<InventoryEntry>();
+        }
         List<RectTransform> tempList = new List<RectTransform>();
         for (int i = 0; i < inventoryEntries.Length; i++)
         {
@@ -61,7 +63,7 @@ public class ItemMenu : GridOptions {
 
     protected override void MakeMenuSelection(int menuIndex)
     {
-        if (menuIndex < Inventory.unsortedList.Length && Inventory.unsortedList[menuIndex] != null)
+        if (menuIndex < Inventory.unsortedList.Length && Inventory.unsortedList[menuIndex] != null && Inventory.unsortedList[menuIndex].usableOutsideBattle)
         {
             PauseMenu.partySelectMenu.openedFromItemMenu = true;
             PauseMenu.partySelectMenu.OpenMenu();
@@ -93,13 +95,13 @@ public class ItemMenu : GridOptions {
                     int itemStock = Inventory.allItems[id.itemID];
                     if (itemStock > 0)
                     {
-                        InventoryEntry ie = inventoryEntries[singleItemIndex];
+                        InventoryEntry ie = inventoryEntries[i];
 
                         ie.itemNum.text = "" + itemStock;
                     }
                     else
                     {
-                        InventoryEntry ie = inventoryEntries[singleItemIndex];
+                        InventoryEntry ie = inventoryEntries[i];
                         ie.itemNum.text = "";
                         ie.itemName.text = "";
                         //listTexts[i].GetComponent<Text>().text += "";
