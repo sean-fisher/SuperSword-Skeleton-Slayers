@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class EnemyPartyManager : PartyManager {
 
     public Sprite background;
+    public bool finalBoss;
 
     // Can be 1 to 5, 5 being the most common.
     public int occurrenceRate;

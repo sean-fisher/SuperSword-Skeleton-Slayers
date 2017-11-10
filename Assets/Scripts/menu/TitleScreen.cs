@@ -6,6 +6,7 @@ public class TitleScreen : GridOptions {
 
     public SceneSwitcher sceneSwitcher;
     public GameObject creditsWindow;
+    public GameObject controlsWindow;
 
     public override void OpenMenu()
     {
@@ -42,6 +43,8 @@ public class TitleScreen : GridOptions {
             case (1):
                 // View Controls
                 Debug.Log("Go to Controls");
+                CloseMenu();
+                controlsWindow.GetComponent<CreditsScreen>().OpenMenu();
                 break;
             case (2):
                 // Go to credits
