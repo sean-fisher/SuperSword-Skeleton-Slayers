@@ -81,4 +81,13 @@ public abstract class ItemData
             target.currentEVA += increaseVal;
         }
     }
+
+    public void BoostMP(int increaseVal, BaseCharacter target)
+    {
+        if (increaseVal > 0)
+        {
+            // TODO: Visual effects related to Boosts
+            target.currentMP += increaseVal;
+        }
+    }
 }

@@ -26,6 +26,7 @@ public class SimpleItemData : ItemData
     public int boostDEF;
     public int boostSKL;
     public int boostEVA;
+    public int boostMP;
 
     public bool revives;
     public bool healsPoison;
@@ -58,7 +59,7 @@ public class SimpleItemData : ItemData
             BoostATK(boostATK, bc);
             BoostDEF(boostDEF, bc);
             BoostSKL(boostSKL, bc);
-            BoostEVA(boostEVA, bc);
+            BoostMP(boostMP, bc);
         }
     }
     public override int CompareTo(ItemData other)

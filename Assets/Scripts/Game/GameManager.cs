@@ -29,7 +29,6 @@ public class GameManager : MonoBehaviour {
 
     public AudioSource musicPlayer;
 
-
     private void Start()
     {
         Cactus.redScreen = redScreen;

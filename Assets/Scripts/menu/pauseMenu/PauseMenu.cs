@@ -23,6 +23,11 @@ public class PauseMenu : GridOptions {
     RectTransform[] mainOptions;
     RectTransform[] additionalStats;
 
+    public Text goldText;
+    public Text stepsText;
+    public Text battlesText;
+    public Text timeText;
+
     // Use this for initialization
     void Start ()
     {
@@ -59,6 +64,11 @@ public class PauseMenu : GridOptions {
             case (1):
                 // Open Equip Window
                 equipMenu.OpenMenu();
+                break;
+            case (2):
+                // Quit to title
+                Debug.Log("Quit to title");
+                GameObject.FindObjectOfType<SceneSwitcher>().SwitchToOtherScene("Title");
                 break;
             default:
                 break;
@@ -144,6 +154,12 @@ public class PauseMenu : GridOptions {
         {
             tempRectList.Add(additionalStatsTexts[i].GetComponent<RectTransform>());
         }
+
+        goldText.text = "Gold: " + Inventory.partyGold + "G";
+        stepsText.text = "Steps Taken: " + GridController.stepsTaken;
+        battlesText.text = "Battles Won: " + BattleManager.battlesFought;
+        timeText.text = "Time Played: " + Time.timeSinceLevelLoad;
+
         additionalStats = tempRectList.ToArray();
         currCursor = cursor2;
         cursor.SetActive(true);
@@ -153,7 +169,7 @@ public class PauseMenu : GridOptions {
         UpdateCursor(mainOptions, 0, 0, -Screen.width / 30);
     }
 
-    void UpdateHeroDisplay()
+    public void UpdateHeroDisplay()
     {
         // Display the current hereoes and stats
 

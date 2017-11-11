@@ -10,6 +10,11 @@ public class MoneyChest : InteractableTile
 
     bool heroStandingOnThisTile = false;
 
+    private void Start()
+    {
+        goldInside = Random.Range(700, 1200);
+    }
+
     private void Update()
     {
         if (heroStandingOnThisTile && Input.GetButtonDown("AButton"))

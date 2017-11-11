@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Using code from https://forum.unity.com/threads/smooth-transition-between-perspective-and-orthographic-modes.32765/
+// Using some code from https://forum.unity.com/threads/smooth-transition-between-perspective-and-orthographic-modes.32765/
 
 public class CamFollow : MonoBehaviour {
 

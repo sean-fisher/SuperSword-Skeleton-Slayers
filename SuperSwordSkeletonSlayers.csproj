@@ -78,6 +78,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\DoNothingAttack.cs" />
     <Compile Include="Assets\Scripts\Battle\Attack.cs" />
     <Compile Include="Assets\Scripts\Battle\AttackType.cs" />
     <Compile Include="Assets\Scripts\Battle\BattleManager.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="Assets\Scripts\Item\SimpleEquip.cs" />
     <Compile Include="Assets\Scripts\Map\AirshipController.cs" />
     <Compile Include="Assets\Scripts\Map\AirshipTile.cs" />
+    <Compile Include="Assets\Scripts\Map\BetterRandomEquipChest.cs" />
     <Compile Include="Assets\Scripts\Map\Cactus.cs" />
     <Compile Include="Assets\Scripts\Map\CastleDoor.cs" />
     <Compile Include="Assets\Scripts\Map\EnemyOrItemChest.cs" />
@@ -153,6 +155,7 @@
     <Compile Include="Assets\Scripts\NPCs\AirshipSalesman.cs" />
     <Compile Include="Assets\Scripts\NPCs\Salesman.cs" />
     <Compile Include="Assets\Scripts\Player\RandomEncounterManager.cs" />
+    <Compile Include="Assets\Scripts\Songs.cs" />
     <Compile Include="Assets\Scripts\Text\ActivateTextAtLine.cs" />
     <Compile Include="Assets\Scripts\Text\TextBoxManager.cs" />
     <Compile Include="Assets\Scripts\Text\XMLLoader.cs" />

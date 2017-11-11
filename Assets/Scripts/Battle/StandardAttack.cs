@@ -14,9 +14,7 @@ public class StandardAttack : Attack {
 	void Update () {
 		
 	}
-
-    public StandardAttack() { }
-
+    
 
     public override IEnumerator UseAttack(BaseCharacter attacker, BaseCharacter target, List<Turn> turnList)
     {

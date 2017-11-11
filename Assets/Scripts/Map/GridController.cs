@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GridController : MonoBehaviour {
 
+    public static int stepsTaken = 0;
+
     public static bool encountersEnabled = true;
     public static bool clampToPixel = true;
     public bool debugEnabled = false;
@@ -192,6 +194,9 @@ public class GridController : MonoBehaviour {
                         touchedDamageTile = true;
                         objectsAtDestination.GetComponent<Cactus>().ActivateInteraction();
                     }
+                } else
+                {
+                    stepsTaken++;
                 }
             } else
             {

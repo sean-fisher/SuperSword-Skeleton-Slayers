@@ -272,6 +272,8 @@ public class TextBoxManager : MonoBehaviour {
             if (yesNoChoice)
             {
                 yesNoOptions.SetActive(true);
+                ynCursor = 0;
+                yesNoPicked = false;
                 cursor.SetActive(true);
                 UpdateCursor(0);
                 //After the text is displayed, give the player two options: yes and no. Each triggers a different cutscene.
@@ -351,6 +353,7 @@ public class TextBoxManager : MonoBehaviour {
             }
         }
         enabled = false;
+        yesNoPicked = false;
     }
 
     public void ReloadScript(TextAsset textToLoad)
@@ -400,12 +403,6 @@ public class TextBoxManager : MonoBehaviour {
 
     public int GetPlayerChoice()
     {
-        if (!yesNoPicked)
-        {
-            return -1;
-        } else
-        {
-            return ynCursor;
-        }
+        return ynCursor;
     }
 }
