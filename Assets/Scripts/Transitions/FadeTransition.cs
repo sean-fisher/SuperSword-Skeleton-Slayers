@@ -9,7 +9,6 @@ public class FadeTransition : ScreenTransition {
     
 	// Use this for initialization
 	void Start () {
-		
 	}
 	
 	// Update is called once per frame
@@ -27,6 +26,18 @@ public class FadeTransition : ScreenTransition {
     public float speed;
     Color currGuiColor = Color.black;
 
+    public void SetBlacked()
+    {
+        inOrOut = 1;
+        transitioning = true;
+        waitOnBlack = false;
+        currGuiColor.a = .5f;
+        /*
+        GameManager.gm = GameObject.Find("Gamemanager").GetComponent<GameManager>();
+        SceneSwitcher.staticst = GameManager.gm.fadeTransition;
+        SceneSwitcher.staticst.enabled = true;*/
+    }
+
     private void OnGUI()
     {
         if (transitioning && !waitOnBlack)
@@ -42,7 +53,10 @@ public class FadeTransition : ScreenTransition {
                     currGuiColor.a += Time.deltaTime * speed * inOrOut;
                     blackTexture.SetPixel(0, 0, currGuiColor);
                     blackTexture.Apply();
+                } else
+                {
                 }
+
             }
             else if (currGuiColor.a > 0)
             { 
@@ -51,6 +65,7 @@ public class FadeTransition : ScreenTransition {
                 currGuiColor.a += Time.deltaTime * speed * inOrOut;
                 blackTexture.SetPixel(0, 0, currGuiColor);
                 blackTexture.Apply();
+                Debug.Log("Trans out: " + currGuiColor.a);
             }
             
         }

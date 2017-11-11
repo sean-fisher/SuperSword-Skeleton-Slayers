@@ -45,23 +45,22 @@ public class BattleManager : MonoBehaviour {
     public LayerMask groundLayer;
     public LayerMask oceanLayer;
 
+    public static int battlesFought = 0;
+
     int totalGoldDrop = 0;
 
     void Start()
     {
-        if (bManager == null)
-        {
             bManager = this;
-        }
-        if (hpm == null)
-        {
+        
             hpm = gameObject.GetComponent<HeroPartyManager>();
-        }
-        if (Attack.battleMessageWindow == null)
-        {
+        
             Attack.battleMessageWindow = messageBoxImg.gameObject;
             TextBoxManager.defaultMessageWindow = messageBoxImg.gameObject;
-        }
+
+        battlesFought = 0;
+        hasLost = false;
+        hasWon = false;
     }
 
     // Update is called once per frame
@@ -152,7 +151,7 @@ public class BattleManager : MonoBehaviour {
             epm = GameObject.Instantiate(areaEncounters
                 .GetRandomEncounter(RandomEncounterManager.currArea).gameObject)
                 .GetComponent<EnemyPartyManager>();
-            Debug.Log("encounter at " + RandomEncounterManager.currArea);
+            //Debug.Log("encounter at " + RandomEncounterManager.currArea);
         } else
         {
             epm = enemyEncounter;
@@ -215,6 +214,8 @@ public class BattleManager : MonoBehaviour {
                 enemyObj.GetComponent<RectTransform>().position += new Vector3((enviroImg.rectTransform.rect.width / 2) * 1.5f, 
                     (-enviroImg.rectTransform.rect.height / 2) * 1.3f);
                 enemyObj.GetComponent<RectTransform>().position = new Vector3(Screen.width / 2, Screen.height / 2);
+                GameManager.gm.musicPlayer.clip = Songs.bossMusic; 
+                GameManager.gm.musicPlayer.Play();
             }
 
             totalGoldDrop += enemyObj.GetComponent<BaseCharacter>().goldDrop;
@@ -240,12 +241,12 @@ public class BattleManager : MonoBehaviour {
         rt.sizeDelta = new Vector2(rt.sizeDelta.x, 24);
         backgroundWindow.gameObject.SetActive(true);
 
-        while (rt.sizeDelta.y < 324)
+        while (rt.sizeDelta.y < 323)
         {
             rt.sizeDelta = new Vector2(rt.sizeDelta.x, rt.sizeDelta.y + (1000 * Time.deltaTime));
             yield return null;
         }
-        rt.sizeDelta = new Vector2(rt.sizeDelta.x, 324);
+        rt.sizeDelta = new Vector2(rt.sizeDelta.x, 323);
         yield return new WaitForSeconds(.1f);
         enviroImg.gameObject.SetActive(true);
 
@@ -343,14 +344,16 @@ public class BattleManager : MonoBehaviour {
         hasWon = true;
         turnList.Clear();
 
-        Destroy(epm.gameObject);
-
+        if (epm.gameObject)
+        {
+            Destroy(epm.gameObject);
+        }
         messageBoxImg.gameObject.SetActive(true);
         List<string> endBattleMessages = new List<string>();
         endBattleMessages.Add("You've Won!");
         endBattleMessages.Add("The defeated enemies dropped " + totalGoldDrop + " Gold!");
         TextBoxManager.tbm.EnableTextBox(messageBoxImg.transform.GetChild(0).gameObject, endBattleMessages.ToArray(), true);
-
+        battlesFought++;
     }
 
     IEnumerator WaitForExplode()

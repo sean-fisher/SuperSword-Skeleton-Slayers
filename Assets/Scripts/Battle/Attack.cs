@@ -104,6 +104,8 @@ public abstract class Attack : MonoBehaviour {
         // If all of this phase's turns are over, a win/lose double check occurs.
         if (turnList.Count == 0)
         {
+            BattleManager.bManager.CheckWin();
+            BattleManager.bManager.CheckLose();
             if (!BattleManager.hasLost && !BattleManager.hasWon)
             {
                 ReturnToMenu();

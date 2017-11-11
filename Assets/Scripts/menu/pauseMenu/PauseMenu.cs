@@ -23,6 +23,11 @@ public class PauseMenu : GridOptions {
     RectTransform[] mainOptions;
     RectTransform[] additionalStats;
 
+    public Text goldText;
+    public Text stepsText;
+    public Text battlesText;
+    public Text timeText;
+
     // Use this for initialization
     void Start ()
     {
@@ -144,6 +149,12 @@ public class PauseMenu : GridOptions {
         {
             tempRectList.Add(additionalStatsTexts[i].GetComponent<RectTransform>());
         }
+
+        goldText.text = "Gold: " + Inventory.partyGold + "G";
+        stepsText.text = "Steps Taken: " + GridController.stepsTaken;
+        battlesText.text = "Battles Won: " + BattleManager.battlesFought;
+        timeText.text = "Time Played: " + Time.timeSinceLevelLoad;
+
         additionalStats = tempRectList.ToArray();
         currCursor = cursor2;
         cursor.SetActive(true);

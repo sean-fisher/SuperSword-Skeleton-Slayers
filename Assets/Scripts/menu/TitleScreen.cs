@@ -32,12 +32,11 @@ public class TitleScreen : GridOptions {
 
     protected override void MakeMenuSelection(int menuIndex)
     {
-        Debug.Log("Make menu selection: " + menuIndex);
+        //Debug.Log("Make menu selection: " + menuIndex);
         switch (menuIndex)
         {
             case (0):
                 // Start new game
-                sceneSwitcher.SwitchToMapScene("MapGenTest");
                 StartCoroutine(StartingGame());
                 break;
             case (1):
@@ -56,6 +55,15 @@ public class TitleScreen : GridOptions {
 
     IEnumerator StartingGame()
     {
+        if (sceneSwitcher == null)
+        {
+            sceneSwitcher = SceneSwitcher.ss;
+        }
+        sceneSwitcher.SwitchToMapScene("MapGenTest");
+        GridController.stepsTaken = 0;
+        BattleManager.battlesFought = 0;
+        Inventory.partyGold = 0;
+        sceneSwitcher.isSwitching = true;
         while (sceneSwitcher.isSwitching)
         {
             yield return null;

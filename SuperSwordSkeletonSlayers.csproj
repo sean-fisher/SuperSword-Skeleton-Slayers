@@ -153,6 +153,7 @@
     <Compile Include="Assets\Scripts\NPCs\AirshipSalesman.cs" />
     <Compile Include="Assets\Scripts\NPCs\Salesman.cs" />
     <Compile Include="Assets\Scripts\Player\RandomEncounterManager.cs" />
+    <Compile Include="Assets\Scripts\Songs.cs" />
     <Compile Include="Assets\Scripts\Text\ActivateTextAtLine.cs" />
     <Compile Include="Assets\Scripts\Text\TextBoxManager.cs" />
     <Compile Include="Assets\Scripts\Text\XMLLoader.cs" />

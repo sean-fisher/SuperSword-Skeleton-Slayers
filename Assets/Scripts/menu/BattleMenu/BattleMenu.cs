@@ -214,9 +214,7 @@ public class BattleMenu : Menu {
                             {
                                 BattleManager.bManager.AddAttackTurn(GetAttacker(), GetTarget(), attackIndex - 1);
                             }
-                            Debug.Log("targetingENemies: " + targetingEnemies);
 
-                            Debug.Log("Target: " + BattleManager.hpm.activePartyMembers[heroEnemyCursor].characterName);
                             NextHeroSelectsAttack(true);
                             aPressed = false;
                         }
@@ -644,7 +642,7 @@ public class BattleMenu : Menu {
             Turn turn = turnList[i];
             if (turn.attack is Defend)
             {
-                Debug.Log(turn.attacker + " is defending");
+                //Debug.Log(turn.attacker + " is defending");
                 turn.attacker.isDefending = true;
             }
         }
@@ -660,12 +658,16 @@ public class BattleMenu : Menu {
 
     public void ReturnToMenu()
     {
-        canSelect = true;
-        cursor.SetActive(true);
-        defaultActionMenu.SetActive(true);
-        bm.messageBoxImg.gameObject.SetActive(false);
-        menuLayer = 1;
-        NextHeroSelectsAttack(false);
+        if (!BattleManager.hasLost && !BattleManager.hasWon)
+        {
+            Debug.Log("Return to attack menu");
+            canSelect = true;
+            cursor.SetActive(true);
+            defaultActionMenu.SetActive(true);
+            bm.messageBoxImg.gameObject.SetActive(false);
+            menuLayer = 1;
+            NextHeroSelectsAttack(false);
+        }
     }
     
 
