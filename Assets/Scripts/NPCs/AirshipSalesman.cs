@@ -18,7 +18,7 @@ public class AirshipSalesman : NPCTile {
             StartCoroutine(Conversation());
         } else
         {
-            SayLine("Thanks for taking that airship off of my hands. Now I have the money to vacation in Costa Rica!", true);
+            SayLine("Thanks for taking that airship off of my hands. Now I have the money to vacation in Costa Rica!");
         }
     }
 
@@ -35,11 +35,14 @@ public class AirshipSalesman : NPCTile {
         if (TextBoxManager.tbm.GetPlayerChoice() == 0)
         {
             // Yes has been picked
+            Debug.Log("Pick yes");
+            saleMade = true;
             AirshipTile.canBoard = true;
             Inventory.SpendGold(1000);
         } else
         {
-
+            // no has been picked
+            Debug.Log("Pick No: " + TextBoxManager.tbm.GetPlayerChoice());
         }
         GridController.partyCanMove = true;
     }

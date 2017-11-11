@@ -65,7 +65,7 @@ public class FadeTransition : ScreenTransition {
                 currGuiColor.a += Time.deltaTime * speed * inOrOut;
                 blackTexture.SetPixel(0, 0, currGuiColor);
                 blackTexture.Apply();
-                Debug.Log("Trans out: " + currGuiColor.a);
+
             }
             
         }

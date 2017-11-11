@@ -119,6 +119,7 @@
     <Compile Include="Assets\Scripts\Item\SimpleEquip.cs" />
     <Compile Include="Assets\Scripts\Map\AirshipController.cs" />
     <Compile Include="Assets\Scripts\Map\AirshipTile.cs" />
+    <Compile Include="Assets\Scripts\Map\BetterRandomEquipChest.cs" />
     <Compile Include="Assets\Scripts\Map\Cactus.cs" />
     <Compile Include="Assets\Scripts\Map\CastleDoor.cs" />
     <Compile Include="Assets\Scripts\Map\EnemyOrItemChest.cs" />

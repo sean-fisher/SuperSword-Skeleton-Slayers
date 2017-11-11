@@ -233,8 +233,6 @@ public class MapGenerator : MonoBehaviour {
                     //leaderCoorY = (int)(Mathf.Abs(center.y / 16));
 
                     // @@@@ Place test tiles @@@@
-                    dontCheckGrid[(int)center.x - 6, (int)center.y] = '&';
-                    dontCheckGrid[(int)center.x - 5, (int)center.y] = '&';
                     //featuresToPlaceOnMap.Add(new FeatureCenterPair(new MapCoor((int)center.x + 4, (int)center.y - 4), FeatureTypes.CASTLE));
                 } else
                 {
@@ -487,9 +485,9 @@ public class MapGenerator : MonoBehaviour {
                                 break;
                             case ('o'):
                                 coastType = 'n';
-                                dontCheckGrid[Mathf.Abs((x - 1) % mapWidth), y]
+                                dontCheckGrid[Mathf.Abs((x) % mapWidth), y]
                                     = 'v';
-                                groundGrid[Mathf.Abs((x - 1) % mapWidth), y]
+                                groundGrid[Mathf.Abs((x) % mapWidth), y]
                                     = 'n';
                                 //walkLevelGrid[Mathf.Abs((x - 1) % mapWidth), y] = '/';
                                 break;

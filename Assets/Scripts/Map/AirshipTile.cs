@@ -47,6 +47,7 @@ public class AirshipTile : InteractableTile {
             gameObject.transform;
         AirshipController.at = this;
         gc.enabled = true;
+        MapEntrance.canEnter = false;
         //gc.speed = 100;
     }
 

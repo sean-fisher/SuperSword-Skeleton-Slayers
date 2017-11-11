@@ -75,6 +75,7 @@ public class AirshipController : GridController {
                 .inputList.Clear();
         }
         GameManager.gm.leader.enabled = true;
+        MapEntrance.canEnter = true;
         canMove = false;
         Camera.main.GetComponent<CamFollow>().targetToFollow =
             GameManager.gm.leader.gameObject.transform;
@@ -167,7 +168,7 @@ public class AirshipController : GridController {
         {
             canMove = false;
             Debug.Log("blocked");
-            ExitShip(destinationVector);
+            //ExitShip(destinationVector);
         }
 
         

@@ -17,9 +17,14 @@ public class MapEntrance : InteractableTile {
 
     public AudioClip playOnExit;
 
+    public static bool canEnter = true;
+
     public override void ActivateInteraction()
     {
-        GameManager.gm.GoThruDoor(this, generateMap);
+        if (canEnter)
+        {
+            GameManager.gm.GoThruDoor(this, generateMap);
+        }
     }
 
 }
