@@ -485,11 +485,8 @@ public class MapGenerator : MonoBehaviour {
                                 break;
                             case ('o'):
                                 coastType = 'n';
-                                dontCheckGrid[Mathf.Abs((x) % mapWidth), y]
-                                    = 'v';
-                                groundGrid[Mathf.Abs((x) % mapWidth), y]
-                                    = 'n';
-                                //walkLevelGrid[Mathf.Abs((x - 1) % mapWidth), y] = '/';
+                                walkLevelGrid[Mathf.Abs((x) % mapWidth), y] = '/';
+                                groundGrid[Mathf.Abs((x) % mapWidth), y] = 'd';
                                 break;
                             default:
                                 coastType = 's';
@@ -517,7 +514,7 @@ public class MapGenerator : MonoBehaviour {
                             break;
                         case ('o'):
                             coastType = 'n';
-                            //walkLevelGrid[(x + 1) % mapWidth, y] = '/';
+                            walkLevelGrid[(x) % mapWidth, y] = '/';
                             break;
                         default:
                             coastType = 's';
@@ -564,7 +561,7 @@ public class MapGenerator : MonoBehaviour {
                                 break;
                             case ('o'):
                                 coastType = 'n';
-                                //walkLevelGrid[Mathf.Abs((x) % mapWidth), y] = '/';
+                                walkLevelGrid[Mathf.Abs((x) % mapWidth), y] = '/';
                                 break;
                             default:
                                 coastType = 's';
@@ -587,7 +584,7 @@ public class MapGenerator : MonoBehaviour {
                         case ('o'):
                             oCount ++;
                             coastType = 'n';
-                            //walkLevelGrid[Mathf.Abs((x) % mapWidth), y] = '/';
+                            walkLevelGrid[Mathf.Abs((x) % mapWidth), y] = '/';
                             break;
                         case ('n'):
                             coastType = 'n';

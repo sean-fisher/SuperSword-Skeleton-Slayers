@@ -9,7 +9,7 @@ public class AirshipSalesman : NPCTile {
     protected override void NPCInteraction()
     {
         GridController.partyCanMove = false;
-        if (Inventory.partyGold < 0 && !saleMade)
+        if (Inventory.partyGold < 1000 && !saleMade)
         {
             SayLine("You want this airship, huh? I guess I'll sell it, but only if you got the money. Bring me 1000G.");
             GridController.partyCanMove = true;

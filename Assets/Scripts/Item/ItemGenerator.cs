@@ -9,6 +9,8 @@ public class ItemGenerator : MonoBehaviour {
     public List<BaseItem> equipSpawns = new List<BaseItem>();
     public List<BaseItem> betterEquipSpawns = new List<BaseItem>();
     public static ItemGenerator instance;
+    public Key key;
+    int keySpawnTimer = 5;
 
     private void Start()
     {
@@ -17,6 +19,11 @@ public class ItemGenerator : MonoBehaviour {
 
     public BaseItem GetTreasureBasedOnLocation(ContinentType area = ContinentType.None)
     {
+        if (--keySpawnTimer == 0)
+        {
+            keySpawnTimer = 5;
+            return key;
+        }
         switch (area)
         {
             case (ContinentType.FOREST):

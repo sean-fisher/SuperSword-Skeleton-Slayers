@@ -69,6 +69,7 @@ public class ItemMenu : GridOptions {
             PauseMenu.partySelectMenu.OpenMenu();
             PauseMenu.partySelectMenu.itemToUseUnsortedIndex = menuIndex;
             DisableMenuControl();
+            PauseMenu.pauseMenu.UpdateHeroDisplay();
         } else
         {
             // No item there

@@ -38,7 +38,6 @@ public static class MapFeatures {
 
     public static string[] castle = new string[]{
                                                        "-  -  -  ",
-                                                       "-  -  -  ",
                                                        "-  .  -  ",
                                                        "-  -  -  ",
                                                        };

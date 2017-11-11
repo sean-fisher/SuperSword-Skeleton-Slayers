@@ -65,6 +65,11 @@ public class PauseMenu : GridOptions {
                 // Open Equip Window
                 equipMenu.OpenMenu();
                 break;
+            case (2):
+                // Quit to title
+                Debug.Log("Quit to title");
+                GameObject.FindObjectOfType<SceneSwitcher>().SwitchToOtherScene("Title");
+                break;
             default:
                 break;
         }
@@ -164,7 +169,7 @@ public class PauseMenu : GridOptions {
         UpdateCursor(mainOptions, 0, 0, -Screen.width / 30);
     }
 
-    void UpdateHeroDisplay()
+    public void UpdateHeroDisplay()
     {
         // Display the current hereoes and stats
 
