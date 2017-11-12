@@ -340,11 +340,10 @@ public class BattleManager : MonoBehaviour {
 
     public void WinBattle()
     {
-        //Debug.Log("Game Won!");
         hasWon = true;
         turnList.Clear();
 
-        if (epm.gameObject)
+        if (epm)
         {
             Destroy(epm.gameObject);
         }
