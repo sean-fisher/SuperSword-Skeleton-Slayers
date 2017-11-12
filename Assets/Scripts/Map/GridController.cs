@@ -386,19 +386,20 @@ public class GridController : MonoBehaviour {
             }
             
 
-            if (GameManager.gm.leader == this && !debugEnabled)
+        }
+
+        if ( canMoveAfter && !battleActivated)
+        {
+            canMove = true;
+            bool interactTileSteppedOn = CheckTile(transform.position);
+
+            if (!interactTileSteppedOn && GameManager.gm.leader == this && !debugEnabled)
             {
                 if (encountersEnabled)
                 {
                     battleActivated = RandomEncounterManager.AdvanceStepCount(transform.position);
                 }
             }
-        }
-
-        if ( canMoveAfter && !battleActivated)
-        {
-            canMove = true;
-            CheckTile(transform.position);
         }
         touchedDamageTile = false;
     }
@@ -447,6 +448,7 @@ public class GridController : MonoBehaviour {
     public void DisableMovement()
     {
         canMove = false;
+        partyCanMove = false;
     }
     public void DisablePartyMovement()
     {
@@ -457,6 +459,7 @@ public class GridController : MonoBehaviour {
         if (!BattleManager.bManager.CheckDisableMenu())
         {
             canMove = true;
+            partyCanMove = true;
         }
     }
 }
