@@ -468,10 +468,10 @@ public class BattleMenu : Menu {
     {
         if (!targetingEnemies)
         {
-            return BattleManager.hpm.activePartyMembers[heroEnemyCursor];
+            return BattleManager.hpm.activePartyMembers[heroEnemyCursor % BattleManager.hpm.activePartyMembers.Count];
         } else
         {
-            return BattleManager.epm.activePartyMembers[heroEnemyCursor];
+            return BattleManager.epm.activePartyMembers[heroEnemyCursor % BattleManager.epm.activePartyMembers.Count];
         }
     }
 

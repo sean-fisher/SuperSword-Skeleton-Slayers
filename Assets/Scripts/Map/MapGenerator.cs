@@ -591,7 +591,6 @@ public class MapGenerator : MonoBehaviour {
                             break;
                         case ('d'):
                             coastType = 'd';
-                            //walkLevelGrid[Mathf.Abs((x) % mapWidth), y] = '/';
                             break;
                         case ('h'):
                             coastType = 'b';
