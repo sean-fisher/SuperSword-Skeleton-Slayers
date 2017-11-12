@@ -130,7 +130,7 @@ public class BattleManager : MonoBehaviour {
         EnemyPartyManager enemyEncounter = null)
     {
         // Disable player movement
-        //GameManager.gm.leader.DisableMovement();
+        GameManager.gm.leader.DisableMovement();
 
         if (enemyEncounter == null)
         {
@@ -332,7 +332,7 @@ public class BattleManager : MonoBehaviour {
 
     public void CheckWin()
     {
-        if (enemiesAlive == 0)
+        if (!hasWon && enemiesAlive == 0)
         {
             WinBattle();
         }
@@ -351,6 +351,7 @@ public class BattleManager : MonoBehaviour {
         List<string> endBattleMessages = new List<string>();
         endBattleMessages.Add("You've Won!");
         endBattleMessages.Add("The defeated enemies dropped " + totalGoldDrop + " Gold!");
+        Inventory.partyGold += totalGoldDrop;
         TextBoxManager.tbm.EnableTextBox(messageBoxImg.transform.GetChild(0).gameObject, endBattleMessages.ToArray(), true);
         battlesFought++;
     }
