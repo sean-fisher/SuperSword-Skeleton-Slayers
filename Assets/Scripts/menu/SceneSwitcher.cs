@@ -65,7 +65,6 @@ public class SceneSwitcher : MonoBehaviour {
 
     IEnumerator SwitchingScenesWithMapGen(string sceneName)
     {
-        Debug.Log("Switch to map gen");
         isSwitching = true;
         st.enabled = true;
         
@@ -79,24 +78,20 @@ public class SceneSwitcher : MonoBehaviour {
         {
             SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
         }
-        Debug.Log("Finished loading into new scene");
 
         StartCoroutine(DummyRoutine());
     }
 
     IEnumerator DummyRoutine()
     {
-        Debug.Log("Start dummy routine");
 
         //((FadeTransition)st).SetBlacked();
         yield return new WaitForSeconds(.5f);
         // set cam position at animating airship sprite
         Camera.main.transform.position =
             new Vector3(3000, 3000, Camera.main.transform.position.z);
-
-        Debug.Log("Move cam 3000");
+        
         // fade in to show airship
-        Debug.Log("Start Transition out");
         int timeout = 50;
         while (st.TransitionOut() && timeout > 0)
         {
@@ -105,12 +100,10 @@ public class SceneSwitcher : MonoBehaviour {
         }
         yield return new WaitForSeconds(2);
         // fade to black from airship
-        Debug.Log("Start Transition in");
         while (st.TransitionIn())
         {
             yield return null;
         }
-        Debug.Log("Cam can follow");
         Camera.main.GetComponent<CamFollow>().canFollow = true;
         GameManager.gm.musicPlayer.Play();
         // fade in to game
@@ -120,6 +113,5 @@ public class SceneSwitcher : MonoBehaviour {
         }
 
         isSwitching = false;
-        Debug.Log("finish scene switch");
     }
 }

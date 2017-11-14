@@ -11,6 +11,7 @@ public class ItemTurn : Attack {
     // If turnList is empty, all turns are over and the player gets to select moves again (assuming the player is alive)
     public override IEnumerator UseAttack(BaseCharacter attacker, BaseCharacter target, List<Turn> turnList)
     {
+        Debug.Log("Target name: " + target.characterName);
         // THIS IS THE BASIC OUTLINE FOR A USEATTACK(...) IMPLEMENTATION.
         if (attacker)
         {
@@ -47,7 +48,7 @@ public class ItemTurn : Attack {
 
                 itemBeingUsed.Effect(new BaseCharacter[] { target });
 
-                battleMessage = string.Format("{0}'s HP was restored by 100!", attacker.characterName, target.characterName);
+                battleMessage = string.Format("{0}'s HP was restored by 100!", target.characterName);
                 TextBoxManager.tbm.EnableTextBox(battleMessageWindow, battleMessage, false);
 
                 // Gives time for the player to read the message

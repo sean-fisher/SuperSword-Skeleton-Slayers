@@ -200,7 +200,8 @@ public class BattleMenu : Menu {
                             itemSelectWindow.gameObject.SetActive(false);
 
                             Debug.Log(itemMenu.selectedItem.itemName);
-                            BattleManager.bManager.AddItemUseTurn(GetAttacker(), GetTarget(), itemMenu.selectedItem);
+                            BattleManager.bManager.AddItemUseTurn(
+                                GetAttacker(), GetTarget(), itemMenu.selectedItem);
                             aPressed = false;
                             NextHeroSelectsAttack(true);
                         }
@@ -597,13 +598,27 @@ public class BattleMenu : Menu {
             BaseCharacter target = null;
             tries = 100;
             // Select a living target
-            while (target == null && --tries > 0)
+            if (enemyAttack.attackType != AttackType.HEALING)
             {
-                int randHeroIndex = UnityEngine.Random.Range(0, BattleManager.hpm.activePartyMembers.Count);
-                if (!BattleManager.hpm.activePartyMembers[randHeroIndex].isDead)
+                while (target == null && --tries > 0)
                 {
-                    target = BattleManager.hpm.activePartyMembers[randHeroIndex];
+                    int randHeroIndex = UnityEngine.Random.Range(0, BattleManager.hpm.activePartyMembers.Count);
+                    if (!BattleManager.hpm.activePartyMembers[randHeroIndex].isDead)
+                    {
+                        target = BattleManager.hpm.activePartyMembers[randHeroIndex];
+                    }
                 }
+            } else
+            {
+                while (target == null && --tries > 0)
+                {
+                    int randHeroIndex = UnityEngine.Random.Range(0, BattleManager.epm.activePartyMembers.Count);
+                    if (!BattleManager.epm.activePartyMembers[randHeroIndex].isDead)
+                    {
+                        target = BattleManager.epm.activePartyMembers[randHeroIndex];
+                    }
+                }
+
             }
             if (usesAttack)
             {

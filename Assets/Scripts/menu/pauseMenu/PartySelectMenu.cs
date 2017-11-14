@@ -58,15 +58,20 @@ public class PartySelectMenu : GridOptions {
 
             if (itemToUse.itemType == ItemTypes.ITEM && itemToUse.usableOutsideBattle)
             {
-                itemToUse.Effect(BattleManager.hpm.activePartyMembers[menuIndex]);
-                bool hasItemStock = GameManager.gm.inventory.DecrementSupply(itemToUseUnsortedIndex);
-
-                if (!hasItemStock)
+                BaseCharacter target = BattleManager.hpm.activePartyMembers[menuIndex];
+                if (!target.isDead) // TODO Check revive
                 {
-                    CloseMenu();
-                    PauseMenu.itemMenu.OpenMenu();
+                    itemToUse.Effect(target);
+                    bool hasItemStock = GameManager.gm.inventory.DecrementSupply(itemToUseUnsortedIndex);
+
+                    if (!hasItemStock)
+                    {
+                        CloseMenu();
+                        PauseMenu.itemMenu.OpenMenu();
+                    }
+                    PauseMenu.itemMenu.UpdateItemCounts(false, itemToUseUnsortedIndex);
+                    PauseMenu.pauseMenu.UpdateHeroDisplay();
                 }
-                PauseMenu.itemMenu.UpdateItemCounts(false, itemToUseUnsortedIndex);
             } else
             {
                 Debug.Log("Can't use this item!");
