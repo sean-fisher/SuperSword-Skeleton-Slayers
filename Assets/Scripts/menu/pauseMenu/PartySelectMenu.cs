@@ -70,6 +70,7 @@ public class PartySelectMenu : GridOptions {
                         PauseMenu.itemMenu.OpenMenu();
                     }
                     PauseMenu.itemMenu.UpdateItemCounts(false, itemToUseUnsortedIndex);
+                    PauseMenu.pauseMenu.UpdateHeroDisplay();
                 }
             } else
             {

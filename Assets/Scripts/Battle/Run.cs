@@ -20,7 +20,7 @@ public class Run : Attack {
         }
         yield return new WaitForSeconds(.3f);
 
-        int escapeChance = UnityEngine.Random.Range(0, 2);
+        int escapeChance = UnityEngine.Random.Range(0, 1);
         
         if (escapeChance == 0)
         {

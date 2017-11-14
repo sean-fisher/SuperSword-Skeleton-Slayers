@@ -8,6 +8,11 @@ public class DefaultAttack : Attack {
 
     public override IEnumerator UseAttack(BaseCharacter attacker, BaseCharacter target, List<Turn> turnList)
     {
+        if (attackName == "Pray")
+        {
+
+            Debug.Log("Target neam: " + target.characterName);
+        }
         if (attacker)
         {
             if (attacker.currentMP >= mpUsed)
