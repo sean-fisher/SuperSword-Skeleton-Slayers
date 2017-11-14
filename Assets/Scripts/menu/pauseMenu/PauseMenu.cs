@@ -81,7 +81,7 @@ public class PauseMenu : GridOptions {
         {
             CheckInput<RectTransform>(mainOptions, 1, mainOptions.Length, null, true, 0, false, -Screen.width / 30);
 
-            if (waitFrame && !cursorMoved && Input.GetButtonDown("StartButton"))
+            if (waitFrame && !cursorMoved && (Input.GetButtonDown("StartButton") || Input.GetButtonDown("BButton")))
             {
                 CloseMenu();
             }

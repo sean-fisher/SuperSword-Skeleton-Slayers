@@ -92,6 +92,13 @@ public class MapGenerator : MonoBehaviour {
         forestCircleCounter = 3;
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            GameManager.gm.gameObject.GetComponent<Inventory>().AddToInventory(ItemGenerator.instance.GetTreasureBasedOnLocation().GetItemData());
+        }
+    }
 
     struct FeatureCenterPair
     {
@@ -1081,8 +1088,11 @@ public class MapGenerator : MonoBehaviour {
                     for (int tileOnCoor = 0;
                         tileOnCoor < bottomMostRow[i].Count; tileOnCoor++)
                     {
-                        bottomMostRow[i][tileOnCoor].transform.position
-                            += new Vector3(0, mapHeight * 16);
+                        if (bottomMostRow[i][tileOnCoor])
+                        {
+                            bottomMostRow[i][tileOnCoor].transform.position
+                                += new Vector3(0, mapHeight * 16);
+                        }
                     }
                 }
                 leaderCoorY++;
@@ -1119,8 +1129,11 @@ public class MapGenerator : MonoBehaviour {
                     for (int tileOnCoor = 0;
                         tileOnCoor < topMostRow[i].Count; tileOnCoor++)
                     {
-                        topMostRow[i][tileOnCoor].transform.position
-                            -= new Vector3(0, mapHeight * 16);
+                        if (topMostRow[i][tileOnCoor])
+                        {
+                            topMostRow[i][tileOnCoor].transform.position
+                                -= new Vector3(0, mapHeight * 16);
+                        }
                     }
                 }
 
@@ -1158,8 +1171,11 @@ public class MapGenerator : MonoBehaviour {
                     for (int tileOnCoor = 0;
                         tileOnCoor < leftMostCol[i].Count; tileOnCoor++)
                     {
-                        leftMostCol[i][tileOnCoor].transform.position
-                            += new Vector3(mapWidth * 16, 0);
+                        if (leftMostCol[i][tileOnCoor])
+                        {
+                            leftMostCol[i][tileOnCoor].transform.position
+                                += new Vector3(mapWidth * 16, 0);
+                        }
                     }
                 }
                 leaderCoorX++;

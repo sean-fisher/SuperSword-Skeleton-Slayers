@@ -137,7 +137,8 @@ public abstract class Attack : MonoBehaviour {
         if (BattleManager.hpm.activePartyMembers.Contains(attacker))
         {
             // A hero is attacking
-            if (!BattleManager.epm.activePartyMembers.Contains(target))
+            if (!BattleManager.hpm.activePartyMembers.Contains(attacker) 
+                && !BattleManager.epm.activePartyMembers.Contains(target))
             {
                 // The enemy target is dead, find a new target
                 target = BattleManager.epm.activePartyMembers[0];

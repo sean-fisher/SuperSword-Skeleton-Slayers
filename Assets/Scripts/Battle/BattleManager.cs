@@ -295,7 +295,6 @@ public class BattleManager : MonoBehaviour {
 
     public void AddItemUseTurn(BaseCharacter attacker, BaseCharacter target, ItemData item)
     {
-        Debug.Log("Add item turn: " + item.itemName);
         itemTurnPrefab.itemBeingUsed = item;
         itemsToUse.Add(item);
         turnList.Add(new Turn(attacker, target, itemTurnPrefab));

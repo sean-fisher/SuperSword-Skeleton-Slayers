@@ -200,7 +200,8 @@ public class BattleMenu : Menu {
                             itemSelectWindow.gameObject.SetActive(false);
 
                             Debug.Log(itemMenu.selectedItem.itemName);
-                            BattleManager.bManager.AddItemUseTurn(GetAttacker(), GetTarget(), itemMenu.selectedItem);
+                            BattleManager.bManager.AddItemUseTurn(
+                                GetAttacker(), GetTarget(), itemMenu.selectedItem);
                             aPressed = false;
                             NextHeroSelectsAttack(true);
                         }
