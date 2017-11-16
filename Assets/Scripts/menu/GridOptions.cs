@@ -42,6 +42,9 @@ public abstract class GridOptions : MonoBehaviour {
     {
         menuOptions[menuIndex].OpenMenu();
         DisableMenuControl();
+
+        Sounds.audioSource.clip = Sounds.menuselect;
+        Sounds.audioSource.Play();
     }
 
     // What is called to open and set up this menu.
@@ -210,7 +213,11 @@ public abstract class GridOptions : MonoBehaviour {
         OnMoveCursor();
     }
 
-    protected virtual void OnMoveCursor() { }
+    protected virtual void OnMoveCursor() {
+
+        Sounds.audioSource.clip = Sounds.cursorMove;
+        Sounds.audioSource.Play();
+    }
 
     void CheckInput(Text[] array, int width, int height = 0)
     {
@@ -491,6 +498,8 @@ public abstract class GridOptions : MonoBehaviour {
                 if (Input.GetButtonDown("BButton"))
                 {
                     bPressed = true;
+                    Sounds.audioSource.clip = Sounds.back;
+                    Sounds.audioSource.Play();
                 }
             } else
             {

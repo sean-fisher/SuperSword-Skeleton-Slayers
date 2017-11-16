@@ -105,7 +105,8 @@ public class SceneSwitcher : MonoBehaviour {
             yield return null;
         }
         Camera.main.GetComponent<CamFollow>().canFollow = true;
-        GameManager.gm.musicPlayer.Play();
+        Songs.bgmmusicPlayer.clip = Songs.overworldMusic;
+        Songs.bgmmusicPlayer.Play();
         // fade in to game
         while (st.TransitionOut())
         {

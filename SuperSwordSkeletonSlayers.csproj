@@ -80,6 +80,7 @@
   <ItemGroup>
     <Compile Include="Assets\DoNothingAttack.cs" />
     <Compile Include="Assets\Scripts\Battle\Attack.cs" />
+    <Compile Include="Assets\Scripts\Battle\AttackAll.cs" />
     <Compile Include="Assets\Scripts\Battle\AttackType.cs" />
     <Compile Include="Assets\Scripts\Battle\BattleManager.cs" />
     <Compile Include="Assets\Scripts\Battle\BattleScreenManager.cs" />
@@ -156,6 +157,7 @@
     <Compile Include="Assets\Scripts\NPCs\Salesman.cs" />
     <Compile Include="Assets\Scripts\Player\RandomEncounterManager.cs" />
     <Compile Include="Assets\Scripts\Songs.cs" />
+    <Compile Include="Assets\Scripts\Sounds.cs" />
     <Compile Include="Assets\Scripts\Text\ActivateTextAtLine.cs" />
     <Compile Include="Assets\Scripts\Text\TextBoxManager.cs" />
     <Compile Include="Assets\Scripts\Text\XMLLoader.cs" />

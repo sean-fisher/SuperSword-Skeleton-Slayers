@@ -354,6 +354,7 @@ public class TextBoxManager : MonoBehaviour {
         }
         enabled = false;
         yesNoPicked = false;
+        
     }
 
     public void ReloadScript(TextAsset textToLoad)

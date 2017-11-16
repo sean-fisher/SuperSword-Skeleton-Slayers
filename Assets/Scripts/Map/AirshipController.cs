@@ -175,6 +175,8 @@ public class AirshipController : GridController {
 
         if (canMove)
         {
+            Sounds.audioSource.clip = Sounds.step;
+            Sounds.audioSource.Play();
             canMove = false;
             destinationVector = Vector3.zero;
             switch (destination)
@@ -212,6 +214,8 @@ public class AirshipController : GridController {
         } else
         {
             canMove = true;
+            Sounds.audioSource.clip = Sounds.bump;
+            Sounds.audioSource.Play();
         }
     }
 

@@ -12,11 +12,12 @@ public class HeroDisplayPanel : MonoBehaviour {
     public Text mpText;
     // Only needed if isBattleDisplay is false
     public Text classNameText;
+    public Image classsprite;
 
     public void UpdateDisplay(BaseCharacter hero)
     {
         hpText.text = "HP: " + hero.currentHP + "/" + hero.baseHP;
-        mpText.text = "MP: " + hero.currentMP + "/" + hero.baseMP;
+        mpText.text = "AP: " + hero.currentMP + "/" + hero.baseMP;
 
         if (!isBattleDisplay)
         {
@@ -25,14 +26,20 @@ public class HeroDisplayPanel : MonoBehaviour {
             {
                 case (HeroClasses.KNIGHT):
                     classNameText.text = "Knight";
+                    classsprite.sprite = PauseMenu.pauseMenu.knight;
                     break;
                 case (HeroClasses.MAGE):
                     classNameText.text = "Mage";
+                    classsprite.sprite = PauseMenu.pauseMenu.mage;
                     break;
                 case (HeroClasses.ARCHER):
                     classNameText.text = "Archer";
+                    classsprite.sprite = PauseMenu.pauseMenu.archer;
                     break;
             }
+            RectTransform rt = GetComponent<RectTransform>();
+            rt.position = new Vector2(76.7f, 136);
+            rt.sizeDelta = new Vector2(46.22f, 63.26f);
         }
     }
 
@@ -40,10 +47,16 @@ public class HeroDisplayPanel : MonoBehaviour {
     {
         nameText.text = hero.characterName;
         hpText.text = "HP: " +  hero.currentHP + "/" + hero.baseHP;
-        mpText.text = "MP: " + hero.currentMP + "/" + hero.baseMP;
+        mpText.text = "AP: " + hero.currentMP + "/" + hero.baseMP;
         if (classNameText)
         {
             mpText.text = hero.heroClass.ToString();
+        }
+        if (!isBattleDisplay)
+        {
+            RectTransform rt = GetComponent<RectTransform>();
+            rt.position = new Vector2(76.7f, 136);
+            rt.sizeDelta = new Vector2(46.22f, 63.26f);
         }
     }
 }

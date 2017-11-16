@@ -27,6 +27,9 @@ public class Run : Attack {
             battleMessage = String.Format("The heroes escaped!", 
                 attacker.characterName);
             TextBoxManager.tbm.EnableTextBox(battleMessageWindow, battleMessage, false);
+
+            Sounds.audioSource.clip = Sounds.runaway;
+            Sounds.audioSource.Play();
         }
         else
         {

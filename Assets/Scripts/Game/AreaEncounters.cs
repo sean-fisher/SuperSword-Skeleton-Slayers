@@ -60,6 +60,7 @@ public class AreaEncounters : MonoBehaviour {
         iceCavePartiesList = iceCaveParties.GetComponentsInChildren<EnemyPartyManager>();
         pyramidPartiesList = pyramidParties.GetComponentsInChildren<EnemyPartyManager>();
         mountainCavePartiesList = mountainCaveParties.GetComponentsInChildren<EnemyPartyManager>();
+        lavaCavePartiesList= lavaCaveParties.GetComponentsInChildren<EnemyPartyManager>();
     }
 	
 	// Update is called once per frame

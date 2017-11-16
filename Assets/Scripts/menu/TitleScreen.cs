@@ -32,6 +32,8 @@ public class TitleScreen : GridOptions {
 
     protected override void MakeMenuSelection(int menuIndex)
     {
+        Sounds.audioSource.clip = Sounds.menuselect;
+        Sounds.audioSource.Play();
         //Debug.Log("Make menu selection: " + menuIndex);
         switch (menuIndex)
         {

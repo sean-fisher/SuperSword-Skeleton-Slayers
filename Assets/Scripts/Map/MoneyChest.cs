@@ -37,6 +37,8 @@ public class MoneyChest : InteractableTile
 
                     hasBeenOpened = true;
                     heroStandingOnThisTile = false;
+
+                    StartCoroutine(WaitThenDestroy());
                 }
                 else
                 {

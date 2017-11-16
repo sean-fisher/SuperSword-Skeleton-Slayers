@@ -241,6 +241,7 @@ public class Inventory : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.M))
         {
             //AddToInventory(new SimpleItem.Medicine());
+            partyGold += 600;
         }
     }
 
