@@ -5,6 +5,7 @@ using UnityEngine;
 public class AirshipController : GridController {
     
     public static AirshipTile at;
+    public static bool isBoarded;
 
     // Each grid space is 16 units wide; 1 unit represents one pixel. 
     // This always moves in increments of one pixel so as to 
@@ -12,6 +13,7 @@ public class AirshipController : GridController {
 
     // Use this for initialization
     void Start () {
+        isBoarded = false;
         anim = GetComponent<Animator>();
 	}
 	
@@ -35,12 +37,9 @@ public class AirshipController : GridController {
             else if (Input.GetAxis("Vertical") > 0)
             {
                 MoveOneSpace(MoveDir.UP);
-            } else if (Input.GetButtonDown("StartButton")) {
-                GameManager.gm.pauseMenu.OpenMenu();
-                canMove = false;
             } else if (Input.GetButtonDown("AButton"))
             {
-                InspectTile();
+                //InspectTile();
             }
             else if (Input.GetButtonDown("BButton"))
             {
@@ -58,6 +57,8 @@ public class AirshipController : GridController {
 
     void ExitShip(Vector2 placeToExitAt)
     {
+        Debug.Log("get off");
+        isBoarded = false;
         for (int i = 0; i < BattleManager.hpm.activePartyMembers.Count;
             i++)
         {
@@ -167,7 +168,6 @@ public class AirshipController : GridController {
         else if (!at.isFlying && objectsAtDestination.tag != "Mountain")
         {
             canMove = false;
-            Debug.Log("blocked");
             //ExitShip(destinationVector);
         }
 

@@ -39,7 +39,6 @@ public class CreditsScreen : GridOptions
         {
             case (0):
                 // Return to main menu
-                Debug.Log("Return");
                 mainWindow.OpenMenu();
                 this.CloseMenu();
                 mainWindow.GetComponent<GridOptions>().OpenMenu();

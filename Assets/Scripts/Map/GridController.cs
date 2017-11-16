@@ -67,11 +67,14 @@ public class GridController : MonoBehaviour {
             else if (Input.GetAxis("Vertical") > 0)
             {
                 MoveOneSpace(MoveDir.UP);
-            } else if (Input.GetButtonDown("StartButton")) {
+            } else if (Input.GetButtonDown("StartButton") 
+                && !AirshipController.isBoarded) {
+                Debug.Log("open menu");
                 GameManager.gm.pauseMenu.OpenMenu();
                 canMove = false;
             } else if (Input.GetButtonDown("AButton"))
             {
+                Debug.Log("inspect!");
                 InspectTile();
             }
         }
@@ -137,6 +140,7 @@ public class GridController : MonoBehaviour {
         {
             if (CheckTile(gameObject.transform.position)) {
 
+                Debug.Log("Standing on something");
                 InteractableTile.currentlyStandingOnInteractableTile = true;
             }
         } else
@@ -439,6 +443,7 @@ public class GridController : MonoBehaviour {
             {
                 InteractableTile it = checkedTileCol.gameObject.GetComponent<InteractableTile>();
                 it.ActivateInteraction();
+                Debug.Log("found something to interact with");
                 return true;
             }
         }

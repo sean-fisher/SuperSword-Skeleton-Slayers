@@ -46,9 +46,9 @@ public class ItemTurn : Attack {
                 }
                 yield return new WaitForSeconds(.3f);
 
-                itemBeingUsed.Effect(new BaseCharacter[] { target });
-
-                battleMessage = string.Format("{0}'s HP was restored by 100!", target.characterName);
+                string message = itemBeingUsed.Effect(new BaseCharacter[] { target });
+                
+                battleMessage = string.Format(message, target.characterName);
                 TextBoxManager.tbm.EnableTextBox(battleMessageWindow, battleMessage, false);
 
                 // Gives time for the player to read the message

@@ -16,6 +16,7 @@ public class HeroDisplayPanel : MonoBehaviour {
 
     public void UpdateDisplay(BaseCharacter hero)
     {
+        Debug.Log("update");
         hpText.text = "HP: " + hero.currentHP + "/" + hero.baseHP;
         mpText.text = "AP: " + hero.currentMP + "/" + hero.baseMP;
 

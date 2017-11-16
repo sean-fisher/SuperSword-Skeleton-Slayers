@@ -49,7 +49,7 @@ public class SimpleItemData : ItemData
     }
 
 
-    public override void Effect(params BaseCharacter[] targets)
+    public override string Effect(params BaseCharacter[] targets)
     {
         // For every target character, their stats are boosted
         for (int i = 0; i < targets.Length; i++)
@@ -60,6 +60,13 @@ public class SimpleItemData : ItemData
             BoostDEF(boostDEF, bc);
             BoostSKL(boostSKL, bc);
             BoostMP(boostMP, bc);
+        }
+        if (boostMP > 0)
+        {
+            return "{0}'s MP was restored by 100!";
+        } else
+        {
+            return "{0}'s HP was restored by 100!";
         }
     }
     public override int CompareTo(ItemData other)

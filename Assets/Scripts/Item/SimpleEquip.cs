@@ -39,9 +39,9 @@ public class SimpleEquipData : EquipData
     }
 
 
-    public override void Effect(params BaseCharacter[] targets)
+    public override string Effect(params BaseCharacter[] targets)
     {
-        Debug.Log("Equipment used");
+        return "Equipment used";
     }
     public override int CompareTo(ItemData other)
     {

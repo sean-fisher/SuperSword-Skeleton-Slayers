@@ -99,6 +99,7 @@ public class PauseMenu : GridOptions {
 
     public override void OpenMenu()
     {
+        Debug.Log("open menu");
         gameObject.SetActive(true);
         canControl = true;
         waitFrame = false;
@@ -122,7 +123,7 @@ public class PauseMenu : GridOptions {
     {
         base.DisableMenuControl();
     }
-
+    bool intiialize = false;
     public void InitMenu()
     {
         if (cursor == null)
@@ -151,8 +152,11 @@ public class PauseMenu : GridOptions {
         }
         mainOptions = tempRectList.ToArray();
 
-        UpdateHeroDisplay();
-
+        if (!intiialize)
+        {
+            UpdateHeroDisplay();
+            intiialize = true;
+        }
         tempRectList.Clear();
         for (int i = 0; i < additionalStatsTexts.Length; i++)
         {

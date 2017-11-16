@@ -365,13 +365,30 @@ public class BattleManager : MonoBehaviour {
         {
             Destroy(epm.gameObject);
         }
-        messageBoxImg.gameObject.SetActive(true);
-        List<string> endBattleMessages = new List<string>();
-        endBattleMessages.Add("You've Won!");
-        endBattleMessages.Add("The defeated enemies dropped " + totalGoldDrop + " Gold!");
-        Inventory.partyGold += totalGoldDrop;
-        TextBoxManager.tbm.EnableTextBox(messageBoxImg.transform.GetChild(0).gameObject, endBattleMessages.ToArray(), true);
-        battlesFought++;
+
+        if (isFightingFinalBoss)
+        {
+            List<string> endBattleMessages = new List<string>();
+            endBattleMessages.Add("NoooOOOOooooOO!!!!! How could you defeat meeeeee!!!!???!?!?!?");
+            TextBoxManager.tbm.EnableTextBox(messageBoxImg.transform.GetChild(0).gameObject, endBattleMessages.ToArray(), false);
+            StartCoroutine(WaitThenSwitch());
+        } else
+        {
+
+            messageBoxImg.gameObject.SetActive(true);
+            List<string> endBattleMessages = new List<string>();
+            endBattleMessages.Add("You've Won!");
+            endBattleMessages.Add("The defeated enemies dropped " + totalGoldDrop + " Gold!");
+            Inventory.partyGold += totalGoldDrop;
+            TextBoxManager.tbm.EnableTextBox(messageBoxImg.transform.GetChild(0).gameObject, endBattleMessages.ToArray(), true);
+            battlesFought++;
+        }
+    }
+
+    IEnumerator WaitThenSwitch()
+    {
+        yield return new WaitForSeconds(1);
+        SceneSwitcher.ss.SwitchToOtherScene("EndGame");
     }
 
     IEnumerator WaitForExplode()

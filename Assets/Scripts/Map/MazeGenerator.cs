@@ -95,11 +95,11 @@ public class MazeGenerator : MonoBehaviour {
                 forestMazeParent.SetActive(disableIfFalse);
                 break;
             case (ContinentType.DESERT):
-                currMazeParent = iceCaveParent;
+                currMazeParent = pyramidParent;
                 currMazeParent.SetActive(disableIfFalse);
                 break;
             case (ContinentType.GLACIER):
-                currMazeParent = pyramidParent;
+                currMazeParent = iceCaveParent;
                 currMazeParent.SetActive(disableIfFalse);
                 break;
             case (ContinentType.MOUNTAIN):
@@ -111,6 +111,7 @@ public class MazeGenerator : MonoBehaviour {
                 currMazeParent.SetActive(disableIfFalse);
                 break;
         }
+
     }
 
     public static void SetGroundType(ContinentType currArea, bool isExiting)

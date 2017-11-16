@@ -20,6 +20,7 @@ public class AirshipTile : InteractableTile {
 
     private void Start()
     {
+        AirshipController.at = this;
         gc = GetComponent<GridController>();
     }
 
@@ -27,6 +28,8 @@ public class AirshipTile : InteractableTile {
     {
         if (canBoard)
         {
+            Debug.Log("board");
+            AirshipController.isBoarded = true;
             StartCoroutine(MoveHeroesToShip());
         }
     }
@@ -45,10 +48,8 @@ public class AirshipTile : InteractableTile {
         gc.canMove = true;
         Camera.main.GetComponent<CamFollow>().targetToFollow = 
             gameObject.transform;
-        AirshipController.at = this;
         gc.enabled = true;
         MapEntrance.canEnter = false;
-        //gc.speed = 100;
     }
 
     public void SwitchGroundAir()

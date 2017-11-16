@@ -49,7 +49,7 @@ public abstract class EquipData : ItemData
         value += boostEVA;
         return value;
     }
-    public abstract override void Effect(params BaseCharacter[] targets);
+    public abstract override string Effect(params BaseCharacter[] targets);
 
     public override int CompareTo(ItemData other)
     {

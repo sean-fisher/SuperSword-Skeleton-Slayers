@@ -78,7 +78,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\DoNothingAttack.cs" />
     <Compile Include="Assets\Scripts\Battle\Attack.cs" />
     <Compile Include="Assets\Scripts\Battle\AttackAll.cs" />
     <Compile Include="Assets\Scripts\Battle\AttackType.cs" />
@@ -90,6 +89,7 @@
     <Compile Include="Assets\Scripts\Battle\CritAttack.cs" />
     <Compile Include="Assets\Scripts\Battle\DefaultAttack.cs" />
     <Compile Include="Assets\Scripts\Battle\Defend.cs" />
+    <Compile Include="Assets\Scripts\Battle\DoNothingAttack.cs" />
     <Compile Include="Assets\Scripts\Battle\Effect.cs" />
     <Compile Include="Assets\Scripts\Battle\EnemyPartyManager.cs" />
     <Compile Include="Assets\Scripts\Battle\GenericAttack.cs" />
@@ -107,6 +107,7 @@
     <Compile Include="Assets\Scripts\Effects\AllEffects.cs" />
     <Compile Include="Assets\Scripts\Effects\Explosion.cs" />
     <Compile Include="Assets\Scripts\Effects\SetSortLayerByY.cs" />
+    <Compile Include="Assets\Scripts\EndGameScreen.cs" />
     <Compile Include="Assets\Scripts\Game\AreaEncounters.cs" />
     <Compile Include="Assets\Scripts\Game\DontDestroyOnLoad.cs" />
     <Compile Include="Assets\Scripts\Game\GameManager.cs" />

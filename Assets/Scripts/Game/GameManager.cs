@@ -102,6 +102,7 @@ public class GameManager : MonoBehaviour {
         {
             if (!mapEntrance.entersIntoMaze)
             {
+                Debug.Log("enter maze: " + mapEntrance.mazeToGenerate);
                 // Move party to exit, usually on world map
                 BattleManager.hpm.MovePartyTo(new Vector2(mapEntrance.exitPosition.x, mapEntrance.exitPosition.y - 4));
                 MazeGenerator.inMaze = false;

@@ -395,6 +395,7 @@ public class BattleMenu : Menu {
 
     public void NextHeroSelectsAttack(bool calledFromPrevHero)
     {
+        targetingEnemies = true;
         attackIndex = 0;
         listSelectWindow.gameObject.SetActive(false);
         cursor2.SetActive(false);
@@ -438,6 +439,7 @@ public class BattleMenu : Menu {
 
     public void PreviousHeroSelectsAttack(bool fromNextHero = false)
     {
+        targetingEnemies = true;
         Debug.Log(string.Format("hero {0} selects attack", selectingHeroIndex - 1));
         if (selectingHeroIndex-- > 0)
         {
@@ -463,7 +465,7 @@ public class BattleMenu : Menu {
         } else
         {
             selectingHeroIndex++;
-            //NextHeroSelectsAttack(false);
+
             // Play "You can't do that" noise
         }
     }

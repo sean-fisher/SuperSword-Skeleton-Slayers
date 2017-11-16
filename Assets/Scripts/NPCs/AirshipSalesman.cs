@@ -35,7 +35,6 @@ public class AirshipSalesman : NPCTile {
         if (TextBoxManager.tbm.GetPlayerChoice() == 0)
         {
             // Yes has been picked
-            Debug.Log("Pick yes");
             saleMade = true;
             AirshipTile.canBoard = true;
             Inventory.SpendGold(1000);

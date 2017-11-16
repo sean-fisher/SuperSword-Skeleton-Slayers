@@ -30,7 +30,7 @@ public abstract class ItemData
 
     public abstract int GetValue();
 
-    public abstract void Effect(params BaseCharacter[] targets);
+    public abstract string Effect(params BaseCharacter[] targets);
 
     public abstract int CompareTo(ItemData other);
     public void BoostHP(int increaseVal, BaseCharacter target)
