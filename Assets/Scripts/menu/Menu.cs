@@ -106,6 +106,8 @@ public abstract class Menu : MonoBehaviour {
     // Move the cursor to a RectTransform (i.e. an enemy's image)
     protected void UpdateCursor(RectTransform[] visibleRectArr, int newIndex, int cursorNum = 0, float offsetNum = 0, bool isSelectingEnemies = false)
     {
+        Sounds.audioSource.clip = Sounds.cursorMove;
+        Sounds.audioSource.Play();
         if (cursorNum == 2)
         {
             currCursor = cursor2;

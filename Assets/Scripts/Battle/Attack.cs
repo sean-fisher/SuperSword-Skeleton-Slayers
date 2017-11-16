@@ -243,6 +243,30 @@ public abstract class Attack : MonoBehaviour {
             }
         }
 
+        switch (attack.attackType)
+        {
+            case (AttackType.HEALING):
+                Sounds.audioSource.clip = Sounds.heal;
+                Sounds.audioSource.Play();
+                break;
+            case (AttackType.FIRE):
+                Sounds.audioSource.clip = Sounds.fire;
+                Sounds.audioSource.Play();
+                break;
+            case (AttackType.WATER):
+                Sounds.audioSource.clip = Sounds.ice;
+                Sounds.audioSource.Play();
+                break;
+            case (AttackType.LIGHTNING):
+                Sounds.audioSource.clip = Sounds.lightning;
+                Sounds.audioSource.Play();
+                break;
+            case (AttackType.NONELEMENTAL):
+                Sounds.audioSource.clip = Sounds.slash;
+                Sounds.audioSource.Play();
+                break;
+        }
+
         return damageDealt;
     }
 

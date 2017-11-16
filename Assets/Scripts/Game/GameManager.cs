@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour {
 
     public AudioSource musicPlayer;
 
+
     private void Start()
     {
         Cactus.redScreen = redScreen;
@@ -39,6 +40,8 @@ public class GameManager : MonoBehaviour {
 
         allEffects = GetComponent<AllEffects>();
         inventory = GetComponent<Inventory>();
+
+        PauseMenu.pauseMenu = pauseMenu;
     }
 
     public void SwitchScene(TransitionType transitionType, string sceneName, 
@@ -138,18 +141,18 @@ public class GameManager : MonoBehaviour {
             circleOfLight.SetActive(false);
         }
         bool changeSong = false;
-        if (mapEntrance.playOnExit != null && mapEntrance.playOnExit != musicPlayer.clip)
+        if (mapEntrance.playOnExit != null && mapEntrance.playOnExit != Songs.bgmmusicPlayer.clip)
         {
             changeSong = true;
-            musicPlayer.Stop();
+            Songs.bgmmusicPlayer.Stop();
         }
 
         yield return new WaitForSeconds(1);
 
         if (changeSong)
         {
-            musicPlayer.clip = mapEntrance.playOnExit;
-            musicPlayer.Play();
+            Songs.bgmmusicPlayer.clip = mapEntrance.playOnExit;
+            Songs.bgmmusicPlayer.Play();
         }
 
         while (st.TransitionOut())

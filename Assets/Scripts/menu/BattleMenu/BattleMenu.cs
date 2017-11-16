@@ -196,14 +196,17 @@ public class BattleMenu : Menu {
                     {
                         if (lastMenuLayer == 2)
                         {
-                            // Item used on target
-                            itemSelectWindow.gameObject.SetActive(false);
+                            if (!GetTarget().isDead) //TODO check if can revive
+                            {
+                                // Item used on target
+                                itemSelectWindow.gameObject.SetActive(false);
 
-                            Debug.Log(itemMenu.selectedItem.itemName);
-                            BattleManager.bManager.AddItemUseTurn(
-                                GetAttacker(), GetTarget(), itemMenu.selectedItem);
-                            aPressed = false;
-                            NextHeroSelectsAttack(true);
+                                Debug.Log(itemMenu.selectedItem.itemName);
+                                BattleManager.bManager.AddItemUseTurn(
+                                    GetAttacker(), GetTarget(), itemMenu.selectedItem);
+                                aPressed = false;
+                                NextHeroSelectsAttack(true);
+                            }
                         }
                         else
                         {
@@ -675,7 +678,7 @@ public class BattleMenu : Menu {
     {
         if (!BattleManager.hasLost && !BattleManager.hasWon)
         {
-            Debug.Log("Return to attack menu");
+
             canSelect = true;
             cursor.SetActive(true);
             defaultActionMenu.SetActive(true);

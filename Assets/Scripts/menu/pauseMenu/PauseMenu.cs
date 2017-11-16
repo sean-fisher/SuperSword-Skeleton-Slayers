@@ -28,6 +28,10 @@ public class PauseMenu : GridOptions {
     public Text battlesText;
     public Text timeText;
 
+    public Sprite knight;
+    public Sprite archer;
+    public Sprite mage;
+
     // Use this for initialization
     void Start ()
     {
@@ -174,7 +178,7 @@ public class PauseMenu : GridOptions {
         // Display the current hereoes and stats
 
         HeroDisplayPanel[] fourMenuDisplays = heroDisplayHolder.GetComponentsInChildren<HeroDisplayPanel>(true);
-        Debug.Log("Children: " + fourMenuDisplays.Length);
+
         for (int i = 0; i < fourMenuDisplays.Length; i++)
         {
             if (i < BattleManager.hpm.activePartyMembers.Count)

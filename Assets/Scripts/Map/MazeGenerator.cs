@@ -16,7 +16,7 @@ public class MazeGenerator : MonoBehaviour {
     public GameObject pyramidParent;
     public GameObject lavaCaveParent;
 
-    int mazeSize = 50;
+    int mazeSize = 40;
     int mazeWidth = 64;
     int mazeHeight = 64;
     char[,] mazeArray;
@@ -42,6 +42,8 @@ public class MazeGenerator : MonoBehaviour {
     GameObject wallTile;
 
     public GameObject entrance;
+
+    public TreasureChest keyChest;
 
     Vector2 enteredFrom;
 
@@ -152,6 +154,7 @@ public class MazeGenerator : MonoBehaviour {
                 objectsToAdd.Add(moneyChest);
                 objectsToAdd.Add(treasureChest);
                 objectsToAdd.Add(archer.gameObject);
+                objectsToAdd.Add(keyChest.gameObject);
                 objectsToAdd.Add(swordChest);
                 groundType = 'g';
                 wallTile = forestWallTile;
@@ -159,9 +162,10 @@ public class MazeGenerator : MonoBehaviour {
                 break;
             case (ContinentType.ICECAVE):
                 objectsToAdd.Add(treasureChest);
-                objectsToAdd.Add(lockedChest);
-                objectsToAdd.Add(swordChest);
                 objectsToAdd.Add(mage.gameObject);
+                objectsToAdd.Add(lockedChest);
+                objectsToAdd.Add(keyChest.gameObject);
+                objectsToAdd.Add(swordChest);
                 groundType = 'h';
                 wallTile = iceWallTile;
                 currMazeParent = iceCaveParent;
@@ -170,6 +174,7 @@ public class MazeGenerator : MonoBehaviour {
                 objectsToAdd.Add(treasureChest);
                 objectsToAdd.Add(enemyOrTreasureChest);
                 objectsToAdd.Add(treasureChest);
+                objectsToAdd.Add(keyChest.gameObject);
                 groundType = 's';
                 wallTile = pyramidWallTile;
                 currMazeParent = pyramidParent;
@@ -179,7 +184,8 @@ public class MazeGenerator : MonoBehaviour {
                 objectsToAdd.Add(lockedChest);
                 objectsToAdd.Add(swordChest);
                 objectsToAdd.Add(betterEquipChest);
-                groundType = 'd';
+                objectsToAdd.Add(keyChest.gameObject);
+                groundType = 's';
                 wallTile = mountainWallTile;
                 currMazeParent = mountainCaveParent;
                 break;
@@ -187,6 +193,7 @@ public class MazeGenerator : MonoBehaviour {
                 objectsToAdd.Add(treasureChest);
                 objectsToAdd.Add(equipChest);
                 objectsToAdd.Add(betterEquipChest);
+                objectsToAdd.Add(keyChest.gameObject);
                 objectsToAdd.Add(moneyChest);
                 groundType = 'r';
                 wallTile = lavaWallTile;

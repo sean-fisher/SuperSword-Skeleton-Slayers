@@ -129,6 +129,13 @@ public class BattleManager : MonoBehaviour {
     public void StartBattle(string[] introMessage = null, 
         EnemyPartyManager enemyEncounter = null)
     {
+        Sounds.audioSource.clip = Sounds.encounter;
+        Sounds.audioSource.Play();
+
+        Songs.bgmmusicPlayer.Pause();
+        Songs.battlemusicPlayer.clip = Songs.battleMusic;
+        Songs.battlemusicPlayer.Play();
+
         // Disable player movement
         GameManager.gm.leader.DisableMovement();
 
@@ -322,6 +329,7 @@ public class BattleManager : MonoBehaviour {
 
     public void RunAway()
     {
+        Songs.songPlayer.FadeOut(Songs.battlemusicPlayer, 1);
         turnList.Clear();
 
         Destroy(epm.gameObject);
@@ -333,12 +341,23 @@ public class BattleManager : MonoBehaviour {
     {
         if (!hasWon && enemiesAlive == 0)
         {
-            WinBattle();
+            StartCoroutine(WaitThenWin());
         }
+    }
+
+    IEnumerator WaitThenWin()
+    {
+        while (Explosion.isExploding || TextBoxManager.tbm.isTyping)
+        {
+            yield return null;
+        }
+        WinBattle();
     }
 
     public void WinBattle()
     {
+        Songs.battlemusicPlayer.Stop();
+
         hasWon = true;
         turnList.Clear();
 
@@ -404,7 +423,7 @@ public class BattleManager : MonoBehaviour {
         {
             Destroy(enviroImg.transform.GetChild(i).gameObject);
         }
-        yield return new WaitForSeconds(.8f);
+        yield return new WaitForSeconds(.4f);
         backgroundWindow.gameObject.SetActive(false);
         enviroImg.gameObject.SetActive(false);
         backgroundWindow.gameObject.SetActive(false);
@@ -428,6 +447,8 @@ public class BattleManager : MonoBehaviour {
         {
             Destroy(transform.GetChild(i).gameObject);
         }
+
+        Songs.bgmmusicPlayer.Play();
     }
 
     public void StartInactiveTurn(Turn turn, List<Turn> turnList)

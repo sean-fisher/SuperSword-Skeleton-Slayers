@@ -29,15 +29,10 @@ public class MenuController : MonoBehaviour
         CLOSED
     }
 
-    MenuType currMenu;
-
-    private void Start()
-    {
-        currMenu = MenuType.CLOSED;
-    }
-
     private void UpdateCursor(GameObject options, int current, int newIndex)
     {
+        Sounds.audioSource.clip = Sounds.cursorMove;
+        Sounds.audioSource.Play();
         int index = 1;
         if (options.name == "BarracksWindow")
         {
@@ -53,27 +48,14 @@ public class MenuController : MonoBehaviour
 
     private void UpdateCursor(Text[] array, int current, int newIndex)
     {
+        Sounds.audioSource.clip = Sounds.cursorMove;
+        Sounds.audioSource.Play();
         array[current].transform.GetChild(0).gameObject.SetActive(false);
         array[newIndex].transform.GetChild(0).gameObject.SetActive(true);
         tempCursor = newIndex;
-    }
 
-    void SelectHero(int current, int next)
-    {
-    }
-
-    int menuEntered;
-
-    // Update is called once per frame
-    void Update()
-    {
-        
         
     }
-    
-    // keeps track of where the beginning of the visible items in the window
-    // is in the Inventory's unsortedList
-    int unsortedListStartPoint;
     
     
     void CheckInput()
