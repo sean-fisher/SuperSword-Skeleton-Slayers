@@ -40,6 +40,7 @@ public class BattleMenu : Menu {
 
     private void Start()
     {
+        
     }
 
     public void InitMenu()

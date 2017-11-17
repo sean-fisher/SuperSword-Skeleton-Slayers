@@ -61,6 +61,8 @@ public class BattleManager : MonoBehaviour {
         battlesFought = 0;
         hasLost = false;
         hasWon = false;
+
+        isFightingFinalBoss = false;
     }
 
     // Update is called once per frame

@@ -30,6 +30,8 @@ public class Run : Attack {
 
             Sounds.audioSource.clip = Sounds.runaway;
             Sounds.audioSource.Play();
+
+            BattleManager.isFightingFinalBoss = false;
         }
         else
         {
