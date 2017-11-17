@@ -35,6 +35,8 @@ public class MapGenerator : MonoBehaviour {
     public GameObject pyramid;              // ^
     public GameObject armorChest;              // *
     public GameObject cactus;              // *
+    public GameObject potionShop;              // (
+    public GameObject etherShop;              // )
 
     [Header("Entrances")]
     public GameObject darkForestEntrance;   // !
@@ -240,6 +242,9 @@ public class MapGenerator : MonoBehaviour {
                     //leaderCoorY = (int)(Mathf.Abs(center.y / 16));
 
                     // @@@@ Place test tiles @@@@
+
+                    dontCheckGrid[knightStartPoint.x, knightStartPoint.y - 3] = '(';
+                    dontCheckGrid[knightStartPoint.x + 1, knightStartPoint.y - 3] = ')';
                     //featuresToPlaceOnMap.Add(new FeatureCenterPair(new MapCoor((int)center.x + 4, (int)center.y - 4), FeatureTypes.CASTLE));
                 } else
                 {
@@ -286,7 +291,7 @@ public class MapGenerator : MonoBehaviour {
                         featuresToPlaceOnMap.Add(new FeatureCenterPair(
                             new MapCoor(tempCenter),
                             FeatureTypes.DARK_FOREST));
-                    }
+                    } else
                     if (randGeoFeature < 6)
                     {
                         // create a forest
@@ -311,8 +316,7 @@ public class MapGenerator : MonoBehaviour {
                                 forestCircleCounter = 0;
                             }
                         }
-                    }
-                    else
+                    } else
                     {
                         // Place a chest
 
@@ -795,6 +799,10 @@ public class MapGenerator : MonoBehaviour {
                 return cactus;
             case ('^'):
                 return pyramid;
+            case ('('):
+                return potionShop;
+            case (')'):
+                return etherShop;
             default:
                 if (tileType != '\0')
                 {

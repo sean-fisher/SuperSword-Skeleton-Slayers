@@ -12,15 +12,19 @@ public class Songs : MonoBehaviour {
     public static AudioClip creditsMusic;
     public static AudioClip titleMusic;
     public static AudioClip oceanMusic;
+    public static AudioClip battleIntro;
+    public static AudioClip overworldIntro;
 
     public AudioClip mazeMusicClip;
     public AudioClip overworldMusicClip;
+    public AudioClip battleIntroClip;
     public AudioClip battleMusicClip;
     public AudioClip bossMusicClip;
     public AudioClip victoryMusicClip;
     public AudioClip creditsMusicClip;
     public AudioClip titleMusicClip;
     public AudioClip oceanMusicClip;
+    public AudioClip overworldIntroClip;
 
     public AudioSource battleaudioSource;
     public static AudioSource battlemusicPlayer;
@@ -37,8 +41,10 @@ public class Songs : MonoBehaviour {
         creditsMusic = creditsMusicClip;
         titleMusic = titleMusicClip;
         oceanMusic = oceanMusicClip;
+        battleIntro = battleIntroClip;
+        overworldIntro = overworldIntroClip;
 
-        if (battlemusicPlayer== null)
+        if (battlemusicPlayer == null)
         {
             battlemusicPlayer = battleaudioSource;
         }
@@ -66,5 +72,27 @@ public class Songs : MonoBehaviour {
 
         source.Stop();
         source.volume = 1;
+    }
+
+    public void PlayIntroThenLoop(AudioSource source, AudioClip intro, AudioClip loop)
+    {
+        source.clip = intro;
+        source.Play();
+        source.loop = false;
+
+        StartCoroutine(WaitForTrackEndThenPlay(source, loop));
+    }
+
+    IEnumerator WaitForTrackEndThenPlay(AudioSource source, AudioClip loop)
+    {
+        yield return null;
+        while (battlemusicPlayer.isPlaying)
+        {
+            yield return null;
+        }
+        
+        source.clip = loop;
+        source.Play();
+        source.loop = true;
     }
 }

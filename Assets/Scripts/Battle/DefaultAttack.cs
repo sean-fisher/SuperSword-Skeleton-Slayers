@@ -84,9 +84,15 @@ public class DefaultAttack : Attack {
             EndTurnCheck(turnList);
         } else if (!BattleManager.hasLost && !BattleManager.hasWon)
         {
-            Turn nextTurn = turnList[0];
-            turnList.RemoveAt(0);
-            BattleManager.bManager.StartInactiveTurn(nextTurn, turnList);
+            if (turnList.Count > 0)
+            {
+                Turn nextTurn = turnList[0];
+                turnList.RemoveAt(0);
+                BattleManager.bManager.StartInactiveTurn(nextTurn, turnList);
+            } else
+            {
+                EndTurnCheck(turnList);
+            }
             //StartCoroutine(nextTurn.attack.UseAttack(nextTurn.target, nextTurn.attacker, turnList));
         } else
         {

@@ -91,6 +91,7 @@ public abstract class Attack : MonoBehaviour {
 
     protected void EndTurnCheck(List<Turn> turnList)
     {
+        Debug.Log("end turn check: " + turnList.Count);
         StartCoroutine(WaitThenReturnToMenu(turnList));
     }
 
@@ -125,6 +126,7 @@ public abstract class Attack : MonoBehaviour {
         }
         else
         {
+            Debug.Log("Error!");
             //BattleManager.bManager.GameOver();
         }
     }

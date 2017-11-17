@@ -11,6 +11,7 @@ public class Salesman : NPCTile {
     public string notEnoughMoneyFormattedString;
     public string enoughMoneyFormattedString;
     public BaseItem itemToSell;
+    public bool sellRandItem;
 
     private void Start()
     {
@@ -20,8 +21,8 @@ public class Salesman : NPCTile {
             case (ContinentType.GRASSLAND):
                 break;
             case (ContinentType.GLACIER):
-                itemToSell = MapGenerator.mg.glacierItems[
-                    Random.Range(0, MapGenerator.mg.glacierItems.Count)];
+                itemToSell = ItemGenerator.instance.equipSpawns[
+                    Random.Range(0, ItemGenerator.instance.equipSpawns.Count)];
                 break;
             default:
                 Debug.Log("Invalid continent Type");

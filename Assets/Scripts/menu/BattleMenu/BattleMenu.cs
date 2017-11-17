@@ -656,8 +656,19 @@ public class BattleMenu : Menu {
     void ExecuteAttacks()
     {
         List<Turn> turnList = bm.turnList;
-        
-        turnList.Sort((t1, t2) => ( t1.attacker.currentEVA - t2.attacker.currentEVA));
+
+        // Shuffle the list
+        int turnCount = turnList.Count;
+
+        turnList.Sort((t1, t2) => (t1.attacker.currentEVA - t2.attacker.currentEVA));
+        for (int i = 0; i < turnCount; i++)
+        {
+            int k = Random.Range(0, turnCount);
+            Turn randTurn = turnList[k];
+
+            turnList[k] = turnList[i];
+            turnList[i] = randTurn;
+        }
 
         for (int i = 0; i < turnList.Count; i++) 
         {

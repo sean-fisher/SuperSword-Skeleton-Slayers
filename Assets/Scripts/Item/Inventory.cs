@@ -24,11 +24,16 @@ public class Inventory : MonoBehaviour {
     public List<EquipData> monkEquips = new List<EquipData>();
     public List<EquipData> ninjaEquips = new List<EquipData>();
     public List<EquipData> chefEquips = new List<EquipData>();
-    
+
 
     // If items are removed from the list such that there is an empty space in unsortedList, 
     // this keeps track of where the item should be added to unsortedList.
     // @return true if the inventory already had this item or was null, false if new item
+
+    private void Start()
+    {
+        partyGold = 200;
+    }
 
     public bool ContainsItem(ItemData item)
     {

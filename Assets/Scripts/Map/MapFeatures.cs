@@ -44,6 +44,9 @@ public static class MapFeatures {
     public static string[] airshipSalesman = new string[]{
                                                         "a  0"
                                                        };
+    public static string[] itemShops = new string[]{
+                                                        "(  )"
+                                                       };
 
     public static string[] GetFeature(FeatureTypes featureType)
     {
@@ -57,6 +60,8 @@ public static class MapFeatures {
                 return MapFeatures.airshipSalesman;
             case (FeatureTypes.CASTLE):
                 return MapFeatures.castle;
+            case (FeatureTypes.SHOPS):
+                return MapFeatures.itemShops;
             default:
                 return MapFeatures.forestCircle;
         }
@@ -67,5 +72,6 @@ public enum FeatureTypes
     FOREST_CIRCLE,
     DARK_FOREST,
     AIRSHIP_SALESMAN,
-    CASTLE
+    CASTLE,
+    SHOPS
 }
