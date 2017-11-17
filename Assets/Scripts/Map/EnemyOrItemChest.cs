@@ -25,6 +25,7 @@ public class EnemyOrItemChest : InteractableTile
                 if (Random.Range(0, 2) == 0)
                 {
                     StartCoroutine(ShowMessageThenStartBattle());
+                    StartCoroutine(WaitThenDestroy());
                 } else
                 {
 
@@ -37,7 +38,7 @@ public class EnemyOrItemChest : InteractableTile
                     TextBoxManager.tbm.EnableTextBox(null, boxMessage, true, false, true);
                     // TODO: Open box animation
                     GameManager.gm.gameObject.GetComponent<Inventory>().AddToInventory(treasure.GetItemData());
-
+                    StartCoroutine(WaitThenDestroy());
                 }
                 StartCoroutine(WaitUntilMessageDoneThenDestroy());
             }
@@ -48,6 +49,14 @@ public class EnemyOrItemChest : InteractableTile
         }
     }
 
+    IEnumerator WaitThenDestroy()
+    {
+        while (TextBoxManager.tbm.isTyping)
+        {
+            yield return null;
+        }
+        Destroy(this.gameObject);
+    }
     protected IEnumerator WaitUntilMessageDoneThenDestroy()
     {
         yield return new WaitForSeconds(1);

@@ -399,6 +399,7 @@ public class BattleMenu : Menu {
         attackIndex = 0;
         listSelectWindow.gameObject.SetActive(false);
         cursor2.SetActive(false);
+        heroEnemyCursor = 0;
         if (calledFromPrevHero)
         {
             MovePanelVert(selectingHeroIndex, 1);
