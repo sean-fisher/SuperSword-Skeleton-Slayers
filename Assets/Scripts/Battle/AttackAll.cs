@@ -106,6 +106,7 @@ public class AttackAll : Attack {
             if (mpUsed > 0)
             {
                 attacker.currentMP -= mpUsed;
+                BattleManager.bManager.battleMenu.UpdatePanel(attacker);
             }
             EndTurnCheck(turnList);
         } else if (!BattleManager.hasLost && !BattleManager.hasWon)

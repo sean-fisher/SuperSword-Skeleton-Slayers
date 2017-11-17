@@ -152,9 +152,9 @@ public class PauseMenu : GridOptions {
         }
         mainOptions = tempRectList.ToArray();
 
+        UpdateHeroDisplay();
         if (!intiialize)
         {
-            UpdateHeroDisplay();
             intiialize = true;
         }
         tempRectList.Clear();

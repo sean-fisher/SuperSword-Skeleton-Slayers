@@ -55,9 +55,6 @@ public class HeroDisplayPanel : MonoBehaviour {
         }
         if (!isBattleDisplay)
         {
-            RectTransform rt = GetComponent<RectTransform>();
-            rt.position = new Vector2(76.7f, 136);
-            rt.sizeDelta = new Vector2(46.22f, 63.26f);
         }
     }
 }

@@ -708,6 +708,9 @@ public class BattleMenu : Menu {
                 heroFound = true;
             }
         }
-        UpdatePanel(--heroIndex);
+        if (heroFound)
+        {
+            UpdatePanel(--heroIndex);
+        }
     }
 }

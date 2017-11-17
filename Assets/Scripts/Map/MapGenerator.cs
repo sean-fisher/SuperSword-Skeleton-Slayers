@@ -907,9 +907,11 @@ public class MapGenerator : MonoBehaviour {
                     {
                         instantiatedTiles[x, y] = new List<GameObject>();
                     }
-                    instantiatedTiles[x, y].Add(tile);
+                    if (walkLevelGrid[x, y] != 'a')
+                    {
+                        instantiatedTiles[x, y].Add(tile);
+                    }
                 }
-
 
                 tile = GetTileObj(walkLevelGrid[x, y], 1);
                 if (tile != null && dontCheckGrid[x, y] == '\0' && walkLevelGrid[x, y] != '-')
@@ -949,7 +951,10 @@ public class MapGenerator : MonoBehaviour {
                         {
                             tile.transform.position = new Vector2(16 * x, -16 * y);
                         }
-                        instantiatedTiles[x, y].Add(tile);
+                        if (walkLevelGrid[x, y] != 'a')
+                        {
+                            instantiatedTiles[x, y].Add(tile);
+                        }
                     }
                 }
             }

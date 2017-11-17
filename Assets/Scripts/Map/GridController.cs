@@ -67,14 +67,13 @@ public class GridController : MonoBehaviour {
             else if (Input.GetAxis("Vertical") > 0)
             {
                 MoveOneSpace(MoveDir.UP);
-            } else if (Input.GetButtonDown("StartButton") 
+            } else if (GameManager.gm.leader == this && Input.GetButtonDown("StartButton") 
                 && !AirshipController.isBoarded) {
                 Debug.Log("open menu");
                 GameManager.gm.pauseMenu.OpenMenu();
                 canMove = false;
-            } else if (Input.GetButtonDown("AButton"))
+            } else if (GameManager.gm.leader == this && Input.GetButtonDown("AButton"))
             {
-                Debug.Log("inspect!");
                 InspectTile();
             }
         }
