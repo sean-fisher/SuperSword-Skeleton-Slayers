@@ -28,11 +28,16 @@ public class LockedChest : InteractableTile
 
                         GameManager.gm.leader.DisableMovement();
 
-                        string boxMessage = "You unlock the chest and find a " +        treasure.GetItemData().itemName + ".";
-                        TextBoxManager.tbm.EnableTextBox(null, boxMessage, true,        false, true);
+                        string boxMessage = "You unlock the chest and find a " 
+                            + treasure.GetItemData().itemName + ".";
+                        TextBoxManager.tbm.EnableTextBox(null, boxMessage, 
+                            true, false, true);
                         // TODO: Open box animation
-                        GameManager.gm.gameObject.GetComponent<Inventory>               ().AddToInventory(treasure.GetItemData());
+                        GameManager.gm.gameObject.GetComponent<Inventory>()
+                            .AddToInventory(treasure.GetItemData());
 
+                        GameManager.gm.gameObject.GetComponent<Inventory>()
+                            .DecrementSupply(key.GetItemData());
 
                         opened = true;
                         heroOnTile = false;

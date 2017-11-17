@@ -89,7 +89,7 @@ public abstract class Attack : MonoBehaviour {
         EndTurnCheck(turnList);
     }
 
-    protected void EndTurnCheck(List<Turn> turnList)
+    public void EndTurnCheck(List<Turn> turnList)
     {
         Debug.Log("end turn check: " + turnList.Count);
         StartCoroutine(WaitThenReturnToMenu(turnList));

@@ -31,6 +31,9 @@ public class Songs : MonoBehaviour {
     public AudioSource bgmaudioSource;
     public static AudioSource bgmmusicPlayer;
 
+    public bool disableOverworldLoop;
+    public bool disableBattleLoop;
+
     private void Start()
     {
         mazeMusic = mazeMusicClip;
@@ -43,6 +46,7 @@ public class Songs : MonoBehaviour {
         oceanMusic = oceanMusicClip;
         battleIntro = battleIntroClip;
         overworldIntro = overworldIntroClip;
+        disableOverworldLoop = false;
 
         if (battlemusicPlayer == null)
         {
@@ -76,23 +80,58 @@ public class Songs : MonoBehaviour {
 
     public void PlayIntroThenLoop(AudioSource source, AudioClip intro, AudioClip loop)
     {
+        Debug.Log("play intro: " + intro.name);
         source.clip = intro;
         source.Play();
         source.loop = false;
+
+        if (source == battlemusicPlayer)
+        {
+            disableBattleLoop = false;
+        } else
+        {
+            disableOverworldLoop = false;
+        }
+
 
         StartCoroutine(WaitForTrackEndThenPlay(source, loop));
     }
 
     IEnumerator WaitForTrackEndThenPlay(AudioSource source, AudioClip loop)
     {
-        yield return null;
-        while (battlemusicPlayer.isPlaying)
+        yield return new WaitForSeconds(1);
+
+        bool loopCondition = disableOverworldLoop;
+        if (source == battlemusicPlayer)
+        {
+            loopCondition = disableBattleLoop;
+        }
+
+        while (source.isPlaying && !loopCondition)
         {
             yield return null;
         }
-        
-        source.clip = loop;
+        if (source == battlemusicPlayer)
+        {
+            loopCondition = disableBattleLoop;
+        }
+        if (!loopCondition)
+        {
+            if (!battlemusicPlayer.isPlaying && !bgmmusicPlayer.isPlaying)
+            {
+                Debug.Log("play loop: " + loop.name);
+                source.clip = loop;
+                source.Play();
+                source.loop = true;
+            }
+        }
+    }
+
+    public void PlayOverride(AudioSource source, AudioClip clip)
+    {
+        battlemusicPlayer.Stop();
+        bgmmusicPlayer.Stop();
+        source.clip = clip;
         source.Play();
-        source.loop = true;
     }
 }

@@ -8,9 +8,27 @@ public class EndGameScreen : MonoBehaviour {
     
     public float speed;
 
-	void Update () {
+    public AudioClip song;
+    public AudioSource source;
+
+    private void Start()
+    {
+        source.clip = song;
+        source.Play();
+    }
+
+    void Update () {
         if ((secondsToScroll -= Time.deltaTime) > 0)
-            transform.position += new Vector3(0, speed * Time.deltaTime);
+        {
+            if (Input.GetButtonDown("StartButton"))
+            {
+                WaitThenReturnToTitle();
+            }
+            else
+            {
+                transform.position += new Vector3(0, speed * Time.deltaTime);
+            }
+        }
         else
             StartCoroutine(WaitThenReturnToTitle());
     }

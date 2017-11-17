@@ -25,7 +25,6 @@ public class EnemyOrItemChest : InteractableTile
                 if (Random.Range(0, 2) == 0)
                 {
                     StartCoroutine(ShowMessageThenStartBattle());
-                    StartCoroutine(WaitThenDestroy());
                 } else
                 {
 
@@ -65,7 +64,7 @@ public class EnemyOrItemChest : InteractableTile
             yield return null;
         }
         yield return new WaitForSeconds(1);
-        //Destroy(this.gameObject);
+        Destroy(this.gameObject);
     }
 
     IEnumerator ShowMessageThenStartBattle()

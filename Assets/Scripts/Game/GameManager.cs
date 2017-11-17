@@ -102,9 +102,10 @@ public class GameManager : MonoBehaviour {
         {
             if (!mapEntrance.entersIntoMaze)
             {
-                Debug.Log("enter maze: " + mapEntrance.mazeToGenerate);
                 // Move party to exit, usually on world map
-                BattleManager.hpm.MovePartyTo(new Vector2(mapEntrance.exitPosition.x, mapEntrance.exitPosition.y - 4));
+                MapGenerator.mg.gameObject.SetActive(true);
+                BattleManager.hpm.MovePartyTo(
+                    new Vector2(mapEntrance.exitPosition.x, mapEntrance.exitPosition.y - 4));
                 MazeGenerator.inMaze = false;
                 MazeGenerator.SetGroundType(mapEntrance.mazeToGenerate, true);
                 GridController.canWrapMap = true;
@@ -116,7 +117,12 @@ public class GameManager : MonoBehaviour {
                     (ContinentType.GRASSLAND);
                 MazeGenerator.SetGroundType(mapEntrance.mazeToGenerate, false);
                 GridController.canWrapMap = false;
-                AreaEncounters.aeinstance.SetCurrArea(mapEntrance.mazeToGenerate);
+                AreaEncounters.aeinstance
+                    .SetCurrArea(mapEntrance.mazeToGenerate);
+                MapGenerator.mg.gameObject.SetActive(false);
+
+                Songs.songPlayer.disableBattleLoop = true;
+                Songs.songPlayer.disableOverworldLoop= true;
             }
         } else
         {
@@ -128,6 +134,8 @@ public class GameManager : MonoBehaviour {
             MazeGenerator.mazeGenerator.PlacePartyAtMazeEntrance(ContinentType.FOREST);
             MazeGenerator.SetGroundType(mapEntrance.mazeToGenerate, false);
             GridController.canWrapMap = false;
+
+            MapGenerator.mg.gameObject.SetActive(false);
         }
         for (int i = 1; i < BattleManager.hpm.activePartyMembers.Count; i++)
         {

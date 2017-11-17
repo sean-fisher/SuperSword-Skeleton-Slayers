@@ -137,8 +137,8 @@ public class BattleManager : MonoBehaviour {
         Sounds.audioSource.Play();
 
         Songs.bgmmusicPlayer.Pause();
-        Songs.songPlayer.PlayIntroThenLoop(Songs.battlemusicPlayer, 
-            Songs.battleIntro, Songs.battleMusic);
+        Songs.songPlayer.disableOverworldLoop = true;
+        Songs.songPlayer.disableBattleLoop = false;
 
         // Disable player movement
         GameManager.gm.leader.DisableMovement();
@@ -200,9 +200,13 @@ public class BattleManager : MonoBehaviour {
         // so disable the horizontal layout group.
         if (isFightingFinalBoss)
         {
+            Songs.battlemusicPlayer.clip = Songs.bossMusic;
+            Songs.battlemusicPlayer.Play();
             enviroImg.GetComponent<HorizontalLayoutGroup>().enabled = false;
         } else
         {
+            Songs.songPlayer.PlayIntroThenLoop(Songs.battlemusicPlayer,
+                Songs.battleIntro, Songs.battleMusic);
             enviroImg.GetComponent<HorizontalLayoutGroup>().enabled = true;
             enviroImg.sprite = AreaEncounters.currBackground;
         }
@@ -225,8 +229,6 @@ public class BattleManager : MonoBehaviour {
                 enemyObj.GetComponent<RectTransform>().position += new Vector3((enviroImg.rectTransform.rect.width / 2) * 1.5f, 
                     (-enviroImg.rectTransform.rect.height / 2) * 1.3f);
                 enemyObj.GetComponent<RectTransform>().position = new Vector3(Screen.width / 2, Screen.height / 2);
-                GameManager.gm.musicPlayer.clip = Songs.bossMusic; 
-                GameManager.gm.musicPlayer.Play();
             }
 
             totalGoldDrop += enemyObj.GetComponent<BaseCharacter>().goldDrop;
@@ -361,6 +363,7 @@ public class BattleManager : MonoBehaviour {
     public void WinBattle()
     {
         Songs.battlemusicPlayer.Stop();
+        Songs.songPlayer.disableBattleLoop = true;
 
         hasWon = true;
         turnList.Clear();
@@ -375,7 +378,7 @@ public class BattleManager : MonoBehaviour {
             List<string> endBattleMessages = new List<string>();
             endBattleMessages.Add("NoooOOOOooooOO!!!!! How could you defeat meeeeee!!!!???!?!?!?");
             TextBoxManager.tbm.EnableTextBox(messageBoxImg.transform.GetChild(0).gameObject, endBattleMessages.ToArray(), false);
-            StartCoroutine(WaitThenSwitch());
+            StartCoroutine(WaitThenSwitch(5));
         } else
         {
 
@@ -386,12 +389,17 @@ public class BattleManager : MonoBehaviour {
             Inventory.partyGold += totalGoldDrop;
             TextBoxManager.tbm.EnableTextBox(messageBoxImg.transform.GetChild(0).gameObject, endBattleMessages.ToArray(), true);
             battlesFought++;
+
+
+            Songs.battlemusicPlayer.clip = Songs.victoryMusic;
+            Songs.battlemusicPlayer.Play();
+            Songs.battlemusicPlayer.loop = false;
         }
     }
 
-    IEnumerator WaitThenSwitch()
+    IEnumerator WaitThenSwitch(int time)
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(time);
         SceneSwitcher.ss.SwitchToOtherScene("EndGame");
     }
 
@@ -483,6 +491,20 @@ public class BattleManager : MonoBehaviour {
         GameObject attackObj = GameObject.Instantiate(turn.attack.gameObject, transform);
 
         yield return null;
-        StartCoroutine(attackObj.GetComponent<Attack>().UseAttack(turn.attacker, turn.target, turnList));
+        if (!turn.attacker.isDead) { 
+            StartCoroutine(attackObj.GetComponent<Attack>().UseAttack(turn.attacker, turn.target, turnList));
+        } else
+        {
+            // attacker is dead
+            if (turnList.Count > 0)
+            {
+                Turn currTurn = turnList[0];
+                turnList.RemoveAt(0);
+                StartInactiveTurn(currTurn, turnList);
+            } else
+            {
+                turn.attack.EndTurnCheck(turnList);
+            }
+        }
     }
 }

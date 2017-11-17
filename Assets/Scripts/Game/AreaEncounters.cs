@@ -73,7 +73,7 @@ public class AreaEncounters : MonoBehaviour {
 
     public EnemyPartyManager GetRandomEncounter(ContinentType currArea)
     {
-
+        Debug.Log("Encounter" + currArea);
         switch (currArea)
         {
             case (ContinentType.GRASSLAND):

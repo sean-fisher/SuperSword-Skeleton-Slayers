@@ -588,7 +588,7 @@ public class BattleMenu : Menu {
 
                     int randMoveIndex = UnityEngine.Random.Range(0, enemy.usableAttacks.Count);
 
-                    int usesMoveChance = UnityEngine.Random.Range(0, 5);
+                    int usesMoveChance = UnityEngine.Random.Range(0, 6);
 
                     if (usesMoveChance > 0)
                     {
