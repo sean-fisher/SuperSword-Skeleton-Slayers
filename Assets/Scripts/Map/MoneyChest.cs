@@ -12,7 +12,7 @@ public class MoneyChest : InteractableTile
 
     private void Start()
     {
-        goldInside = Random.Range(700, 1200);
+        goldInside = Random.Range(900, 1200);
     }
 
     private void Update()

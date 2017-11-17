@@ -100,7 +100,7 @@ public abstract class Attack : MonoBehaviour {
         {
             yield return null;
         }
-
+        BattleManager.bManager.battleMenu.UpdateAllPanels();
         // If all of this phase's turns are over, a win/lose double check occurs.
         if (turnList.Count == 0)
         {

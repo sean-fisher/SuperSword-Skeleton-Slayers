@@ -588,7 +588,7 @@ public class BattleMenu : Menu {
 
                     int usesMoveChance = UnityEngine.Random.Range(0, 5);
 
-                    if (usesMoveChance > 2)
+                    if (usesMoveChance > 0)
                     {
                         if (occurrenceVal <= enemy.usableAttacks[randMoveIndex].occurrenceChance)
                         {
@@ -711,6 +711,14 @@ public class BattleMenu : Menu {
         if (heroFound)
         {
             UpdatePanel(--heroIndex);
+        }
+    }
+
+    public void UpdateAllPanels()
+    {
+        for (int i = 0; i < bm.allHeroStats.childCount; i++)
+        {
+            UpdatePanel(i);
         }
     }
 }
