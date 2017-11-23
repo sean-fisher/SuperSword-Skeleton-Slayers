@@ -45,6 +45,8 @@ public class BattleManager : MonoBehaviour {
     public LayerMask groundLayer;
     public LayerMask oceanLayer;
 
+    public Attack dummyAttack;
+
     public static int battlesFought = 0;
 
     int totalGoldDrop = 0;
@@ -202,6 +204,7 @@ public class BattleManager : MonoBehaviour {
         {
             Songs.battlemusicPlayer.clip = Songs.bossMusic;
             Songs.battlemusicPlayer.Play();
+            Songs.battlemusicPlayer.loop = true;
             enviroImg.GetComponent<HorizontalLayoutGroup>().enabled = false;
         } else
         {

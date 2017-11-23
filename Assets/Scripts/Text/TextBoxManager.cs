@@ -194,6 +194,7 @@ public class TextBoxManager : MonoBehaviour {
 
     public void EnableTextBox(GameObject textBox = null, string text = null, bool canAdvance = true, bool yesNo = false, bool enableAfter = false)
     {
+        ynCursor = 0;
         this.canAdvance = canAdvance;
         enableOnDisable = enableAfter;
         typingStartedThisFrame = true;
@@ -225,6 +226,7 @@ public class TextBoxManager : MonoBehaviour {
 
     public void EnableTextBox(GameObject textBox = null, string[] texts = null, bool canAdvance = true, bool yesNo = false)
     {
+        ynCursor = 0;
         this.canAdvance = canAdvance;
         textLines = texts;
         currentLine = 0;
@@ -235,6 +237,7 @@ public class TextBoxManager : MonoBehaviour {
     public void EnableTextBox(string text, bool enableOnDisable = true, 
         bool canAdvance = true)
     {
+        ynCursor = 0;
         textBox.SetActive(true);
         isActive = true;
         if (stopPlayerMovement)

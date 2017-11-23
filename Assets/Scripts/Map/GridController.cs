@@ -45,7 +45,8 @@ public class GridController : MonoBehaviour {
             TextBoxManager.player = this;
         }
         anim = GetComponent<Animator>();
-	}
+        canOpenMenu = true;
+    }
 	
 	// Update is called once per frame
 	void FixedUpdate () {
@@ -67,16 +68,35 @@ public class GridController : MonoBehaviour {
             else if (Input.GetAxis("Vertical") > 0)
             {
                 MoveOneSpace(MoveDir.UP);
-            } else if (GameManager.gm.leader == this && Input.GetButtonDown("StartButton") 
+            } else if (canOpenMenu && GameManager.gm.leader == this && Input.GetButton("StartButton") 
                 && !AirshipController.isBoarded) {
                 Debug.Log("open menu");
                 GameManager.gm.pauseMenu.OpenMenu();
                 canMove = false;
+                canOpenMenu = false;
             } else if (GameManager.gm.leader == this && Input.GetButtonDown("AButton"))
             {
                 InspectTile();
             }
         }
+    }
+
+    bool canOpenMenu;
+
+    public void WaitThenEnableOpenMenu()
+    {
+        StartCoroutine(WaitingThenEnableOpenMenu());
+    }
+
+    IEnumerator WaitingThenEnableOpenMenu()
+    {
+        float timer = .5f;
+        while((timer-=Time.deltaTime) >0)
+        {
+            yield return null;
+        }
+
+        canOpenMenu = true;
     }
 
     public MapCoor GetCoor()

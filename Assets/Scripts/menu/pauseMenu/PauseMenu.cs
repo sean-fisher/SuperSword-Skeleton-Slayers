@@ -117,6 +117,8 @@ public class PauseMenu : GridOptions {
 
         canControl = false;
         waitFrame = false;
+
+        GameManager.gm.leader.WaitThenEnableOpenMenu();
     }
 
     public override void DisableMenuControl()
@@ -166,7 +168,7 @@ public class PauseMenu : GridOptions {
         goldText.text = "Gold: " + Inventory.partyGold + "G";
         stepsText.text = "Steps Taken: " + GridController.stepsTaken;
         battlesText.text = "Battles Won: " + BattleManager.battlesFought;
-        timeText.text = "Time Played: " + Time.timeSinceLevelLoad;
+        timeText.text = "Time Played: " + (int)(Time.timeSinceLevelLoad / 60);
 
         additionalStats = tempRectList.ToArray();
         currCursor = cursor2;

@@ -656,7 +656,7 @@ public class BattleMenu : Menu {
     void ExecuteAttacks()
     {
         List<Turn> turnList = bm.turnList;
-
+        /*
         // Shuffle the list
         int turnCount = turnList.Count;
 
@@ -668,7 +668,7 @@ public class BattleMenu : Menu {
 
             turnList[k] = turnList[i];
             turnList[i] = randTurn;
-        }
+        }*/
 
         for (int i = 0; i < turnList.Count; i++) 
         {

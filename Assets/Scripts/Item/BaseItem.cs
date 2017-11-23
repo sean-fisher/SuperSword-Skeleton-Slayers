@@ -88,6 +88,10 @@ public abstract class ItemData
         {
             // TODO: Visual effects related to Boosts
             target.currentMP += increaseVal;
+            if (target.currentMP > target.baseMP)
+            {
+                target.currentMP = target.baseMP;
+            }
         }
     }
 }

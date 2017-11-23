@@ -36,6 +36,7 @@ public class EndGameScreen : MonoBehaviour {
 
     IEnumerator WaitThenReturnToTitle()
     {
+        Debug.Log("return");
         yield return new WaitForSeconds(0);
         SceneSwitcher.ss.SwitchToOtherScene("Title");
     }
